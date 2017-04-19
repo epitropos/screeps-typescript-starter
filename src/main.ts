@@ -1,4 +1,6 @@
 import * as CreepManager from "./components/creeps/creepManager";
+import * as RoomManager from "./components/rooms/roomManager";
+import * as GameMapManager from "./components/gameMapManager";
 import * as Config from "./config/config";
 
 import { log } from "./lib/logger/log";
@@ -32,7 +34,9 @@ export function loop() {
   for (let i in Game.rooms) {
     let room: Room = Game.rooms[i];
 
-    CreepManager.run(room);
+    GameMapManager.run();
+    RoomManager.run(room); // TODO: Move into GameMapManager.
+    CreepManager.run(room); // TODO: Move into RoomManager.
 
     // Clears any non-existing creep memory.
     for (let name in Memory.creeps) {
