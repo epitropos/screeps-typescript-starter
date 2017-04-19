@@ -1,4 +1,4 @@
-# screeps-starter
+# screeps-starter1
 
 > Starter kit for [TypeScript](http://www.typescriptlang.org/)-based [Screeps](https://screeps.com/) AI codes.
 
