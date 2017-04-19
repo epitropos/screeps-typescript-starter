@@ -8,7 +8,7 @@ import * as creepActions from "../creepActions";
  */
 export function run(creep: Creep): void {
   let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
-  let energySource = creep.room.find<Source>(FIND_SOURCES_ACTIVE)[0];
+  let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
 
   if (creepActions.needsRenew(creep)) {
     creepActions.moveToRenew(creep, spawn);

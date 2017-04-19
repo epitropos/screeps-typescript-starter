@@ -12,7 +12,7 @@ export function moveTo(creep: Creep, target: Structure | RoomPosition): number {
   let result: number = 0;
 
   // Execute moves by cached paths at first
-  result = creep.moveTo(target);
+  result = creep.moveTo(target, {visualizePathStyle: {stroke: "#ffffff"}});
 
   return result;
 }
@@ -50,7 +50,7 @@ export function tryRenew(creep: Creep, spawn: Spawn): number {
  */
 export function moveToRenew(creep: Creep, spawn: Spawn): void {
   if (tryRenew(creep, spawn) === ERR_NOT_IN_RANGE) {
-    creep.moveTo(spawn);
+    creep.moveTo(spawn, {visualizePathStyle: {stroke: "#ffffff"}});
   }
 }
 

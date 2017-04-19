@@ -11,12 +11,14 @@ export function run(): void {
   if (Config.ENABLE_DEBUG_MODE) {
     log.info("Loading map.");
   }
-  //_loadCreeps(room);
-  //_buildMissingCreeps(room);
+  /*
+  _loadCreeps(room);
+  _buildMissingCreeps(room);
 
-  //_.each(creeps, (creep: Creep) => {
-  //  if (creep.memory.role === "harvester") {
-  //    harvester.run(creep);
-  //  }
-  //});
+  _.each(creeps, (creep: Creep) => {
+    if (creep.memory.role === "harvester") {
+      harvester.run(creep);
+    }
+  });
+  */
 }

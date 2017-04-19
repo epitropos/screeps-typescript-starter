@@ -63,7 +63,7 @@ function _buildMissingCreeps(room: Room) {
     }
   }
 
-  if (harvesters.length < 2) {
+  if (harvesters.length < 5) {
     if (harvesters.length < 1 || room.energyCapacityAvailable <= 800) {
       bodyParts = [WORK, WORK, CARRY, MOVE];
     } else if (room.energyCapacityAvailable > 800) {
