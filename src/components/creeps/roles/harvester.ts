@@ -9,11 +9,25 @@ import * as creepActions from "../creepActions";
 export function run(creep: Creep): void {
   let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
   let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
+  let extensions = creep.room.find<StructureExtension>(FIND_STRUCTURES, {
+    filter: (s: StructureExtension) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity
+  });
+  let containers = creep.room.find<StructureContainer>(FIND_STRUCTURES, {
+    filter: (s: StructureContainer) => s.structureType === STRUCTURE_CONTAINER && _.sum(s.store) < s.storeCapacity
+  });
 
   if (creepActions.needsRenew(creep)) {
     creepActions.moveToRenew(creep, spawn);
   } else if (_.sum(creep.carry) === creep.carryCapacity) {
-    _moveToDropEnergy(creep, spawn);
+    if (spawn.energy < spawn.energyCapacity) {
+      _moveToDropEnergy(creep, spawn);
+    } else if (extensions.length > 0) {
+      let extension = creep.pos.findClosestByPath<StructureExtension>(extensions);
+      _moveToDropEnergy(creep, extension);
+    } else if (containers.length > 0) {
+      let container = creep.pos.findClosestByPath<StructureContainer>(containers);
+      _moveToDropEnergy(creep, container);
+    }
   } else {
     _moveToHarvest(creep, energySource);
   }
