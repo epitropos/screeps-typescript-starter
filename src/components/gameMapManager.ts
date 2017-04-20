@@ -2,6 +2,9 @@ import * as Config from "../config/config";
 
 import { log } from "../lib/logger/log";
 
+// TODO: Define enum for overall goal.
+// TODO: Goals: Expansion, Maintenance, Conquer, Quarantine
+
 /**
  * Initialization scripts for CreepManager module.
  *

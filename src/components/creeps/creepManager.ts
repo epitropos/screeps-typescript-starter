@@ -1,3 +1,5 @@
+// TODO: Change game loop so creeps make requests (i.e. repair, energy, etc).
+
 import * as Config from "../../config/config";
 
 import * as miner from "./roles/miner";
@@ -14,6 +16,9 @@ export let miners: Creep[] = [];
 export let carriers: Creep[] = [];
 export let harvesters: Creep[] = [];
 export let upgraders: Creep[] = [];
+
+// TODO: Use creepFactory to create creeps.
+// TODO: Use creepManager to maintain correct population balance based on gameMapGoal and current room levels.
 
 /**
  * Initialization scripts for CreepManager module.

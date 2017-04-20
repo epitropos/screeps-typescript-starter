@@ -1,3 +1,5 @@
+// TODO: Change game loop so that rooms make requests (This includes enemy rooms requesting conquering or quarantining).
+
 import * as Config from "../../config/config";
 
 import { log } from "../../lib/logger/log";
