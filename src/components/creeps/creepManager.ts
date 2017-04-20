@@ -3,6 +3,7 @@
 import * as Config from "../../config/config";
 
 import * as miner from "./roles/miner";
+import * as builder from "./roles/builder";
 import * as carrier from "./roles/carrier";
 import * as harvester from "./roles/harvester";
 import * as upgrader from "./roles/upgrader";
@@ -12,10 +13,17 @@ import { log } from "../../lib/logger/log";
 export let creeps: Creep[];
 export let creepCount: number = 0;
 
+export let builders: Creep[] = [];
 export let miners: Creep[] = [];
 export let carriers: Creep[] = [];
 export let harvesters: Creep[] = [];
 export let upgraders: Creep[] = [];
+
+export let MAX_MINERS: number = 0;
+export let MAX_CARRIERS: number = 0;
+export let MAX_HARVESTERS: number = 6;
+export let MAX_BUILDERS: number = 1;
+export let MAX_UPGRADERS: number = 1;
 
 // TODO: Use creepFactory to create creeps.
 // TODO: Use creepManager to maintain correct population balance based on gameMapGoal and current room levels.
@@ -31,6 +39,9 @@ export function run(room: Room): void {
   _buildMissingCreeps(room);
 
   _.each(creeps, (creep: Creep) => {
+    if (creep.memory.role === "builder") {
+      builder.run(creep);
+    }
     if (creep.memory.role === "harvester") {
       harvester.run(creep);
     }
@@ -56,6 +67,7 @@ function _loadCreeps(room: Room) {
   creepCount = _.size(creeps);
 
   // Iterate through each creep and push them into the role array.
+  builders = _.filter(creeps, (creep) => creep.memory.role === "builder");
   miners = _.filter(creeps, (creep) => creep.memory.role === "miner");
   carriers = _.filter(creeps, (creep) => creep.memory.role === "carrier");
   harvesters = _.filter(creeps, (creep) => creep.memory.role === "harvester");
@@ -94,36 +106,56 @@ function _buildMissingCreeps(room: Room) {
   // ATTACK           80
   // RANGED_ATTACK   150
 
-  /*
-  if (miners.length < 6) {
-    bodyParts = [WORK, WORK, CARRY, MOVE];
+  if (miners.length < MAX_MINERS) {
+    if (miners.length < 1 || room.energyCapacityAvailable <= 800) {
+      bodyParts = [WORK, WORK, CARRY, MOVE];
+    } else if (room.energyCapacityAvailable > 800) {
+      bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
+    }
     _.each(spawns, (spawn: Spawn) => {
       _spawnCreep(spawn, bodyParts, "miner");
     });
   }
 
-  if (carriers.length < 6) {
-    bodyParts = [CARRY, CARRY, CARRY, MOVE];
+  if (carriers.length < MAX_CARRIERS) {
+    if (carriers.length < 1 || room.energyCapacityAvailable <= 800) {
+      bodyParts = [CARRY, CARRY, CARRY, MOVE];
+    } else if (room.energyCapacityAvailable > 800) {
+      bodyParts = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
+    }
     _.each(spawns, (spawn: Spawn) => {
       _spawnCreep(spawn, bodyParts, "carriers");
     });
   }
-  */
 
-  if (harvesters.length < 6) {
+  if (harvesters.length < MAX_HARVESTERS) {
     if (harvesters.length < 1 || room.energyCapacityAvailable <= 800) {
       bodyParts = [WORK, WORK, CARRY, MOVE];
     } else if (room.energyCapacityAvailable > 800) {
       bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
     }
-
     _.each(spawns, (spawn: Spawn) => {
       _spawnCreep(spawn, bodyParts, "harvester");
     });
   }
 
+  if (builders.length < MAX_HARVESTERS) {
+    if (builders.length < 1 || room.energyCapacityAvailable <= 800) {
+      bodyParts = [WORK, WORK, CARRY, MOVE];
+    } else if (room.energyCapacityAvailable > 800) {
+      bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
+    }
+    _.each(spawns, (spawn: Spawn) => {
+      _spawnCreep(spawn, bodyParts, "builder");
+    });
+  }
+
   if (upgraders.length < 1) {
-    bodyParts = [WORK, WORK, CARRY, MOVE];
+    if (upgraders.length < 1 || room.energyCapacityAvailable <= 800) {
+      bodyParts = [WORK, WORK, CARRY, MOVE];
+    } else if (room.energyCapacityAvailable > 800) {
+      bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
+    }
     _.each(spawns, (spawn: Spawn) => {
       _spawnCreep(spawn, bodyParts, "upgrader");
     });

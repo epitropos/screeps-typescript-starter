@@ -27,6 +27,6 @@ export function moveToWithdraw(creep: Creep, target: Container): void {
   }
 }
 
-function tryWithdraw(creep: Creep, target: Container): number {
+export function tryWithdraw(creep: Creep, target: Container): number {
   return creep.withdraw(target, RESOURCE_ENERGY, creep.carryCapacity - _.sum(creep.carry));
 }

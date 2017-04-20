@@ -1,5 +1,6 @@
 import * as creepActions from "../creepActions";
 import * as creepEnergyActions from "../creepEnergyActions";
+import * as roomActions from "../../rooms/roomActions";
 
 /**
  * Runs all creep actions.
@@ -9,33 +10,40 @@ import * as creepEnergyActions from "../creepEnergyActions";
  */
 export function run(creep: Creep): void {
   let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
-  let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
-  let extensions = creep.room.find<StructureExtension>(FIND_STRUCTURES, {
-    filter: (s: StructureExtension) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity,
-  });
-  let containers = creep.room.find<StructureContainer>(FIND_STRUCTURES, {
-    filter: (s: StructureContainer) => s.structureType === STRUCTURE_CONTAINER && _.sum(s.store) < s.storeCapacity,
-  });
-  let towers = creep.room.find<Tower>(FIND_STRUCTURES, {
-    filter: (s: Tower) => s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity,
-  });
 
   if (creepActions.isRenewing(creep)) {
     creepActions.moveToRenew(creep, spawn);
-  } else if (_.sum(creep.carry) === creep.carryCapacity) {
+    return;
+  }
+
+  if (_.sum(creep.carry) === creep.carryCapacity) {
     if (spawn.energy < spawn.energyCapacity) {
       creepEnergyActions.moveToDropEnergy(creep, spawn);
-    } else if (extensions.length > 0) {
-      let extension = creep.pos.findClosestByPath<StructureExtension>(extensions);
+      return;
+    }
+
+    let extensions = roomActions.loadExtensions(creep.room);
+    if (extensions.length > 0) {
+      let extension = creep.pos.findClosestByPath<Extension>(extensions);
       creepEnergyActions.moveToDropEnergy(creep, extension);
-    } else if (containers.length > 0) {
-      let container = creep.pos.findClosestByPath<StructureContainer>(containers);
+      return;
+    }
+
+    let containers = roomActions.loadContainers(creep.room);
+    if (containers.length > 0) {
+      let container = creep.pos.findClosestByPath<Container>(containers);
       creepEnergyActions.moveToDropEnergy(creep, container);
-    } else if (towers.length > 0) {
+      return;
+    }
+
+    let towers = roomActions.loadTowers(creep.room);
+    if (towers.length > 0) {
       let tower = creep.pos.findClosestByPath<Tower>(towers);
       creepEnergyActions.moveToDropEnergy(creep, tower);
+      return;
     }
-  } else {
-    creepEnergyActions.moveToHarvest(creep, energySource);
   }
+
+  let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
+  creepEnergyActions.moveToHarvest(creep, energySource);
 }
