@@ -22,6 +22,14 @@ export function run(tower: Tower): void {
     // TODO: Repair damaged structures.
   }
   */
+  let closestHostileCreep = tower.pos.findClosestByRange<Creep>(FIND_HOSTILE_CREEPS);
+  if (closestHostileCreep) {
+    if (Config.ENABLE_DEBUG_MODE) {
+      log.info("Tower attacking hostile creep: " + closestHostileCreep.name + " at (" + closestHostileCreep.pos.x + "," + closestHostileCreep.pos.y + ")");
+    }
+    tower.attack(closestHostileCreep);
+  }
+
   let closestDamagedStructure = tower.pos.findClosestByRange<Structure>(FIND_STRUCTURES,
   {filter: (structure: Structure) => structure.hits < structure.hitsMax});
   if (closestDamagedStructure) {
@@ -29,14 +37,6 @@ export function run(tower: Tower): void {
       log.info("Tower repairing structures: " + closestDamagedStructure.structureType + " at (" + closestDamagedStructure.pos.x + "," + closestDamagedStructure.pos.y + ")");
     }
     tower.repair(closestDamagedStructure);
-  }
-
-  let closestHostileCreep = tower.pos.findClosestByRange<Creep>(FIND_HOSTILE_CREEPS);
-  if (closestHostileCreep) {
-    if (Config.ENABLE_DEBUG_MODE) {
-      log.info("Tower attacking hostile creep: " + closestHostileCreep.name + " at (" + closestHostileCreep.pos.x + "," + closestHostileCreep.pos.y + ")");
-    }
-    tower.attack(closestHostileCreep);
   }
 }
 
