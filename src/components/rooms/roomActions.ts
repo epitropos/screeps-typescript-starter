@@ -19,6 +19,12 @@ export function loadExtensions(room: Room): Extension[] {
 
 export function loadContainers(room: Room): Container[] {
   return room.find<Container>(FIND_STRUCTURES, {
+    filter: (s: Container) => s.structureType === STRUCTURE_CONTAINER,
+  });
+}
+
+export function loadContainersWithSpace(room: Room): Container[] {
+  return room.find<Container>(FIND_STRUCTURES, {
     filter: (s: Container) => s.structureType === STRUCTURE_CONTAINER && _.sum(s.store) < s.storeCapacity,
   });
 }

@@ -23,8 +23,8 @@ export function run(creep: Creep): void {
   }
 
   if (state === STATE_REFUELING) {
-    let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
-    creepEnergyActions.moveToHarvest(creep, energySource);
+    _getEnergy(creep);
+    return;
   }
 
   if (state === STATE_UPGRADING) {
@@ -64,6 +64,18 @@ function _determineCurrentState(creep: Creep): string {
   // TODO: Add STATE_IDLE
   // return STATE_IDLE;
   return STATE_UPGRADING;
+}
+
+function _getEnergy(creep: Creep): void {
+  let containers = roomActions.loadContainers(creep.room);
+  if (containers.length > 0) {
+    let container = creep.pos.findClosestByPath(containers);
+    creepEnergyActions.moveToWithdraw(creep, container);
+    return;
+  }
+
+  let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
+  creepEnergyActions.moveToHarvest(creep, energySource);
 }
 
 function _tryUpgrade(creep: Creep, target: Controller): number {
