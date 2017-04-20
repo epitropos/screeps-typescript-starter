@@ -63,6 +63,12 @@ function _determineCurrentState(creep: Creep): string {
     return STATE_RENEWING;
   }
 
+  if (state === STATE_REFUELING) {
+    if (!creepActions.refuelingComplete(creep)) {
+      return STATE_REFUELING;
+    }
+  }
+
   if (creepActions.needsToRefuel(creep)) {
     return STATE_REFUELING;
   }

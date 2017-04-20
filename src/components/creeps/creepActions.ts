@@ -19,7 +19,11 @@ export function moveTo(creep: Creep, target: Structure | RoomPosition): number {
 
 // TODO: Change this to needsMoreCargo.
 export function needsToRefuel(creep: Creep): boolean {
-  return (_.sum(creep.carry) < creep.carryCapacity);
+  return (_.sum(creep.carry) === 0);
+}
+
+export function refuelingComplete(creep: Creep): boolean {
+  return (_.sum(creep.carry) === creep.carryCapacity);
 }
 
 /**
