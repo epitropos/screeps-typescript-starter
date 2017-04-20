@@ -30,6 +30,17 @@ export function needsRenew(creep: Creep): boolean {
 }
 
 /**
+ * Returns true if the `ticksToLive` of a creep is above the refill mark set in config.
+ *
+ * @export
+ * @param {Creep} creep
+ * @returns {boolean}
+ */
+export function renewComplete(creep: Creep): boolean {
+  return (creep.ticksToLive >= Config.DEFAULT_REFILL_LIFE_TO);
+}
+
+/**
  * Shorthand method for `renewCreep()`.
  *
  * @export
@@ -93,4 +104,22 @@ export function canWork(creep: Creep): boolean {
   } else {
     return creep.memory.working;
   }
+}
+
+/**
+ * Returns true if the creep is in the "renewing" state.
+ *
+ * @export
+ * @param {Creep} creep
+ * @returns {boolean}
+ */
+export function isRenewing(creep: Creep): boolean {
+  if (needsRenew(creep)) {
+    creep.memory.isRenewing = true;
+    return true;
+  } else if (renewComplete(creep)) {
+    creep.memory.isRenewing = false;
+    return false;
+  }
+  return creep.memory.isRenewing;
 }
