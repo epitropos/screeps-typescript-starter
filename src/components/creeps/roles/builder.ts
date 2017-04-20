@@ -52,27 +52,28 @@ export function run(creep: Creep): void {
 
 function _determineCurrentState(creep: Creep): string {
   let state = creep.memory.state;
+
   if (state === STATE_RENEWING) {
-    if (creepActions.renewComplete(creep)) {
-      creep.memory.state = state = STATE_BUILDING;
+    if (!creepActions.renewComplete(creep)) {
+      return STATE_RENEWING;
     }
-  } else if (state === STATE_REFUELING) {
-    if (creepActions.needsRenew(creep)) {
-      creep.memory.state = state = STATE_RENEWING;
-    } else if (_.sum(creep.carry) === creep.carryCapacity) {
-      creep.memory.state = state = STATE_BUILDING;
-    }
-  } else if (state === STATE_BUILDING) {
-    if (creepActions.needsRenew(creep)) {
-      creep.memory.state = state = STATE_RENEWING;
-    } else if (_.sum(creep.carry) === 0) {
-      creep.memory.state = state = STATE_REFUELING;
-    }
-  } else {
-    creep.memory.state = state = STATE_REFUELING;
   }
 
-  return state;
+  if (creepActions.needsRenew) {
+    return STATE_RENEWING;
+  }
+
+  if (creepActions.needsToRefuel) {
+    return STATE_REFUELING;
+  }
+
+  if (roomActions.constructionSitesExist(creep.room)) {
+    return STATE_BUILDING;
+  }
+
+  // TODO: Add STATE_IDLE
+  // return STATE_IDLE;
+  return STATE_BUILDING;
 }
 
 function _build(creep: Creep, constructionSite: ConstructionSite): void {

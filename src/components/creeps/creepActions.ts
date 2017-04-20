@@ -17,6 +17,11 @@ export function moveTo(creep: Creep, target: Structure | RoomPosition): number {
   return result;
 }
 
+// TODO: Change this to needsMoreCargo.
+export function needsToRefuel(creep: Creep): boolean {
+  return (_.sum(creep.carry) < creep.carryCapacity);
+}
+
 /**
  * Returns true if the `ticksToLive` of a creep has dropped below the renew
  * limit set in config.

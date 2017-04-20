@@ -1,4 +1,3 @@
-// import * as Config from "../../config/config";
 import * as creepActions from "./creepActions";
 
 export function tryHarvest(creep: Creep, target: Source): number {

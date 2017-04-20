@@ -1,5 +1,11 @@
 import * as creepActions from "../creepActions";
 import * as creepEnergyActions from "../creepEnergyActions";
+import * as roomActions from "../../rooms/roomActions";
+
+// TODO: Shorten to save memory.
+export const STATE_UPGRADING = "UPGRADING";
+export const STATE_REFUELING = "REFUELING";
+export const STATE_RENEWING = "RENEWING";
 
 /**
  * Runs all creep actions.
@@ -8,21 +14,50 @@ import * as creepEnergyActions from "../creepEnergyActions";
  * @param {Creep} creep
  */
 export function run(creep: Creep): void {
-  let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
-  let controller = <Controller> creep.room.controller;
-  let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
+  let state = creep.memory.state = _determineCurrentState(creep);
 
-  // TODO: Change these to check current "task", and separate into "if" instead of "else if".
-  // TODO: Change isRenewing from bool to use "task".
-  if (creepActions.isRenewing(creep)) {
+  if (state === STATE_RENEWING) {
+    let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
     creepActions.moveToRenew(creep, spawn);
-  // TODO: Change these to check current task, and separate into "if" instead of "else if".
-  } else if (_.sum(creep.carry) === creep.carryCapacity) {
-    _moveToUpgrade(creep, controller);
-  // TODO: Change these to check current task, and separate into "if" instead of "else if".
-  } else {
+    return;
+  }
+
+  if (state === STATE_REFUELING) {
+    let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
     creepEnergyActions.moveToHarvest(creep, energySource);
   }
+
+  if (state === STATE_UPGRADING) {
+    let controller = <Controller> creep.room.controller;
+    _moveToUpgrade(creep, controller);
+    return;
+  }
+}
+
+function _determineCurrentState(creep: Creep): string {
+  let state = creep.memory.state;
+
+  if (state === STATE_RENEWING) {
+    if (!creepActions.renewComplete(creep)) {
+      return STATE_RENEWING;
+    }
+  }
+
+  if (creepActions.needsRenew(creep)) {
+    return STATE_RENEWING;
+  }
+
+  if (creepActions.needsToRefuel(creep)) {
+    return STATE_REFUELING;
+  }
+
+  if (roomActions.controllerNeedsUpgrading(creep.room)) {
+    return STATE_UPGRADING;
+  }
+
+  // TODO: Add STATE_IDLE
+  // return STATE_IDLE;
+  return STATE_UPGRADING;
 }
 
 function _tryUpgrade(creep: Creep, target: Controller): number {

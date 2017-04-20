@@ -1,3 +1,16 @@
+export function controllerNeedsUpgrading(room: Room): boolean {
+  if (room.controller) {
+    return room.controller.level < 8;
+  }
+
+  return false;
+}
+
+export function constructionSitesExist(room: Room): boolean {
+  let constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES);
+  return constructionSites.length > 0;
+}
+
 export function loadExtensions(room: Room): Extension[] {
   return room.find<Extension>(FIND_STRUCTURES, {
     filter: (s: Extension) => s.structureType === STRUCTURE_EXTENSION && s.energy < s.energyCapacity,
