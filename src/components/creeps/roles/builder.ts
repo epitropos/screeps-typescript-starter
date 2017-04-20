@@ -17,7 +17,7 @@ export const STATE_RENEWING = "RENEWING";
  * @param {Creep} creep
  */
 export function run(creep: Creep): void {
-  let state = _determineCurrentState(creep);
+  let state = creep.memory.state = _determineCurrentState(creep);
 
   if (state === STATE_RENEWING) {
     let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
@@ -59,11 +59,11 @@ function _determineCurrentState(creep: Creep): string {
     }
   }
 
-  if (creepActions.needsRenew) {
+  if (creepActions.needsRenew(creep)) {
     return STATE_RENEWING;
   }
 
-  if (creepActions.needsToRefuel) {
+  if (creepActions.needsToRefuel(creep)) {
     return STATE_REFUELING;
   }
 

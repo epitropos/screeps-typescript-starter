@@ -70,6 +70,16 @@ export function moveToRenew(creep: Creep, spawn: Spawn): void {
   }
 }
 
+export function tryPickup(creep: Creep, resource: Resource): number {
+  return creep.pickup(resource);
+}
+
+export function moveToPickup(creep: Creep, resource: Resource): void {
+  if (tryPickup(creep, resource) === ERR_NOT_IN_RANGE) {
+    creep.moveTo(resource, {visualizePathStyle: {stroke: "#ffffff"}});
+  }
+}
+
 /**
  * Attempts transferring available resources to the creep.
  *

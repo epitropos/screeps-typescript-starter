@@ -44,6 +44,15 @@ export function run(creep: Creep): void {
     }
   }
 
+  let droppedEnergy = creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY);
+  if (droppedEnergy) {
+    creepActions.moveToPickup(creep, droppedEnergy);
+    return;
+  }
+
   let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
-  creepEnergyActions.moveToHarvest(creep, energySource);
+  if (energySource) {
+    creepEnergyActions.moveToHarvest(creep, energySource);
+    return;
+  }
 }
