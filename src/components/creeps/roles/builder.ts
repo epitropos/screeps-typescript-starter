@@ -1,6 +1,14 @@
+// import * as Config from "../../../config/config";
+// import { log } from "../../../lib/logger/log";
+
 import * as creepActions from "../creepActions";
 import * as creepEnergyActions from "../creepEnergyActions";
 import * as roomActions from "../../rooms/roomActions";
+
+// TODO: Shorten to save memory.
+export const STATE_BUILDING = "BUILDING";
+export const STATE_REFUELING = "REFUELING";
+export const STATE_RENEWING = "RENEWING";
 
 /**
  * Runs all creep actions.
@@ -9,30 +17,62 @@ import * as roomActions from "../../rooms/roomActions";
  * @param {Creep} creep
  */
 export function run(creep: Creep): void {
-  if (creepActions.isRenewing(creep)) {
+  let state = _determineCurrentState(creep);
+
+  if (state === STATE_RENEWING) {
     let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
     creepActions.moveToRenew(creep, spawn);
     return;
   }
 
-  if (_.sum(creep.carry) < creep.carryCapacity) {
+  if (state === STATE_REFUELING) {
     _getEnergy(creep);
     return;
   }
 
-  let constructionSites = roomActions.loadConstructionSites(creep.room);
-  if (constructionSites.length > 0) {
-    let constructionSite = creep.pos.findClosestByPath(constructionSites);
-    _build(creep, constructionSite);
-    return;
+  if (state === STATE_BUILDING) {
+    let constructionSites = roomActions.loadConstructionSites(creep.room);
+    if (constructionSites.length > 0) {
+      let constructionSite = creep.pos.findClosestByPath(constructionSites);
+      _build(creep, constructionSite);
+      return;
+    }
+
+    let damagedStructures = roomActions.loadDamagedStructures(creep.room);
+    if (damagedStructures.length > 0) {
+      let damagedStructure = creep.pos.findClosestByPath(damagedStructures);
+      _moveToRepair(creep, damagedStructure);
+      return;
+    }
   }
 
-  let damagedStructures = roomActions.loadDamagedStructures(creep.room);
-  if (damagedStructures.length > 0) {
-    let damagedStructure = creep.pos.findClosestByPath(damagedStructures);
-    _moveToRepair(creep, damagedStructure);
-    return;
+  // TODO: Move randomly. This should keep the creep as an obstacle to a minimum.
+  // TODO: Otherwise, move creep to an idle location.
+}
+
+function _determineCurrentState(creep: Creep): string {
+  let state = creep.memory.state;
+  if (state === STATE_RENEWING) {
+    if (creepActions.renewComplete(creep)) {
+      creep.memory.state = state = STATE_BUILDING;
+    }
+  } else if (state === STATE_REFUELING) {
+    if (creepActions.needsRenew(creep)) {
+      creep.memory.state = state = STATE_RENEWING;
+    } else if (_.sum(creep.carry) === creep.carryCapacity) {
+      creep.memory.state = state = STATE_BUILDING;
+    }
+  } else if (state === STATE_BUILDING) {
+    if (creepActions.needsRenew(creep)) {
+      creep.memory.state = state = STATE_RENEWING;
+    } else if (_.sum(creep.carry) === 0) {
+      creep.memory.state = state = STATE_REFUELING;
+    }
+  } else {
+    creep.memory.state = state = STATE_REFUELING;
   }
+
+  return state;
 }
 
 function _build(creep: Creep, constructionSite: ConstructionSite): void {

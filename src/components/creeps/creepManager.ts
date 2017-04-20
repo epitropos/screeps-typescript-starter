@@ -139,7 +139,7 @@ function _buildMissingCreeps(room: Room) {
     });
   }
 
-  if (builders.length < MAX_HARVESTERS) {
+  if (builders.length < MAX_BUILDERS) {
     if (builders.length < 1 || room.energyCapacityAvailable <= 800) {
       bodyParts = [WORK, WORK, CARRY, MOVE];
     } else if (room.energyCapacityAvailable > 800) {
@@ -150,7 +150,7 @@ function _buildMissingCreeps(room: Room) {
     });
   }
 
-  if (upgraders.length < 1) {
+  if (upgraders.length < MAX_UPGRADERS) {
     if (upgraders.length < 1 || room.energyCapacityAvailable <= 800) {
       bodyParts = [WORK, WORK, CARRY, MOVE];
     } else if (room.energyCapacityAvailable > 800) {
