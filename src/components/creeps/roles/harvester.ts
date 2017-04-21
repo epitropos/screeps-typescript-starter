@@ -5,7 +5,7 @@ import * as roomActions from "../../rooms/roomActions";
 // TODO: Shorten to save memory.
 export const STATE_DELIVERING = "DELIVERING";
 export const STATE_REFUELING = "REFUELING";
-export const STATE_RENEWING = "RENEWING";
+// export const STATE_RENEWING = "RENEWING";
 
 /**
  * Runs all creep actions.
@@ -18,9 +18,10 @@ export function run(creep: Creep): void {
 
   let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
 
-  if (state === STATE_RENEWING) {
-    creepActions.moveToRenew(creep, spawn);
-  }
+  // if (state === STATE_RENEWING) {
+  //   // creepActions.moveToRenew(creep, spawn);
+  //   state = creep.memory.state = STATE_REFUELING;
+  // }
 
   if (state === STATE_REFUELING) {
     let droppedEnergy = creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY);
@@ -49,17 +50,17 @@ export function run(creep: Creep): void {
       return;
     }
 
-    let containers = roomActions.loadContainersWithSpace(creep.room);
-    if (containers.length > 0) {
-      let container = creep.pos.findClosestByPath<Container>(containers);
-      creepEnergyActions.moveToDropEnergy(creep, container);
-      return;
-    }
-
     let towers = roomActions.loadTowers(creep.room);
     if (towers.length > 0) {
       let tower = creep.pos.findClosestByPath<Tower>(towers);
       creepEnergyActions.moveToDropEnergy(creep, tower);
+      return;
+    }
+
+    let containers = roomActions.loadContainersWithSpace(creep.room);
+    if (containers.length > 0) {
+      let container = creep.pos.findClosestByPath<Container>(containers);
+      creepEnergyActions.moveToDropEnergy(creep, container);
       return;
     }
   }
@@ -68,15 +69,15 @@ export function run(creep: Creep): void {
 function _determineCurrentState(creep: Creep): string {
   let state = creep.memory.state;
 
-  if (state === STATE_RENEWING) {
-    if (!creepActions.renewComplete(creep)) {
-      return STATE_RENEWING;
-    }
-  }
+  // if (state === STATE_RENEWING) {
+  //   if (!creepActions.renewComplete(creep)) {
+  //     return STATE_RENEWING;
+  //   }
+  // }
 
-  if (creepActions.needsRenew(creep)) {
-    return STATE_RENEWING;
-  }
+  // if (creepActions.needsRenew(creep)) {
+  //   return STATE_RENEWING;
+  // }
 
   if (state === STATE_REFUELING) {
     if (!creepActions.refuelingComplete(creep)) {

@@ -5,7 +5,7 @@ import * as roomActions from "../../rooms/roomActions";
 // TODO: Shorten to save memory.
 export const STATE_UPGRADING = "UPGRADING";
 export const STATE_REFUELING = "REFUELING";
-export const STATE_RENEWING = "RENEWING";
+// export const STATE_RENEWING = "RENEWING";
 
 /**
  * Runs all creep actions.
@@ -16,11 +16,12 @@ export const STATE_RENEWING = "RENEWING";
 export function run(creep: Creep): void {
   let state = creep.memory.state = _determineCurrentState(creep);
 
-  if (state === STATE_RENEWING) {
-    let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
-    creepActions.moveToRenew(creep, spawn);
-    return;
-  }
+  // if (state === STATE_RENEWING) {
+  //   // let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
+  //   // creepActions.moveToRenew(creep, spawn);
+  //   // return;
+  //   state = creep.memory.state = STATE_REFUELING;
+  // }
 
   if (state === STATE_REFUELING) {
     _getEnergy(creep);
@@ -37,15 +38,15 @@ export function run(creep: Creep): void {
 function _determineCurrentState(creep: Creep): string {
   let state = creep.memory.state;
 
-  if (state === STATE_RENEWING) {
-    if (!creepActions.renewComplete(creep)) {
-      return STATE_RENEWING;
-    }
-  }
+  // if (state === STATE_RENEWING) {
+  //   if (!creepActions.renewComplete(creep)) {
+  //     return STATE_RENEWING;
+  //   }
+  // }
 
-  if (creepActions.needsRenew(creep)) {
-    return STATE_RENEWING;
-  }
+  // if (creepActions.needsRenew(creep)) {
+  //   return STATE_RENEWING;
+  // }
 
   if (state === STATE_REFUELING) {
     if (!creepActions.refuelingComplete(creep)) {

@@ -2,7 +2,7 @@ import * as Config from "./config/config";
 import { log } from "./lib/logger/log";
 import * as CreepManager from "./components/creeps/creepManager";
 import * as GameMapManager from "./components/gameMapManager";
-import * as RoomManager from "./components/rooms/roomManager";
+// import * as RoomManager from "./components/rooms/roomManager";
 import * as StructureManager from "./components/structures/structureManager";
 
 // Any code written outside the `loop()` method is executed only when the
@@ -35,7 +35,7 @@ export function loop() {
     let room: Room = Game.rooms[i];
 
     GameMapManager.run();
-    RoomManager.run(room); // TODO: Move into GameMapManager.
+    // RoomManager.run(room); // TODO: Move into GameMapManager.
     StructureManager.run(room); // TODO: Move into RoomManager.
     CreepManager.run(room); // TODO: Move into RoomManager.
 

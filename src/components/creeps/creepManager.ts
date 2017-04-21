@@ -35,6 +35,41 @@ export let MAX_UPGRADERS: number = 1;
  * @param {Room} room
  */
 export function run(room: Room): void {
+  let maxMinersFromMemory = room.memory.population.maximum.miners;
+  if (maxMinersFromMemory) {
+    MAX_MINERS = maxMinersFromMemory;
+  } else {
+    room.memory.population.maximum.miners = MAX_MINERS;
+  }
+
+  let maxCarriersFromMemory = room.memory.population.maximum.carriers;
+  if (maxCarriersFromMemory) {
+    MAX_CARRIERS = maxCarriersFromMemory;
+  } else {
+    room.memory.population.maximum.carriers = MAX_CARRIERS;
+  }
+
+  let maxHarvestersFromMemory = room.memory.population.maximum.harvesters;
+  if (maxHarvestersFromMemory) {
+    MAX_HARVESTERS = maxHarvestersFromMemory;
+  } else {
+    room.memory.population.maximum.harvesters = MAX_HARVESTERS;
+  }
+
+  let maxBuildersFromMemory = room.memory.population.maximum.builders;
+  if (maxBuildersFromMemory) {
+    MAX_BUILDERS = maxBuildersFromMemory;
+  } else {
+    room.memory.population.maximum.builders = MAX_BUILDERS;
+  }
+
+  let maxUpgradersFromMemory = room.memory.population.maximum.upgraders;
+  if (maxUpgradersFromMemory) {
+    MAX_UPGRADERS = maxUpgradersFromMemory;
+  } else {
+    room.memory.population.maximum.upgraders = MAX_UPGRADERS;
+  }
+
   _loadCreeps(room);
   _buildMissingCreeps(room);
 
@@ -107,11 +142,11 @@ function _buildMissingCreeps(room: Room) {
   // RANGED_ATTACK   150
 
   if (miners.length < MAX_MINERS) {
-    if (miners.length < 1 || room.energyCapacityAvailable <= 800) {
-      bodyParts = [WORK, WORK, CARRY, MOVE];
-    } else if (room.energyCapacityAvailable > 800) {
-      bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
-    }
+    if (room.energyCapacityAvailable <= 300) { bodyParts = [WORK, WORK, MOVE];
+    } else if (room.energyCapacityAvailable <= 400) { bodyParts = [WORK, WORK, WORK, MOVE];
+    } else if (room.energyCapacityAvailable <= 500) { bodyParts = [WORK, WORK, WORK, WORK, MOVE];
+    } else if (room.energyCapacityAvailable <= 600) { bodyParts = [WORK, WORK, WORK, WORK, WORK, MOVE]; }
+
     _.each(spawns, (spawn: Spawn) => {
       _spawnCreep(spawn, bodyParts, "miner");
     });
@@ -182,7 +217,7 @@ function _spawnCreep(spawn: Spawn, bodyParts: string[], role: string) {
   status = _.isString(status) ? OK : status;
   if (status === OK) {
     Memory.uuid = uuid + 1;
-    let creepName: string = spawn.room.name + " - " + role + uuid;
+    let creepName: string = spawn.room.name + "_" + role + uuid;
 
     log.info("Started creating new creep: " + creepName);
     if (Config.ENABLE_DEBUG_MODE) {
