@@ -1,0 +1,3 @@
+class CreepMelee extends CreepSoldier {
+
+}

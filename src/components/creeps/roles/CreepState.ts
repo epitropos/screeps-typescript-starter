@@ -1,4 +1,4 @@
-enum CreeperState {
+enum CreepState {
   Idle = 1,
   Building = 2,
   Upgrading = 3,

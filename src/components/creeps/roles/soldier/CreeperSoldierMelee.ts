@@ -1,3 +1,0 @@
-// class CreeperSoldierMelee extends CreeperSoldier {
-
-// }

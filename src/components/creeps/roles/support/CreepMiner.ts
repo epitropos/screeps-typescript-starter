@@ -1,6 +1,6 @@
-// class MineCreeper extends BaseCreeper {
+class CreepMiner extends CreepSupport {
 
-// }
+}
 
 // This will require carriers (or haulers) that pick up dropped energy, or containers directly below miners.
 // Calculation of body parts.

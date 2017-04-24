@@ -1,0 +1,3 @@
+class CreepHarvester extends CreepSupport {
+
+}

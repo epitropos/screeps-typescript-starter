@@ -1,0 +1,3 @@
+class RoomOwned extends RoomBase {
+
+}

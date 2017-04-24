@@ -1,3 +1,0 @@
-// class CreeperSoldierScout extends CreeperSoldier {
-
-// }

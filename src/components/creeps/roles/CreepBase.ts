@@ -1,6 +1,6 @@
 // import * as Config from "../../../config/config";
 
-// class CreeperBase {
+class CreepBase {
 //   public creep: Creep;
 //   public roomManager: RoomManager;
 
@@ -285,4 +285,4 @@
 //       }
 //     }
 //   }
-// }
+}

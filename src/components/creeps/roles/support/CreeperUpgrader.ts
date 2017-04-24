@@ -1,3 +1,0 @@
-// class CreeperUpgrader extends CreeperSupport {
-
-// }

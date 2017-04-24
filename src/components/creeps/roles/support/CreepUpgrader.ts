@@ -1,0 +1,3 @@
+class CreepUpgrader extends CreepSupport {
+
+}

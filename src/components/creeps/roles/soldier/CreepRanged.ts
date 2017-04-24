@@ -1,0 +1,3 @@
+class CreepRanged extends CreepSoldier {
+
+}

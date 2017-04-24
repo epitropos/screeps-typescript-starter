@@ -1,0 +1,3 @@
+class RoomNeutral extends RoomBase {
+
+}

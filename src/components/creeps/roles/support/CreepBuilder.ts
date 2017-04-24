@@ -1,4 +1,4 @@
-// class CreeperBuilder extends CreeperSupport {
+class CreepBuilder extends CreepSupport {
 //   protected determineCurrentState(creep: Creep): CreeperState {
 //     let state = creep.memory.state;
 
@@ -64,4 +64,4 @@
 
 //   }
 //   */
-// }
+}

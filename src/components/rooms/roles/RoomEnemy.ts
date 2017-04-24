@@ -1,0 +1,3 @@
+class RoomEnemy extends RoomBase {
+
+}
