@@ -90,7 +90,7 @@ function _build(creep: Creep, constructionSite: ConstructionSite): void {
 }
 
 function _getEnergy(creep: Creep): void {
-  let containers = roomActions.loadContainers(creep.room);
+  let containers = roomActions.loadContainersWithEnergy(creep.room);
   if (containers.length > 0) {
     let container = creep.pos.findClosestByPath(containers);
     creepEnergyActions.moveToWithdraw(creep, container);

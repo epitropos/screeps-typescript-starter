@@ -23,6 +23,12 @@ export function loadContainers(room: Room): Container[] {
   });
 }
 
+export function loadContainersWithEnergy(room: Room): Container[] {
+  return room.find<Container>(FIND_STRUCTURES, {
+    filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0,
+  });
+}
+
 export function loadContainersWithSpace(room: Room): Container[] {
   return room.find<Container>(FIND_STRUCTURES, {
     filter: (s: Container) => s.structureType === STRUCTURE_CONTAINER && _.sum(s.store) < s.storeCapacity,
