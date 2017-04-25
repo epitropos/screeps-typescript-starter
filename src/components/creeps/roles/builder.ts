@@ -103,7 +103,7 @@ function _getEnergy(creep: Creep): void {
 
 function _moveToRepair(creep: Creep, structure: Structure): void {
   if (_tryRepair(creep, structure) === ERR_NOT_IN_RANGE) {
-    creep.moveTo(structure, {visualizePathStyle: {stroke: "#ffffff"}});
+    creep.moveTo(structure, {visualizePathStyle: {stroke: "#ff0000"}});
   }
 }
 

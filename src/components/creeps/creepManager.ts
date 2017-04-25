@@ -3,9 +3,9 @@
 import * as Config from "../../config/config";
 
 import * as miner from "./roles/miner";
-import * as builder from "./roles/builder";
+// import * as builder from "./roles/builder";
 import * as carrier from "./roles/carrier";
-import * as harvester from "./roles/harvester";
+// import * as harvester from "./roles/harvester";
 import * as upgrader from "./roles/upgrader";
 
 import { log } from "../../lib/logger/log";
@@ -74,12 +74,12 @@ export function run(room: Room): void {
   _buildMissingCreeps(room);
 
   _.each(creeps, (creep: Creep) => {
-    if (creep.memory.role === "builder") {
-      builder.run(creep);
-    }
-    if (creep.memory.role === "harvester") {
-      harvester.run(creep);
-    }
+    // if (creep.memory.role === "builder") {
+    //   builder.run(creep);
+    // }
+    // if (creep.memory.role === "harvester") {
+    //   harvester.run(creep);
+    // }
     if (creep.memory.role === "miner") {
       miner.run(creep);
     }
@@ -163,6 +163,7 @@ function _buildMissingCreeps(room: Room) {
     });
   }
 
+  log.info("# harvesters: " + harvesters.length + " | MAX_HARVESTERS: " + MAX_HARVESTERS);
   if (harvesters.length < MAX_HARVESTERS) {
     if (harvesters.length < 1 || room.energyCapacityAvailable <= 800) {
       bodyParts = [WORK, WORK, CARRY, MOVE];

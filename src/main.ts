@@ -1,9 +1,12 @@
 import * as Config from "./config/config";
-import { log } from "./lib/logger/log";
+// import { log } from "./lib/logger/log";
 import * as CreepManager from "./components/creeps/creepManager";
-import * as GameMapManager from "./components/gameMapManager";
+// import * as GameMapManager from "./components/gameMapManager";
 // import * as RoomManager from "./components/rooms/roomManager";
 import * as StructureManager from "./components/structures/structureManager";
+
+import {GameHandler} from "./components/game/GameHandler";
+import {RoomHandler} from "./components/rooms/RoomHandler";
 
 // Any code written outside the `loop()` method is executed only when the
 // Screeps system reloads your script.
@@ -14,8 +17,6 @@ import * as StructureManager from "./components/structures/structureManager";
 if (Config.USE_PATHFINDER) {
   PathFinder.use(true);
 }
-
-log.info("load");
 
 /**
  * Screeps system expects this "loop" method in main.js to run the
@@ -31,10 +32,19 @@ export function loop() {
     Memory.uuid = 0;
   }
 
+  let gameHandler = new GameHandler(Game);
+  gameHandler.run();
+
+  for (let roomName in Game.rooms) {
+    let room = Game.rooms[roomName];
+    let roomHandler = new RoomHandler(room);
+    roomHandler.run();
+  }
+
   for (let i in Game.rooms) {
     let room: Room = Game.rooms[i];
 
-    GameMapManager.run();
+    //GameMapManager.run();
     // RoomManager.run(room); // TODO: Move into GameMapManager.
     StructureManager.run(room); // TODO: Move into RoomManager.
     CreepManager.run(room); // TODO: Move into RoomManager.
@@ -45,7 +55,7 @@ export function loop() {
 
       if (creep.room === room.name) {
         if (!Game.creeps[name]) {
-          log.info("Clearing non-existing creep memory:", name);
+          // log.info("Clearing non-existing creep memory:", name);
           delete Memory.creeps[name];
         }
       }

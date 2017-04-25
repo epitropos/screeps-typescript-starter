@@ -68,7 +68,7 @@ function _determineCurrentState(creep: Creep): string {
 }
 
 function _getEnergy(creep: Creep): void {
-  let containers = roomActions.loadContainers(creep.room);
+  let containers = roomActions.loadContainersWithEnergy(creep.room);
   if (containers.length > 0) {
     let container = creep.pos.findClosestByPath(containers);
     creepEnergyActions.moveToWithdraw(creep, container);

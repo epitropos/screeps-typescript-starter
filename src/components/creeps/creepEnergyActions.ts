@@ -11,7 +11,7 @@ export function moveToHarvest(creep: Creep, target: Source): void {
 }
 
 export function tryEnergyDropOff(creep: Creep, target: Spawn | Structure): number {
-  return creep.transfer(target, RESOURCE_ENERGY);
+  return creep.transfer(target, RESOURCE_ENERGY, creep.carry[RESOURCE_ENERGY]);
 }
 
 export function moveToDropEnergy(creep: Creep, target: Spawn | Structure): void {

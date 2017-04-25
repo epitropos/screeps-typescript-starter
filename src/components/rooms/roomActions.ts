@@ -46,5 +46,7 @@ export function loadConstructionSites(room: Room): ConstructionSite[] {
 }
 
 export function loadDamagedStructures(room: Room): Structure[] {
-  return room.find<Structure>(FIND_STRUCTURES, {filter: (s: Structure) => s.hits < s.hitsMax});
+  return room.find<Structure>(FIND_STRUCTURES,
+  {filter: (s: Structure) => (s.structureType !== STRUCTURE_WALL && s.hits < s.hitsMax)
+    || (s.structureType === STRUCTURE_WALL && s.hits < 40000)});
 }

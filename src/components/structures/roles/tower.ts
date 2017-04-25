@@ -21,14 +21,16 @@ export function run(tower: Tower): void {
     return;
   }
 
-  /*
   let damagedStructures = _loadDamagedStructures(tower.room);
+  log.info("# of damaged structures: " + damagedStructures.length);
   if (damagedStructures.length > 0) {
     let mostDamagedStructure = _getMostDamagedStructure(damagedStructures);
-    tower.repair(mostDamagedStructure);
+    log.info("Most damaged structure: "
+    + mostDamagedStructure.structureType
+    + " at (" + mostDamagedStructure.pos.x + "," + mostDamagedStructure.pos.y + ")");
+    // tower.repair(mostDamagedStructure);
     return;
   }
-  */
 
   let structures = tower.room.find<Structure>(FIND_MY_STRUCTURES, {filter: (s: Structure) => s.hits < s.hitsMax});
   if (Config.ENABLE_DEBUG_MODE) {
@@ -58,7 +60,6 @@ function _loadHostileCreeps(room: Room): Creep[] {
   return room.find<Creep>(FIND_HOSTILE_CREEPS);
 }
 
-/*
 function _getMostDamagedStructure(structures: Structure[]): Structure {
   let mostDamagedStructure = structures[0];
   _.each(structures, (structure: Structure) => {
@@ -70,6 +71,9 @@ function _getMostDamagedStructure(structures: Structure[]): Structure {
 }
 
 function _loadDamagedStructures(room: Room): Structure[] {
-  return room.find<Structure>(FIND_MY_STRUCTURES, {filter: (s: Structure) => s.hits < s.hitsMax});
+  return room.find<Structure>(FIND_STRUCTURES,
+  // {filter: (s: Structure) => (s.structureType !== STRUCTURE_WALL && s.hits < s.hitsMax)
+  //   || (s.structureType === STRUCTURE_WALL && s.hits < 40000)}
+  {filter: (s: Structure) => s.hits < s.hitsMax}
+  );
 }
-*/
