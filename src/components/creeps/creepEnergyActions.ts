@@ -27,9 +27,12 @@ export function moveToWithdraw(creep: Creep, target: Container): void {
 }
 
 export function tryWithdraw(creep: Creep, target: Container): number {
-  let amountToWithdraw = creep.carryCapacity - _.sum(creep.carry);
-  if (amountToWithdraw > target.store[RESOURCE_ENERGY]) {
-    amountToWithdraw = target.store[RESOURCE_ENERGY];
+  if (target) {
+    let amountToWithdraw = creep.carryCapacity - _.sum(creep.carry);
+    if (amountToWithdraw > target.store[RESOURCE_ENERGY]) {
+      amountToWithdraw = target.store[RESOURCE_ENERGY];
+    }
+    return creep.withdraw(target, RESOURCE_ENERGY, amountToWithdraw);
   }
-  return creep.withdraw(target, RESOURCE_ENERGY, amountToWithdraw);
+  return 0;
 }
