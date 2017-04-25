@@ -1,3 +1,0 @@
-class CreepCarrier extends CreepSupport {
-
- }

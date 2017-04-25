@@ -1,3 +1,0 @@
-class CreepHauler extends CreepSupport {
-
-}

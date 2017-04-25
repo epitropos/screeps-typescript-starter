@@ -1,1 +1,0 @@
-// TODO: Class for flags

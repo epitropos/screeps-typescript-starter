@@ -1,3 +1,0 @@
-class RoomOwned extends RoomBase {
-
-}

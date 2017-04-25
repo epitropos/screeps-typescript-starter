@@ -63,6 +63,11 @@ export function run(creep: Creep): void {
       creepEnergyActions.moveToDropEnergy(creep, container);
       return;
     }
+
+    if (creep.room.storage) {
+      creepEnergyActions.moveToDropEnergy(creep, creep.room.storage);
+      return;
+    }
   }
 }
 

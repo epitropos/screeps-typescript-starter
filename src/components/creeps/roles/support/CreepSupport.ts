@@ -1,3 +1,0 @@
-class CreepSupport extends CreepBase {
-
-}

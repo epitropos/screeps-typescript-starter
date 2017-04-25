@@ -31,21 +31,6 @@ export function loop() {
     Memory.uuid = 0;
   }
 
-  let gameHandler: GameHandler = new GameHandler(Game);
-  gameHandler.run();
-
-  let roomHandlers: RoomHandler[] = [];
-  let rooms = Game.rooms;
-  for (let roomName in rooms) {
-    let roomHandler = new RoomHandler(Game.rooms[roomName]);
-    roomHandlers.push(roomHandler);
-  }
-
-  for(let roomHandler in roomHandlers) {
-    roomHandler.run();
-  }
-
-
   for (let i in Game.rooms) {
     let room: Room = Game.rooms[i];
 

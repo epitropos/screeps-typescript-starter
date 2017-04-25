@@ -1,3 +1,0 @@
-class CreepMedic extends CreepSoldier {
-
-}

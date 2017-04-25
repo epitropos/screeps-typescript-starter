@@ -1,3 +1,0 @@
-class CreepScout extends CreepSoldier {
-
-}
