@@ -163,39 +163,39 @@ function _buildMissingCreeps(room: Room) {
     });
   }
 
-  log.info("# harvesters: " + harvesters.length + " | MAX_HARVESTERS: " + MAX_HARVESTERS);
-  if (harvesters.length < MAX_HARVESTERS) {
-    if (harvesters.length < 1 || room.energyCapacityAvailable <= 800) {
-      bodyParts = [WORK, WORK, CARRY, MOVE];
-    } else if (room.energyCapacityAvailable > 800) {
-      bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
-    }
-    _.each(spawns, (spawn: Spawn) => {
-      _spawnCreep(spawn, bodyParts, "harvester");
-    });
-  }
+  // log.info("# harvesters: " + harvesters.length + " | MAX_HARVESTERS: " + MAX_HARVESTERS);
+  // if (harvesters.length < MAX_HARVESTERS) {
+  //   if (harvesters.length < 1 || room.energyCapacityAvailable <= 800) {
+  //     bodyParts = [WORK, WORK, CARRY, MOVE];
+  //   } else if (room.energyCapacityAvailable > 800) {
+  //     bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
+  //   }
+  //   _.each(spawns, (spawn: Spawn) => {
+  //     _spawnCreep(spawn, bodyParts, "harvester");
+  //   });
+  // }
 
-  if (builders.length < MAX_BUILDERS) {
-    if (builders.length < 1 || room.energyCapacityAvailable <= 800) {
-      bodyParts = [WORK, WORK, CARRY, MOVE];
-    } else if (room.energyCapacityAvailable > 800) {
-      bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
-    }
-    _.each(spawns, (spawn: Spawn) => {
-      _spawnCreep(spawn, bodyParts, "builder");
-    });
-  }
+  // if (builders.length < MAX_BUILDERS) {
+  //   if (builders.length < 1 || room.energyCapacityAvailable <= 800) {
+  //     bodyParts = [WORK, WORK, CARRY, MOVE];
+  //   } else if (room.energyCapacityAvailable > 800) {
+  //     bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
+  //   }
+  //   _.each(spawns, (spawn: Spawn) => {
+  //     _spawnCreep(spawn, bodyParts, "builder");
+  //   });
+  // }
 
-  if (upgraders.length < MAX_UPGRADERS) {
-    if (upgraders.length < 1 || room.energyCapacityAvailable <= 800) {
-      bodyParts = [WORK, WORK, CARRY, MOVE];
-    } else if (room.energyCapacityAvailable > 800) {
-      bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
-    }
-    _.each(spawns, (spawn: Spawn) => {
-      _spawnCreep(spawn, bodyParts, "upgrader");
-    });
-  }
+  // if (upgraders.length < MAX_UPGRADERS) {
+  //   if (upgraders.length < 1 || room.energyCapacityAvailable <= 800) {
+  //     bodyParts = [WORK, WORK, CARRY, MOVE];
+  //   } else if (room.energyCapacityAvailable > 800) {
+  //     bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
+  //   }
+  //   _.each(spawns, (spawn: Spawn) => {
+  //     _spawnCreep(spawn, bodyParts, "upgrader");
+  //   });
+  // }
 }
 
 /**

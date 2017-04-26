@@ -1,10 +1,11 @@
 // import * as Config from "../../config/config";
 // import {log} from "../../lib/logger/log";
 import {CreepHandler} from "../creeps/CreepHandler";
+import {CreepPopulationHandler} from "../creeps/CreepPopulationHandler";
 import {StructureHandler} from "../structures/StructureHandler";
 
 export class RoomHandler {
-  public readonly room: Room;
+  public room: Room;
 
   constructor (room: Room) {
     this.room = room;
@@ -12,6 +13,9 @@ export class RoomHandler {
 
   public run() {
     // log.info("Processing room: " + this.room.name);
+
+    let creepPopulationHandler = new CreepPopulationHandler(new RoomHandler(this.room));
+    creepPopulationHandler.run();
 
     let creeps = this.room.find(FIND_MY_CREEPS);
     // log.info("Creeps found: " + creeps.length);

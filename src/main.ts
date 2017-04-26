@@ -18,6 +18,8 @@ if (Config.USE_PATHFINDER) {
   PathFinder.use(true);
 }
 
+initializeMemory();
+
 /**
  * Screeps system expects this "loop" method in main.js to run the
  * application. If we have this line, we can be sure that the globals are
@@ -60,5 +62,47 @@ export function loop() {
         }
       }
     }
+  }
+}
+
+function initializeMemory() {
+  initializeMemoryConfig();
+  initializeMemoryConfigDefaults();
+  initializeMemoryConfigDefaultsPopulation();
+  initializeMemoryRequest();
+}
+
+function initializeMemoryConfig() {
+  if (!Memory.config) {
+    Memory.config = {};
+  }
+}
+
+function initializeMemoryConfigDefaults() {
+  if (!Memory.config.defaults) {
+    Memory.config.defaults = {};
+  }
+}
+
+function initializeMemoryConfigDefaultsPopulation() {
+  if (!Memory.config.defaults.population) {
+    Memory.config.defaults.population = {}
+    Memory.config.defaults.population.maximums = {};
+    Memory.config.defaults.population.maximums.builders = 1;
+    Memory.config.defaults.population.maximums.haulers = 0;
+    Memory.config.defaults.population.maximums.miners = 0;
+    Memory.config.defaults.population.maximums.upgraders = 1;
+
+    Memory.config.defaults.population.maximums.harvesters = 1;
+  }
+}
+
+function initializeMemoryRequest() {
+  if (!Memory.requests) {
+    Memory.requests = {};
+  }
+
+  if (!Memory.requests.nextRequestId) {
+    Memory.requests.nextRequestId = 1;
   }
 }
