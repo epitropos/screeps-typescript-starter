@@ -1,6 +1,7 @@
 // TODO: Change game loop so creeps make requests (i.e. repair, energy, etc).
 
 import * as Config from "../../config/config";
+import * as C from "../../config/constants";
 
 import * as miner from "./roles/miner";
 // import * as builder from "./roles/builder";
@@ -74,19 +75,20 @@ export function run(room: Room): void {
   _buildMissingCreeps(room);
 
   _.each(creeps, (creep: Creep) => {
-    // if (creep.memory.role === "builder") {
+    // if (creep.memory.role === C.BUILDER) {
     //   builder.run(creep);
     // }
-    // if (creep.memory.role === "harvester") {
+    // if (creep.memory.role === C.HARVESTER) {
     //   harvester.run(creep);
     // }
-    if (creep.memory.role === "miner") {
+    if (creep.memory.role === C.MINER) {
       miner.run(creep);
     }
-    if (creep.memory.role === "carrier") {
+    // TODO: Change carrier to hauler
+    if (creep.memory.role === C.CARRIER) {
       carrier.run(creep);
     }
-    if (creep.memory.role === "upgrader") {
+    if (creep.memory.role === C.UPGRADER) {
       upgrader.run(creep);
     }
   });
@@ -102,11 +104,12 @@ function _loadCreeps(room: Room) {
   creepCount = _.size(creeps);
 
   // Iterate through each creep and push them into the role array.
-  builders = _.filter(creeps, (creep) => creep.memory.role === "builder");
-  miners = _.filter(creeps, (creep) => creep.memory.role === "miner");
-  carriers = _.filter(creeps, (creep) => creep.memory.role === "carrier");
-  harvesters = _.filter(creeps, (creep) => creep.memory.role === "harvester");
-  upgraders = _.filter(creeps, (creep) => creep.memory.role === "upgrader");
+  builders = _.filter(creeps, (creep) => creep.memory.role === C.BUILDER);
+  miners = _.filter(creeps, (creep) => creep.memory.role === C.MINER);
+  // TODO: Change carrier to hauler
+  carriers = _.filter(creeps, (creep) => creep.memory.role === C.CARRIER);
+  harvesters = _.filter(creeps, (creep) => creep.memory.role === C.HARVESTER);
+  upgraders = _.filter(creeps, (creep) => creep.memory.role === C.UPGRADER);
 
   if (Config.ENABLE_DEBUG_MODE) {
     log.info(creepCount + " creeps found in the playground.");
@@ -148,7 +151,7 @@ function _buildMissingCreeps(room: Room) {
     } else if (room.energyCapacityAvailable <= 600) { bodyParts = [WORK, WORK, WORK, WORK, WORK, MOVE]; }
 
     _.each(spawns, (spawn: Spawn) => {
-      _spawnCreep(spawn, bodyParts, "miner");
+      _spawnCreep(spawn, bodyParts, C.MINER);
     });
   }
 
@@ -171,7 +174,7 @@ function _buildMissingCreeps(room: Room) {
   //     bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
   //   }
   //   _.each(spawns, (spawn: Spawn) => {
-  //     _spawnCreep(spawn, bodyParts, "harvester");
+  //     _spawnCreep(spawn, bodyParts, C.HARVESTER);
   //   });
   // }
 
@@ -182,7 +185,7 @@ function _buildMissingCreeps(room: Room) {
   //     bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
   //   }
   //   _.each(spawns, (spawn: Spawn) => {
-  //     _spawnCreep(spawn, bodyParts, "builder");
+  //     _spawnCreep(spawn, bodyParts, C.BUILDER);
   //   });
   // }
 
@@ -193,7 +196,7 @@ function _buildMissingCreeps(room: Room) {
   //     bodyParts = [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
   //   }
   //   _.each(spawns, (spawn: Spawn) => {
-  //     _spawnCreep(spawn, bodyParts, "upgrader");
+  //     _spawnCreep(spawn, bodyParts, C.UPGRADER);
   //   });
   // }
 }

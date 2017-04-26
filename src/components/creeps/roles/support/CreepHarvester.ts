@@ -1,5 +1,5 @@
 // import * as Config from "../../../../config/config";
- import {log} from "../../../../lib/logger/log";
+// import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
@@ -30,39 +30,35 @@ export class CreepHarvester extends CreepSupport {
     // }
 
     if (state === this.STATE_REFUELING) {
-      let droppedEnergy = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY);
+      let droppedEnergy = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY,
+        {filter: (r: Resource) => r.resourceType === RESOURCE_ENERGY});
       if (droppedEnergy) {
-        log.info("droppedEnergy");
         this.moveToPickup(this.creep, droppedEnergy);
         return;
       }
 
       let energySource = this.creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
       if (energySource) {
-        log.info("energySource");
         this.moveToHarvest(this.creep, energySource);
         return;
       }
     }
 
     if (state === this.STATE_DELIVERING) {
-      if (spawn.energy < spawn.energyCapacity) {
-        log.info("spawn");
-        this.moveToDropEnergy(this.creep, spawn);
-        return;
-      }
-
       let extensions = this.roomHandler.loadExtensions(this.creep.room);
       if (extensions.length > 0) {
-        log.info("extension");
         let extension = this.creep.pos.findClosestByPath<Extension>(extensions);
         this.moveToDropEnergy(this.creep, extension);
         return;
       }
 
+      if (spawn.energy < spawn.energyCapacity) {
+        this.moveToDropEnergy(this.creep, spawn);
+        return;
+      }
+
       let towers = this.roomHandler.loadTowers(this.creep.room);
       if (towers.length > 0) {
-        log.info("tower");
         let tower = this.creep.pos.findClosestByPath<Tower>(towers);
         this.moveToDropEnergy(this.creep, tower);
         return;
@@ -70,14 +66,12 @@ export class CreepHarvester extends CreepSupport {
 
       let containers = this.roomHandler.loadContainersWithSpace(this.creep.room);
       if (containers.length > 0) {
-        log.info("container");
         let container = this.creep.pos.findClosestByPath<Container>(containers);
         this.moveToDropEnergy(this.creep, container);
         return;
       }
 
       if (this.creep.room.storage) {
-        log.info("storage");
         this.moveToDropEnergy(this.creep, this.creep.room.storage);
         return;
       }

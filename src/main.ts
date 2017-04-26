@@ -46,7 +46,7 @@ export function loop() {
   for (let i in Game.rooms) {
     let room: Room = Game.rooms[i];
 
-    //GameMapManager.run();
+    // GameMapManager.run();
     // RoomManager.run(room); // TODO: Move into GameMapManager.
     StructureManager.run(room); // TODO: Move into RoomManager.
     CreepManager.run(room); // TODO: Move into RoomManager.
@@ -86,7 +86,7 @@ function initializeMemoryConfigDefaults() {
 
 function initializeMemoryConfigDefaultsPopulation() {
   if (!Memory.config.defaults.population) {
-    Memory.config.defaults.population = {}
+    Memory.config.defaults.population = {};
     Memory.config.defaults.population.maximums = {};
     Memory.config.defaults.population.maximums.builders = 1;
     Memory.config.defaults.population.maximums.haulers = 0;

@@ -1,7 +1,7 @@
 // TODO: Change game loop so that rooms make requests (This includes enemy rooms requesting conquering or quarantining).
 
 import * as Config from "../../config/config";
-
+// import * as C from "../../config/constants";
 import { log } from "../../lib/logger/log";
 
 /**
@@ -20,7 +20,7 @@ export function run(room: Room): void {
   _buildMissingCreeps(room);
 
   _.each(creeps, (creep: Creep) => {
-    if (creep.memory.role === "harvester") {
+    if (creep.memory.role === C.HARVESTER) {
       harvester.run(creep);
     }
   });

@@ -1,5 +1,5 @@
 // import * as Config from "../../../../config/config";
-import {log} from "../../../../lib/logger/log";
+// import {log} from "../../../../lib/logger/log";
 import {CreepBase} from "../CreepBase";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
@@ -23,7 +23,6 @@ export class CreepSupport extends CreepBase {
   }
 
   public tryEnergyDropOff(creep: Creep, target: Spawn | Structure): number {
-    log.info("tryEnergyDropOff");
     return creep.transfer(target, RESOURCE_ENERGY);
   }
 

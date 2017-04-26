@@ -12,7 +12,7 @@ export class CreepBase {
   }
 
   public run() {
-    // No operation.
+    this.creep.say(this.creep.name);
   }
 
   /**

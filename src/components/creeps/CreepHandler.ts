@@ -1,5 +1,6 @@
 // import * as Config from "../../config/config";
 // import {log} from "../../lib/logger/log";
+import * as C from "../../config/constants";
 import {RoomHandler} from "../rooms/RoomHandler";
 import {CreepBuilder} from "./roles/support/CreepBuilder";
 import {CreepHarvester} from "./roles/support/CreepHarvester";
@@ -19,11 +20,11 @@ export class CreepHandler {
     let creepRole = this.creep.memory.role;
     // log.warning("creep: " + this.creep.name + " has a role of " + creepRole);
     switch (creepRole) {
-      case "builder":
+      case C.BUILDER:
         let builder = new CreepBuilder(this.creep, this.roomHandler);
         builder.run();
         break;
-      case "harvester":
+      case C.HARVESTER:
         let harvester = new CreepHarvester(this.creep, this.roomHandler);
         harvester.run();
         break;

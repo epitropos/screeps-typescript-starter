@@ -1,5 +1,5 @@
 import * as Config from "../config/config";
-
+// import * as C from "../config/constants";
 import { log } from "../lib/logger/log";
 
 // TODO: Define enum for overall goal.
@@ -19,7 +19,7 @@ export function run(): void {
   _buildMissingCreeps(room);
 
   _.each(creeps, (creep: Creep) => {
-    if (creep.memory.role === "harvester") {
+    if (creep.memory.role === C.HARVESTER) {
       harvester.run(creep);
     }
   });
