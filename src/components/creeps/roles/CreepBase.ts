@@ -1,3 +1,4 @@
+import * as C from "../../../config/constants";
 import * as Config from "../../../config/config";
 // import {log} from "../../../lib/logger/log";
 import {RoomHandler} from "../../rooms/RoomHandler";
@@ -27,7 +28,7 @@ export class CreepBase {
     let result: number = 0;
 
     // Execute moves by cached paths at first
-    result = creep.moveTo(target, {visualizePathStyle: {stroke: "#ff0000"}});
+    result = creep.moveTo(target, {visualizePathStyle: {stroke: C.BRIGHTRED}});
 
     return result;
   }
@@ -85,7 +86,7 @@ export class CreepBase {
    */
   public moveToRenew(creep: Creep, spawn: Spawn): void {
     if (this.tryRenew(creep, spawn) === ERR_NOT_IN_RANGE) {
-      creep.moveTo(spawn, {visualizePathStyle: {stroke: "#ff0000"}});
+      creep.moveTo(spawn, {visualizePathStyle: {stroke: C.BRIGHTRED}});
     }
   }
 
@@ -95,7 +96,7 @@ export class CreepBase {
 
   public moveToPickup(creep: Creep, resource: Resource): void {
     if (this.tryPickup(creep, resource) === ERR_NOT_IN_RANGE) {
-      creep.moveTo(resource, {visualizePathStyle: {stroke: "#ff0000"}});
+      creep.moveTo(resource, {visualizePathStyle: {stroke: C.BRIGHTRED}});
     }
   }
 

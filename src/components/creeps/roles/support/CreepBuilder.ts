@@ -1,3 +1,4 @@
+import * as C from "../../../../config/constants";
 // import * as Config from "../../../../config/config";
 // import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
@@ -7,7 +8,6 @@ export class CreepBuilder extends CreepSupport {
   // TODO: Change into a shared enum.
   public readonly STATE_BUILDING = "BUILDING";
   public readonly STATE_REFUELING = "REFUELING";
-  // public readonly STATE_RENEWING = "RENEWING";
 
   constructor (creep: Creep, roomHandler: RoomHandler) {
     super(creep, roomHandler);
@@ -17,13 +17,6 @@ export class CreepBuilder extends CreepSupport {
     super.run();
 
     let state = this.creep.memory.state = this.determineCurrentState(this.creep);
-
-    // if (state === STATE_RENEWING) {
-    //   // let spawn = creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
-    //   // creepActions.moveToRenew(creep, spawn);
-    //   // return;
-    //   state = creep.memory.state = STATE_REFUELING;
-    // }
 
     if (state === this.STATE_REFUELING) {
       this.getEnergy(this.creep);
@@ -53,16 +46,6 @@ export class CreepBuilder extends CreepSupport {
   public determineCurrentState(creep: Creep): string {
     let state = creep.memory.state;
 
-    // if (state === STATE_RENEWING) {
-    //   if (!creepActions.renewComplete(creep)) {
-    //     return STATE_RENEWING;
-    //   }
-    // }
-
-    // if (creepActions.needsRenew(creep)) {
-    //   return STATE_RENEWING;
-    // }
-
     if (state === this.STATE_REFUELING) {
       if (!this.refuelingComplete(creep)) {
         return this.STATE_REFUELING;
@@ -89,20 +72,44 @@ export class CreepBuilder extends CreepSupport {
   }
 
   public getEnergy(creep: Creep): void {
-    let containers = this.roomHandler.loadContainersWithEnergy(creep.room);
-    if (containers.length > 0) {
-      let container = creep.pos.findClosestByPath<Container>(containers);
-      this.moveToWithdraw(creep, container);
-      return;
+    // let containers = this.roomHandler.loadContainersWithEnergy(creep.room);
+    // if (containers.length > 0) {
+    //   let container = creep.pos.findClosestByPath<Container>(containers);
+    //   this.moveToWithdraw(creep, container);
+    //   return;
+    // }
+
+    // let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
+    // this.moveToHarvest(creep, energySource);
+
+    let stepsToContainer = Infinity;
+    let closestContainer = creep.pos.findClosestByPath<Container>(FIND_MY_STRUCTURES, {
+      filter: (s: Structure) => s.structureType === STRUCTURE_CONTAINER,
+    });
+    if (closestContainer) {
+      let pathToContainer = creep.room.findPath(creep.pos, closestContainer.pos);
+      stepsToContainer = pathToContainer.length;
     }
 
-    let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
-    this.moveToHarvest(creep, energySource);
+    let storage = creep.room.storage;
+    let stepsToStorage = Infinity;
+    if (storage) {
+      let pathToStorage = creep.room.findPath(creep.pos, storage.pos);
+      stepsToStorage = pathToStorage.length;
+    }
+
+    if (stepsToContainer === Infinity && stepsToStorage === Infinity) {
+      return;
+    } else if (stepsToContainer < stepsToStorage) {
+      this.moveToWithdraw(creep, closestContainer);
+    } else {
+      this.moveToWithdrawFromStorage(creep, storage);
+    }
   }
 
   public moveToRepair(creep: Creep, structure: Structure): void {
     if (this.tryRepair(creep, structure) === ERR_NOT_IN_RANGE) {
-      creep.moveTo(structure, {visualizePathStyle: {stroke: "#ff0000"}});
+      creep.moveTo(structure, {visualizePathStyle: {stroke: C.BRIGHTRED}});
     }
   }
 

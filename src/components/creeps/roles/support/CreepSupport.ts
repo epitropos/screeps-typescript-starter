@@ -32,6 +32,33 @@ export class CreepSupport extends CreepBase {
     }
   }
 
+  public moveToWithdrawFromStorage(creep: Creep, storage: Storage | StructureStorage | undefined): void {
+    if (storage === undefined) {
+      return;
+    }
+
+    if (this.tryToWithdrawFromStorage(creep, storage) === ERR_NOT_IN_RANGE) {
+      this.moveTo(creep, storage.pos);
+    }
+  }
+
+  public tryToWithdrawFromStorage(creep: Creep, storage: Storage | StructureStorage): number {
+    if (storage) {
+      let amountToWithdraw = creep.carryCapacity - _.sum(creep.carry);
+      let amountInStorage = storage.store[RESOURCE_ENERGY];
+      if (amountInStorage === undefined) {
+        return 0;
+      }
+      if (storage.store !== undefined
+      && storage.store[RESOURCE_ENERGY] !== undefined
+      && amountToWithdraw > amountInStorage) {
+        amountToWithdraw = amountInStorage;
+      }
+      return creep.withdraw(storage, RESOURCE_ENERGY, amountToWithdraw);
+    }
+    return 0;
+  }
+
   public moveToWithdraw(creep: Creep, target: Container): void {
     if (this.tryWithdraw(creep, target) === ERR_NOT_IN_RANGE) {
       this.moveTo(creep, target.pos);

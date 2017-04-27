@@ -171,17 +171,19 @@ export class CreepPopulationHandler {
 
     if (energyCapacity <= 300) {
       switch (creepRole) {
-        case C.BUILDER: return 1;
-        case C.HARVESTER: return 1;
+        //case C.BUILDER: return 1;
+        case C.HARVESTER:
+        case C.HAULER: return 1;
         default: return 0;
       }
     }
 
     if (energyCapacity <= 400) {
       switch (creepRole) {
-        // case C.BUILDER: return 2;
-        case C.HARVESTER: return 3;
-        // case C.UPGRADER: return 1;
+        case C.BUILDER: return 1;
+        case C.HARVESTER: return 2;
+        case C.HAULER: return 2;
+        //case C.UPGRADER: return 1;
         default: return 0;
       }
     }
@@ -189,7 +191,8 @@ export class CreepPopulationHandler {
     if (energyCapacity <= 500) {
       switch (creepRole) {
         case C.BUILDER: return 2;
-        case C.HARVESTER: return 4;
+        case C.HARVESTER:
+        case C.HAULER: return 2;
         case C.UPGRADER: return 1;
         default: return 0;
       }
@@ -197,8 +200,9 @@ export class CreepPopulationHandler {
 
     if (energyCapacity <= 600) {
       switch (creepRole) {
-        case C.BUILDER: return 3;
-        case C.HARVESTER: return 4;
+        case C.BUILDER: return 2;
+        case C.HARVESTER:
+        case C.HAULER: return 2;
         case C.UPGRADER: return 2;
         default: return 0;
       }
@@ -206,8 +210,9 @@ export class CreepPopulationHandler {
 
     if (energyCapacity <= 700) {
       switch (creepRole) {
-        case C.BUILDER: return 3;
-        case C.HARVESTER: return 4;
+        case C.BUILDER: return 2;
+        case C.HARVESTER:
+        case C.HAULER: return 2;
         case C.UPGRADER: return 3;
         default: return 0;
       }
@@ -215,17 +220,18 @@ export class CreepPopulationHandler {
 
     if (energyCapacity <= 800) {
       switch (creepRole) {
-        case C.BUILDER: return 3;
-        case C.HARVESTER: return 4;
+        case C.BUILDER: return 2;
+        case C.HARVESTER:
+        case C.HAULER: return 2;
         case C.UPGRADER: return 3;
         default: return 0;
       }
     }
 
     switch (creepRole) {
-      case C.BUILDER: return 3;
-      case C.HARVESTER: return 4;
-      // case C.HAULER: return 3;
+      case C.BUILDER: return 2;
+      case C.HARVESTER:
+      case C.HAULER: return 2;
       case C.UPGRADER: return 3;
       default: return 0;
     }
@@ -242,6 +248,10 @@ export class CreepPopulationHandler {
 
     let result = spawn.canCreateCreep(bodyParts);
     if (result !== OK) {
+      if (result === ERR_NOT_ENOUGH_ENERGY && creeps.length === 0) {
+        // Create an emergency creep.
+        this.createCreep(spawn, creepRole, [WORK, CARRY, MOVE]);
+      }
       return;
     }
 
