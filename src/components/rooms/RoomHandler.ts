@@ -1,8 +1,13 @@
 // import * as Config from "../../config/config";
 // import {log} from "../../lib/logger/log";
-import {CreepHandler} from "../creeps/CreepHandler";
-import {CreepPopulationHandler} from "../creeps/CreepPopulationHandler";
-import {StructureHandler} from "../structures/StructureHandler";
+
+// import {RoomAllyCity} from "./roles/RoomAllyCity";
+// import {RoomAllyColony} from "./roles/RoomAllyColony";
+import {RoomEnemyCity} from "./roles/RoomEnemyCity";
+import {RoomEnemyColony} from "./roles/RoomEnemyColony";
+import {RoomFriendlyCity} from "./roles/RoomFriendlyCity";
+import {RoomFriendlyColony} from "./roles/RoomFriendlyColony";
+import {RoomNeutral} from "./roles/RoomNeutral";
 
 export class RoomHandler {
   public room: Room;
@@ -14,26 +19,35 @@ export class RoomHandler {
   public run() {
     // log.info("Processing room: " + this.room.name);
 
-    let creepPopulationHandler = new CreepPopulationHandler(new RoomHandler(this.room));
-    creepPopulationHandler.run();
+    let spawns = this.room.find(FIND_MY_SPAWNS);
+    if (spawns.length > 0) {
+      let roomCity = new RoomFriendlyCity(this.room);
+      roomCity.run();
+      return;
+    }
 
-    let creeps = this.room.find(FIND_MY_CREEPS);
-    // log.info("Creeps found: " + creeps.length);
-    _.forEach(creeps, function(creep: Creep) {
-      if (creep) {
-        let creepHandler = new CreepHandler(creep);
-        creepHandler.run();
-      }
-    });
+    let controller = this.room.controller;
+    if (controller && controller.my) {
+      let roomColony = new RoomFriendlyColony(this.room);
+      roomColony.run();
+      return;
+    }
 
-    let structures = this.room.find(FIND_MY_STRUCTURES);
-    // log.info("Structures found: " + creeps.length);
-    _.forEach(structures, function(structure: Structure) {
-      if (structure) {
-        let structureHandler = new StructureHandler(structure);
-        structureHandler.run();
-      }
-    });
+    spawns = this.room.find(FIND_HOSTILE_SPAWNS);
+    if (spawns.length > 0) {
+      let roomEnemyCity = new RoomEnemyCity(this.room);
+      roomEnemyCity.run();
+      return;
+    }
+
+    if (controller && controller.owner.username !== "") {
+      let roomEnemyColony = new RoomEnemyColony(this.room);
+      roomEnemyColony.run();
+      return;
+    }
+
+    let roomNeutral = new RoomNeutral(this.room);
+    roomNeutral.run();
   }
 
   public controllerNeedsUpgrading(room: Room): boolean {

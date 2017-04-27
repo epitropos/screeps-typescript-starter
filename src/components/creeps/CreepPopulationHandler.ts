@@ -80,6 +80,7 @@ export class CreepPopulationHandler {
       spawn);
 
     // CLAIMERS
+    // TODO: Code goes here.
   }
 
   // TODO: Move this method into a static method in the appropriate creep class.
@@ -197,7 +198,7 @@ export class CreepPopulationHandler {
     if (energyCapacity <= 600) {
       switch (creepRole) {
         case C.BUILDER: return 3;
-        case C.HARVESTER: return 5;
+        case C.HARVESTER: return 4;
         case C.UPGRADER: return 2;
         default: return 0;
       }
@@ -206,7 +207,7 @@ export class CreepPopulationHandler {
     if (energyCapacity <= 700) {
       switch (creepRole) {
         case C.BUILDER: return 3;
-        case C.HARVESTER: return 6;
+        case C.HARVESTER: return 4;
         case C.UPGRADER: return 3;
         default: return 0;
       }
@@ -215,7 +216,7 @@ export class CreepPopulationHandler {
     if (energyCapacity <= 800) {
       switch (creepRole) {
         case C.BUILDER: return 3;
-        case C.HARVESTER: return 6;
+        case C.HARVESTER: return 4;
         case C.UPGRADER: return 3;
         default: return 0;
       }
@@ -223,7 +224,7 @@ export class CreepPopulationHandler {
 
     switch (creepRole) {
       case C.BUILDER: return 3;
-      case C.HARVESTER: return 6;
+      case C.HARVESTER: return 4;
       // case C.HAULER: return 3;
       case C.UPGRADER: return 3;
       default: return 0;
