@@ -1,6 +1,6 @@
 import * as Config from "./config/config";
 // import { log } from "./lib/logger/log";
-import * as CreepManager from "./components/creeps/creepManager";
+// import * as CreepManager from "./components/creeps/creepManager";
 // import * as GameMapManager from "./components/gameMapManager";
 // import * as RoomManager from "./components/rooms/roomManager";
 import * as StructureManager from "./components/structures/structureManager";
@@ -49,18 +49,24 @@ export function loop() {
     // GameMapManager.run();
     // RoomManager.run(room); // TODO: Move into GameMapManager.
     StructureManager.run(room); // TODO: Move into RoomManager.
-    CreepManager.run(room); // TODO: Move into RoomManager.
+    // CreepManager.run(room); // TODO: Move into RoomManager.
 
-    // Clears any non-existing creep memory.
-    for (let name in Memory.creeps) {
-      let creep: any = Memory.creeps[name];
+    // // Clears any non-existing creep memory.
+    // for (let name in Memory.creeps) {
+    //   let creep: any = Memory.creeps[name];
 
-      if (creep.room === room.name) {
-        if (!Game.creeps[name]) {
-          // log.info("Clearing non-existing creep memory:", name);
-          delete Memory.creeps[name];
-        }
-      }
+    //   if (creep.room === room.name) {
+    //     if (!Game.creeps[name]) {
+    //       // log.info("Clearing non-existing creep memory:", name);
+    //       delete Memory.creeps[name];
+    //     }
+    //   }
+    // }
+  }
+
+  for (let i in Memory.creeps) {
+    if (!Game.creeps[i]) {
+        delete Memory.creeps[i];
     }
   }
 }

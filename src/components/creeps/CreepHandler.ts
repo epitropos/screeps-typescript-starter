@@ -4,6 +4,7 @@ import * as C from "../../config/constants";
 import {RoomHandler} from "../rooms/RoomHandler";
 import {CreepBuilder} from "./roles/support/CreepBuilder";
 import {CreepHarvester} from "./roles/support/CreepHarvester";
+import {CreepUpgrader} from "./roles/support/CreepUpgrader";
 
 export class CreepHandler {
   public readonly creep: Creep;
@@ -27,6 +28,10 @@ export class CreepHandler {
       case C.HARVESTER:
         let harvester = new CreepHarvester(this.creep, this.roomHandler);
         harvester.run();
+        break;
+      case C.UPGRADER:
+        let upgrader = new CreepUpgrader(this.creep, this.roomHandler);
+        upgrader.run();
         break;
       default:
         break;

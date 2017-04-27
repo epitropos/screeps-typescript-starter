@@ -85,36 +85,69 @@ export class CreepPopulationHandler {
 
   public getBodyParts(creepRole: string, energyCapacity: number) {
     if (creepRole === C.BUILDER) {
-      if (energyCapacity <= 300) { return [WORK, CARRY, MOVE]; }
-      if (energyCapacity <= 400) { return [WORK, WORK, CARRY, MOVE]; }
-      if (energyCapacity <= 500) { return [WORK, WORK, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 600) { return [WORK, WORK, WORK, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 700) { return [WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE]; }
-      if (energyCapacity <= 800) { return [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 900) { return [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]; }
-      return [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
+      if (energyCapacity <=  300) { return [WORK,                                            CARRY,                      MOVE]; }// 111
+      if (energyCapacity <=  400) { return [WORK, WORK,                                      CARRY,                      MOVE]; }// 211
+      if (energyCapacity <=  500) { return [WORK, WORK,                                      CARRY,                      MOVE, MOVE]; }// 212
+      if (energyCapacity <=  600) { return [WORK, WORK, WORK,                                CARRY,                      MOVE, MOVE]; }// 312
+      if (energyCapacity <=  700) { return [WORK, WORK, WORK,                                CARRY,                      MOVE, MOVE, MOVE]; }// 313
+      if (energyCapacity <=  800) { return [WORK, WORK, WORK,                                CARRY, CARRY,               MOVE, MOVE, MOVE]; }// 323
+      if (energyCapacity <=  900) { return [WORK, WORK, WORK, WORK,                          CARRY, CARRY,               MOVE, MOVE, MOVE]; }// 423
+      if (energyCapacity <= 1000) { return [WORK, WORK, WORK, WORK,                          CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE]; }// 424
+      if (energyCapacity <= 1100) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE]; }// 524
+      if (energyCapacity <= 1200) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE, MOVE]; }// 525
+      if (energyCapacity <= 1300) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE]; }// 535
+      if (energyCapacity <= 1400) { return [WORK, WORK, WORK, WORK, WORK, WORK,              CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE]; }// 635
+      if (energyCapacity <= 1500) { return [WORK, WORK, WORK, WORK, WORK, WORK,              CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 636
+      if (energyCapacity <= 1600) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 736
+      if (energyCapacity <= 1700) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 737
+      if (energyCapacity <= 1800) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 747
+      if (energyCapacity <= 1900) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 847
+      if (energyCapacity <= 2000) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 848
+      return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     }
 
     if (creepRole === C.HARVESTER) {
-      if (energyCapacity <= 300) { return [WORK, CARRY, MOVE]; }
-      if (energyCapacity <= 400) { return [WORK, WORK, CARRY, MOVE]; }
-      if (energyCapacity <= 500) { return [WORK, WORK, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 600) { return [WORK, WORK, WORK, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 700) { return [WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE]; }
-      if (energyCapacity <= 800) { return [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 900) { return [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]; }
-      return [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
+      if (energyCapacity <=  300) { return [WORK,                                            CARRY,                      MOVE]; }// 111
+      if (energyCapacity <=  400) { return [WORK, WORK,                                      CARRY,                      MOVE]; }// 211
+      if (energyCapacity <=  500) { return [WORK, WORK,                                      CARRY,                      MOVE, MOVE]; }// 212
+      if (energyCapacity <=  600) { return [WORK, WORK, WORK,                                CARRY,                      MOVE, MOVE]; }// 312
+      if (energyCapacity <=  700) { return [WORK, WORK, WORK,                                CARRY,                      MOVE, MOVE, MOVE]; }// 313
+      if (energyCapacity <=  800) { return [WORK, WORK, WORK,                                CARRY, CARRY,               MOVE, MOVE, MOVE]; }// 323
+      if (energyCapacity <=  900) { return [WORK, WORK, WORK, WORK,                          CARRY, CARRY,               MOVE, MOVE, MOVE]; }// 423
+      if (energyCapacity <= 1000) { return [WORK, WORK, WORK, WORK,                          CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE]; }// 424
+      if (energyCapacity <= 1100) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE]; }// 524
+      if (energyCapacity <= 1200) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE, MOVE]; }// 525
+      if (energyCapacity <= 1300) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE]; }// 535
+      if (energyCapacity <= 1400) { return [WORK, WORK, WORK, WORK, WORK, WORK,              CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE]; }// 635
+      if (energyCapacity <= 1500) { return [WORK, WORK, WORK, WORK, WORK, WORK,              CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 636
+      if (energyCapacity <= 1600) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 736
+      if (energyCapacity <= 1700) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 737
+      if (energyCapacity <= 1800) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 747
+      if (energyCapacity <= 1900) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 847
+      if (energyCapacity <= 2000) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 848
+      return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     }
 
     if (creepRole === C.UPGRADER) {
-      if (energyCapacity <= 300) { return [WORK, CARRY, MOVE]; }
-      if (energyCapacity <= 400) { return [WORK, WORK, CARRY, MOVE]; }
-      if (energyCapacity <= 500) { return [WORK, WORK, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 600) { return [WORK, WORK, WORK, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 700) { return [WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE]; }
-      if (energyCapacity <= 800) { return [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]; }
-      if (energyCapacity <= 900) { return [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]; }
-      return [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE];
+      if (energyCapacity <=  300) { return [WORK,                                            CARRY,                      MOVE]; }// 111
+      if (energyCapacity <=  400) { return [WORK, WORK,                                      CARRY,                      MOVE]; }// 211
+      if (energyCapacity <=  500) { return [WORK, WORK,                                      CARRY,                      MOVE, MOVE]; }// 212
+      if (energyCapacity <=  600) { return [WORK, WORK, WORK,                                CARRY,                      MOVE, MOVE]; }// 312
+      if (energyCapacity <=  700) { return [WORK, WORK, WORK,                                CARRY,                      MOVE, MOVE, MOVE]; }// 313
+      if (energyCapacity <=  800) { return [WORK, WORK, WORK,                                CARRY, CARRY,               MOVE, MOVE, MOVE]; }// 323
+      if (energyCapacity <=  900) { return [WORK, WORK, WORK, WORK,                          CARRY, CARRY,               MOVE, MOVE, MOVE]; }// 423
+      if (energyCapacity <= 1000) { return [WORK, WORK, WORK, WORK,                          CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE]; }// 424
+      if (energyCapacity <= 1100) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE]; }// 524
+      if (energyCapacity <= 1200) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY,               MOVE, MOVE, MOVE, MOVE, MOVE]; }// 525
+      if (energyCapacity <= 1300) { return [WORK, WORK, WORK, WORK, WORK,                    CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE]; }// 535
+      if (energyCapacity <= 1400) { return [WORK, WORK, WORK, WORK, WORK, WORK,              CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE]; }// 635
+      if (energyCapacity <= 1500) { return [WORK, WORK, WORK, WORK, WORK, WORK,              CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 636
+      if (energyCapacity <= 1600) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 736
+      if (energyCapacity <= 1700) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY,        MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 737
+      if (energyCapacity <= 1800) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 747
+      if (energyCapacity <= 1900) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 847
+      if (energyCapacity <= 2000) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 848
+      return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     }
 
     return [WORK, CARRY, MOVE];
