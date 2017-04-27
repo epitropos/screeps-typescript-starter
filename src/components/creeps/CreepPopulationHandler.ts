@@ -20,69 +20,69 @@ export class CreepPopulationHandler {
 
     let room = roomHandler.room;
     let spawns = room.find<Spawn>(FIND_MY_SPAWNS);
-    let spawn = spawns[0]; // TODO: Pick a spawn with a better mechanism than this.
+    let spawn = spawns[0]; // TODO: Pick a spawn using a better mechanism than this.
 
     if (spawn.spawning) {
       return;
     }
 
     let creeps = room.find<Creep>(FIND_MY_CREEPS);
+
+    if (creeps.length === 0) {
+      this.createCreepIfNecessary([], 1, C.HARVESTER, [WORK, CARRY, MOVE], spawn);
+    }
+
+    let availableEnergy = room.energyCapacityAvailable;
+
+    // HARVESTERS
     let harvesters = _.filter(creeps, (creep) => creep.memory.role === C.HARVESTER);
+    let maxHarvesters = this.numberOfCreeps(C.HARVESTER, availableEnergy);
+    this.createCreepIfNecessary(harvesters,
+      maxHarvesters,
+      C.HARVESTER,
+      this.getBodyParts(C.HARVESTER, availableEnergy),
+      spawn);
+
+    // MINERS
+    let miners = _.filter(creeps, (creep) => creep.memory.role === C.MINER);
+    let maxMiners = this.numberOfCreeps(C.MINER, availableEnergy);
+    this.createCreepIfNecessary(miners,
+      maxMiners,
+      C.MINER,
+      this.getBodyParts(C.BUILDER, availableEnergy),
+      spawn);
+
+    // HAULERS
+    let haulers = _.filter(creeps, (creep) => creep.memory.role === C.HAULER);
+    let maxHaulers = this.numberOfCreeps(C.HAULER, availableEnergy);
+    this.createCreepIfNecessary(haulers,
+      maxHaulers,
+      C.HAULER,
+      this.getBodyParts(C.BUILDER, availableEnergy),
+      spawn);
+
+    // BUILDERS
     let builders = _.filter(creeps, (creep) => creep.memory.role === C.BUILDER);
+    let maxBuilders = this.numberOfCreeps(C.BUILDER, availableEnergy);
+    this.createCreepIfNecessary(builders,
+      maxBuilders,
+      C.BUILDER,
+      this.getBodyParts(C.BUILDER, availableEnergy),
+      spawn);
+
+    // UPGRADERS
     let upgraders = _.filter(creeps, (creep) => creep.memory.role === C.UPGRADER);
+    let maxUpgraders = this.numberOfCreeps(C.UPGRADER, availableEnergy);
+    this.createCreepIfNecessary(upgraders,
+      maxUpgraders,
+      C.UPGRADER,
+      this.getBodyParts(C.UPGRADER, availableEnergy),
+      spawn);
 
-    // let harvesters = room.find(FIND_MY_CREEPS, {filter: (c: Creep) => c.memory.role === C.HARVESTER});
-    let maxHarvesters = this.numberOfCreeps(C.HARVESTER, room.energyAvailable);
-    // let maxHarvesters = 6;
-    if (harvesters.length < maxHarvesters) {
-      let bodyParts = this.getBodyParts(C.HARVESTER, room.energyAvailable);
-      let result = spawn.canCreateCreep(bodyParts);
-      if (result !== OK) {
-        return;
-      }
-      log.info("Creating harvester " + (harvesters.length + 1) + " of " + maxHarvesters);
-      this.createCreep(spawn, C.HARVESTER, bodyParts);
-      return;
-    }
-
-    // let miners = room.find(FIND_MY_CREEPS, {filter: (c: Creep) => c.memory.role === C.MINER});
-    // TODO: Add code to build miner.
-
-    // let haulers = room.find(FIND_MY_CREEPS, {filter: (c: Creep) => c.memory.role === C.HAULER});
-    // TODO: Add code to build hauler.
-
-    // let builders = room.find(FIND_MY_CREEPS, {filter: (c: Creep) => c.memory.role === C.BUILDER});
-    let maxBuilders = this.numberOfCreeps(C.BUILDER, room.energyAvailable);
-    // let maxBuilders = 3;
-    if (builders.length < maxBuilders) {
-      let bodyParts = this.getBodyParts(C.BUILDER, room.energyAvailable);
-      let result = spawn.canCreateCreep(bodyParts);
-      if (result !== OK) {
-        return;
-      }
-      log.info("Creating builder " + (builders.length + 1) + " of " + maxBuilders);
-      this.createCreep(spawn, C.BUILDER, bodyParts);
-      return;
-    }
-
-    // let upgraders = room.find(FIND_MY_CREEPS, {filter: (c: Creep) => c.memory.role === C.UPGRADER});
-    let maxUpgraders = this.numberOfCreeps(C.UPGRADER, room.energyAvailable);
-    // let maxUpgraders = 3;
-    if (upgraders.length < maxUpgraders) {
-      let bodyParts = this.getBodyParts(C.UPGRADER, room.energyAvailable);
-      let result = spawn.canCreateCreep(bodyParts);
-      if (result !== OK) {
-        return;
-      }
-      log.info("Creating upgrader " + (upgraders.length + 1) + " of " + maxUpgraders);
-      this.createCreep(spawn, C.UPGRADER, bodyParts);
-      return;
-    }
-
-    // let claimers = room.find(FIND_MY_CREEPS, {filter: (c: Creep) => c.memory.role === "claimer"});
-    // TODO: Add code to build claimer.
+    // CLAIMERS
   }
 
+  // TODO: Move this method into a static method in the appropriate creep class.
   public getBodyParts(creepRole: string, energyCapacity: number) {
     if (creepRole === C.BUILDER) {
       if (energyCapacity <=  300) { return [WORK,                                            CARRY,                      MOVE]; }// 111
@@ -147,7 +147,7 @@ export class CreepPopulationHandler {
       if (energyCapacity <= 1800) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK,        CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 747
       if (energyCapacity <= 1900) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 847
       if (energyCapacity <= 2000) { return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]; }// 848
-      return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK,  CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+      return [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     }
 
     return [WORK, CARRY, MOVE];
@@ -155,15 +155,12 @@ export class CreepPopulationHandler {
 
   public createCreep(spawn: Spawn, creepRole: string, bodyParts: string[]) {
     let status = spawn.canCreateCreep(bodyParts, undefined);
-    log.info("canCreateCreep: " + status);
     if (status === OK) {
       let uuid = Memory.uuid;
       Memory.uuid++;
-      // let creepName: string = spawn.room.name + "_" + creepRole + uuid;
       let creepName: string = creepRole + uuid;
-      log.info("creepName: " + creepName);
+      log.info("Creating creep: " + creepName);
       let status2 = spawn.createCreep(bodyParts, creepName, {role: creepRole});
-      log.info("status: " + status2);
       return _.isString(status2) ? OK : status2;
     }
   }
@@ -231,5 +228,23 @@ export class CreepPopulationHandler {
       case C.UPGRADER: return 3;
       default: return 0;
     }
+  }
+
+  public createCreepIfNecessary(creeps: Creep[],
+                                maxCreeps: number,
+                                creepRole: string,
+                                bodyParts: string[],
+                                spawn: Spawn) {
+    if (creeps.length >= maxCreeps) {
+      return;
+    }
+
+    let result = spawn.canCreateCreep(bodyParts);
+    if (result !== OK) {
+      return;
+    }
+
+    this.createCreep(spawn, creepRole, bodyParts);
+    return;
   }
 }
