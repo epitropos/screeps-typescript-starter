@@ -1,5 +1,5 @@
 // import * as Config from "../../../../config/config";
-// import {log} from "../../../../lib/logger/log";
+import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
@@ -88,7 +88,7 @@ export class CreepUpgrader extends CreepSupport {
     let pathToContainer = undefined;
     let container = undefined;
     let containers = creep.room.find<Container>(FIND_STRUCTURES, {
-      filter: (c: Container) => (c.structureType === STRUCTURE_CONTAINER && _.sum(c.store) < c.storeCapacity),
+      filter: (c: Container) => (c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0),
     });
     // TODO: Check if doing findClosestByPath with zero length array results in undefined, null or an error.
     if (containers.length > 0) {
@@ -110,21 +110,25 @@ export class CreepUpgrader extends CreepSupport {
     }
 
     if (pathToContainer === undefined) {
+      log.info("pathToContainer undefined");
       this.moveToWithdrawFromStorage(creep, <Storage> storage);
       return;
     }
 
     if (pathToStorage === undefined) {
+      log.info("pathToStorage undefined");
       this.moveToWithdraw(creep, <Container> container);
       return;
     }
 
     if (pathToContainer.length <= pathToStorage.length) {
+      log.info("pathToContainer.length: " + pathToContainer.length + " <= pathToStorage.length: " + pathToStorage.length);
       // TODO: doesn't look like this branch is working.
       this.moveToWithdraw(creep, <Container> container);
       return;
     }
 
+    log.info("default to storage");
     this.moveToWithdrawFromStorage(creep, <Storage> storage);
     return;
   }

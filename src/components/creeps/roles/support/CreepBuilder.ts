@@ -109,7 +109,7 @@ export class CreepBuilder extends CreepSupport {
     let pathToContainer = undefined;
     let container = undefined;
     let containers = creep.room.find<Container>(FIND_STRUCTURES, {
-      filter: (c: Container) => (c.structureType === STRUCTURE_CONTAINER && _.sum(c.store) < c.storeCapacity),
+      filter: (c: Container) => (c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0),
     });
     // TODO: Check if doing findClosestByPath with zero length array results in undefined, null or an error.
     if (containers.length > 0) {

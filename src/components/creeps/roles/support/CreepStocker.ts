@@ -1,5 +1,5 @@
 // import * as Config from "../../../../config/config";
-// import {log} from "../../../../lib/logger/log";
+import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
@@ -61,6 +61,7 @@ export class CreepStocker extends CreepSupport {
       if (storage) {
         let availableEnergy = storage.store[RESOURCE_ENERGY] || 0;
         if (availableEnergy > 0) {
+          log.info("availableEnergy: " + availableEnergy);
           this.moveToWithdrawFromStorage(this.creep, storage);
           return;
         }
