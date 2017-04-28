@@ -1,5 +1,5 @@
 import * as Config from "./config/config";
-// import { log } from "./lib/logger/log";
+import { log } from "./lib/logger/log";
 // import * as CreepManager from "./components/creeps/creepManager";
 // import * as GameMapManager from "./components/gameMapManager";
 // import * as RoomManager from "./components/rooms/roomManager";
@@ -29,6 +29,7 @@ initializeMemory();
  * @export
  */
 export function loop() {
+  log.info("##################################################");
   // Check memory for null or out of bounds custom objects
   if (!Memory.uuid || Memory.uuid > 100) {
     Memory.uuid = 0;

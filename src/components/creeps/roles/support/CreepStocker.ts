@@ -1,9 +1,9 @@
 // import * as Config from "../../../../config/config";
-import {log} from "../../../../lib/logger/log";
+// import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
-export class CreepHauler extends CreepSupport {
+export class CreepStocker extends CreepSupport {
   public readonly STATE_DELIVERING = "DELIVERING";
   public readonly STATE_REFUELING = "REFUELING";
 
@@ -57,6 +57,15 @@ export class CreepHauler extends CreepSupport {
       // } else {
       //   this.moveToWithdrawFromStorage(this.creep, storage);
       // }
+      let storage = this.creep.room.storage;
+      if (storage) {
+        let availableEnergy = storage.store[RESOURCE_ENERGY] || 0;
+        if (availableEnergy > 0) {
+          this.moveToWithdrawFromStorage(this.creep, storage);
+          return;
+        }
+      }
+
       let containers = this.creep.room.find<Container>(FIND_STRUCTURES, {
         filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0,
       });
@@ -64,42 +73,33 @@ export class CreepHauler extends CreepSupport {
       if (containers) {
         let container = this.creep.pos.findClosestByPath(containers);
         if (container) {
-          log.info("moveToWithdraw from " + container.structureType +
-          " at (" + container.pos.x + "," + container.pos.y + ")");
           this.moveToWithdraw(this.creep, container);
-        } else {
-          log.info("container is null");
+          return;
         }
-      } else {
-        log.info("ARGH");
       }
+
+      return;
     }
 
     if (state === this.STATE_DELIVERING) {
-      // let extensions = this.roomHandler.loadExtensions(this.creep.room);
-      // if (extensions.length > 0) {
-      //   let extension = this.creep.pos.findClosestByPath<Extension>(extensions);
-      //   this.moveToDropEnergy(this.creep, extension);
-      //   return;
-      // }
+      let extensions = this.roomHandler.loadExtensions(this.creep.room);
+      if (extensions.length > 0) {
+        let extension = this.creep.pos.findClosestByPath<Extension>(extensions);
+        this.moveToDropEnergy(this.creep, extension);
+        return;
+      }
 
-      // let spawn = this.creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
-      // if (spawn.energy < spawn.energyCapacity) {
-      //   this.moveToDropEnergy(this.creep, spawn);
-      //   return;
-      // }
+      let spawn = this.creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
+      if (spawn.energy < spawn.energyCapacity) {
+        this.moveToDropEnergy(this.creep, spawn);
+        return;
+      }
 
-      // let towers = this.roomHandler.loadTowers(this.creep.room);
-      // if (towers.length > 0) {
-      //   let tower = this.creep.pos.findClosestByPath<Tower>(towers);
-      //   this.moveToDropEnergy(this.creep, tower);
-      //   return;
-      // }
-      let storage = this.creep.room.storage;
-      if (storage) {
-        if (_.sum(storage.store) < storage.storeCapacity) {
-          this.moveToDropEnergy(this.creep, storage);
-        }
+      let towers = this.roomHandler.loadTowers(this.creep.room);
+      if (towers.length > 0) {
+        let tower = this.creep.pos.findClosestByPath<Tower>(towers);
+        this.moveToDropEnergy(this.creep, tower);
+        return;
       }
     }
   }
