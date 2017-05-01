@@ -100,7 +100,7 @@ function initializeMemoryConfigDefaultsPopulation() {
     Memory.config.defaults.population.maximums.miners = 0;
     Memory.config.defaults.population.maximums.upgraders = 1;
 
-    Memory.config.defaults.population.maximums.harvesters = 1;
+    // Memory.config.defaults.population.maximums.harvesters = 1;
   }
 }
 

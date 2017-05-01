@@ -28,7 +28,7 @@ export class CreepBase {
     let result: number = 0;
 
     // Execute moves by cached paths at first
-    result = creep.moveTo(target, {visualizePathStyle: {stroke: C.WHITE}});
+    result = creep.moveTo(target, {ignoreCreeps: false, visualizePathStyle: {stroke: C.WHITE}});
 
     return result;
   }

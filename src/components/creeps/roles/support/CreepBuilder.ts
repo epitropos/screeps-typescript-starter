@@ -5,6 +5,33 @@ import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepBuilder extends CreepSupport {
+  public static getBodyParts(energyCapacityAvailable: number) {
+    let bodyParts: string[] = [];
+    let bodySegmentSize = 200;
+
+    let sizeRemaining = energyCapacityAvailable;
+
+    let bodyPartsSize = 0;
+
+    while (sizeRemaining > 0 || bodyParts.length + 3 > 50) {
+      bodyParts.push(WORK);
+      bodyParts.push(CARRY);
+      bodyParts.push(MOVE);
+      bodyPartsSize += bodySegmentSize;
+      sizeRemaining -= bodySegmentSize;
+    }
+
+    // TODO: Move function into CreepSupport.
+    return _.sortBy(bodyParts, function(bodyPart) {
+      switch (bodyPart) {
+        case CARRY: return 2;
+        case MOVE: return 3;
+        case WORK: return 1;
+        default: return 99;
+      }
+    });
+  }
+
   // TODO: Change into a shared enum.
   public readonly STATE_BUILDING = "BUILDING";
   public readonly STATE_REFUELING = "REFUELING";
@@ -107,17 +134,17 @@ export class CreepBuilder extends CreepSupport {
     // }
     // Get path to closest container.
     let pathToContainer = undefined;
-    let container = undefined;
-    let containers = creep.room.find<Container>(FIND_STRUCTURES, {
-      filter: (c: Container) => (c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0),
-    });
-    // TODO: Check if doing findClosestByPath with zero length array results in undefined, null or an error.
-    if (containers.length > 0) {
-      container = creep.pos.findClosestByPath<Container>(containers);
-      if (container) {
-        pathToContainer = creep.pos.findPathTo(container);
-      }
-    }
+    // let container = undefined;
+    // let containers = creep.room.find<Container>(FIND_STRUCTURES, {
+    //   filter: (c: Container) => (c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0),
+    // });
+    // // TODO: Check if doing findClosestByPath with zero length array results in undefined, null or an error.
+    // if (containers.length > 0) {
+    //   container = creep.pos.findClosestByPath<Container>(containers);
+    //   if (container) {
+    //     pathToContainer = creep.pos.findPathTo(container);
+    //   }
+    // }
 
     // Get path to storage.
     let pathToStorage = undefined;
@@ -135,15 +162,15 @@ export class CreepBuilder extends CreepSupport {
       return;
     }
 
-    if (pathToStorage === undefined) {
-      this.moveToWithdraw(creep, <Container> container);
-      return;
-    }
+    // if (pathToStorage === undefined) {
+    //   this.moveToWithdraw(creep, <Container> container);
+    //   return;
+    // }
 
-    if (pathToContainer.length <= pathToStorage.length) {
-      this.moveToWithdraw(creep, <Container> container);
-      return;
-    }
+    // if (pathToContainer.length <= pathToStorage.length) {
+    //   this.moveToWithdraw(creep, <Container> container);
+    //   return;
+    // }
 
     this.moveToWithdrawFromStorage(creep, <Storage> storage);
     return;
