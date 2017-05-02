@@ -45,13 +45,8 @@ export class CreepSupport extends CreepBase {
   public tryToWithdrawFromStorage(creep: Creep, storage: Storage | StructureStorage): number {
     if (storage) {
       let amountToWithdraw = creep.carryCapacity - _.sum(creep.carry);
-      let amountInStorage = storage.store[RESOURCE_ENERGY];
-      if (amountInStorage === undefined) {
-        return 0;
-      }
-      if (storage.store !== undefined
-      && storage.store[RESOURCE_ENERGY] !== undefined
-      && amountToWithdraw > amountInStorage) {
+      let amountInStorage = storage.store[RESOURCE_ENERGY] || 0;
+      if (amountInStorage < amountToWithdraw) {
         amountToWithdraw = amountInStorage;
       }
       return creep.withdraw(storage, RESOURCE_ENERGY, amountToWithdraw);

@@ -5,20 +5,17 @@ import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepBuilder extends CreepSupport {
-  public static getBodyParts(energyCapacityAvailable: number) {
+  public static getBodyParts(energyAvailable: number) {
     let bodyParts: string[] = [];
     let bodySegmentSize = 200;
 
-    let sizeRemaining = energyCapacityAvailable;
-
     let bodyPartsSize = 0;
 
-    while (sizeRemaining > 0 || bodyParts.length + 3 > 50) {
+    while (bodyPartsSize + bodySegmentSize < energyAvailable) {
       bodyParts.push(WORK);
       bodyParts.push(CARRY);
       bodyParts.push(MOVE);
       bodyPartsSize += bodySegmentSize;
-      sizeRemaining -= bodySegmentSize;
     }
 
     // TODO: Move function into CreepSupport.

@@ -4,20 +4,19 @@ import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepUpgrader extends CreepSupport {
-  public static getBodyParts(energyCapacityAvailable: number) {
+  public static getBodyParts(energyAvailable: number) {
     let bodyParts: string[] = [];
     let bodySegmentSize = 200;
 
-    let sizeRemaining = energyCapacityAvailable;
-
     let bodyPartsSize = 0;
 
-    while (sizeRemaining > 0 || bodyParts.length + 2 > 50) {
+    let count = 0; // This is used to enforce the 15 energy per tick cap.
+
+    while (bodyPartsSize + bodySegmentSize < energyAvailable && count++ <= 15) {
       bodyParts.push(WORK);
       bodyParts.push(CARRY);
       bodyParts.push(MOVE);
       bodyPartsSize += bodySegmentSize;
-      sizeRemaining -= bodySegmentSize;
     }
 
     // TODO: Move function into CreepSupport.
@@ -41,41 +40,44 @@ export class CreepUpgrader extends CreepSupport {
   public run() {
     super.run();
 
-    let state = this.creep.memory.state = this.determineCurrentState(this.creep);
+    let state = this.creep.memory.state || this.STATE_REFUELING;
+    // let state = this.creep.memory.state = this.determineCurrentState(this.creep);
 
     if (state === this.STATE_REFUELING) {
       this.getEnergy(this.creep);
-      return;
-    }
-
-    if (state === this.STATE_UPGRADING) {
+    } else if (state === this.STATE_UPGRADING) {
       let controller = <Controller> this.creep.room.controller;
       this.moveToUpgrade(this.creep, controller);
-      return;
+    }
+
+    if (this.creep.carry[RESOURCE_ENERGY] || 0 > 0) {
+      this.creep.memory.state = this.STATE_UPGRADING;
+    } else {
+      this.creep.memory.state = this.STATE_REFUELING;
     }
   }
 
-  public determineCurrentState(creep: Creep): string {
-    let state = creep.memory.state;
+  // public determineCurrentState(creep: Creep): string {
+  //   let state = creep.memory.state;
 
-    if (state === this.STATE_REFUELING) {
-      if (!this.refuelingComplete(creep)) {
-        return this.STATE_REFUELING;
-      }
-    }
+  //   if (state === this.STATE_REFUELING) {
+  //     if (!this.refuelingComplete(creep)) {
+  //       return this.STATE_REFUELING;
+  //     }
+  //   }
 
-    if (this.needsToRefuel(creep)) {
-      return this.STATE_REFUELING;
-    }
+  //   if (this.needsToRefuel(creep)) {
+  //     return this.STATE_REFUELING;
+  //   }
 
-    if (this.roomHandler.controllerNeedsUpgrading(creep.room)) {
-      return this.STATE_UPGRADING;
-    }
+  //   if (this.roomHandler.controllerNeedsUpgrading(creep.room)) {
+  //     return this.STATE_UPGRADING;
+  //   }
 
-    // TODO: Add STATE_IDLE
-    // return STATE_IDLE;
-    return this.STATE_UPGRADING;
-  }
+  //   // TODO: Add STATE_IDLE
+  //   // return STATE_IDLE;
+  //   return this.STATE_UPGRADING;
+  // }
 
   public getEnergy(creep: Creep): void {
     let pathToContainer = undefined;
