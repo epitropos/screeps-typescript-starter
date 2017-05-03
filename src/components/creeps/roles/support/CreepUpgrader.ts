@@ -41,7 +41,6 @@ export class CreepUpgrader extends CreepSupport {
     super.run();
 
     let state = this.creep.memory.state || this.STATE_REFUELING;
-    // let state = this.creep.memory.state = this.determineCurrentState(this.creep);
 
     if (state === this.STATE_REFUELING) {
       this.getEnergy(this.creep);
@@ -56,28 +55,6 @@ export class CreepUpgrader extends CreepSupport {
       this.creep.memory.state = this.STATE_REFUELING;
     }
   }
-
-  // public determineCurrentState(creep: Creep): string {
-  //   let state = creep.memory.state;
-
-  //   if (state === this.STATE_REFUELING) {
-  //     if (!this.refuelingComplete(creep)) {
-  //       return this.STATE_REFUELING;
-  //     }
-  //   }
-
-  //   if (this.needsToRefuel(creep)) {
-  //     return this.STATE_REFUELING;
-  //   }
-
-  //   if (this.roomHandler.controllerNeedsUpgrading(creep.room)) {
-  //     return this.STATE_UPGRADING;
-  //   }
-
-  //   // TODO: Add STATE_IDLE
-  //   // return STATE_IDLE;
-  //   return this.STATE_UPGRADING;
-  // }
 
   public getEnergy(creep: Creep): void {
     let pathToContainer = undefined;
@@ -109,18 +86,6 @@ export class CreepUpgrader extends CreepSupport {
       this.moveToWithdrawFromStorage(creep, <Storage> storage);
       return;
     }
-
-    // if (pathToStorage === undefined) {
-    //   log.info("pathToStorage undefined");
-    //   this.moveToWithdraw(creep, <Container> container);
-    //   return;
-    // }
-
-    // if (pathToContainer.length <= pathToStorage.length) {
-    //   log.info("pathToContainer.length: " + pathToContainer.length + " <= pathToStorage.length: " + pathToStorage.length);
-    //   this.moveToWithdraw(creep, <Container> container);
-    //   return;
-    // }
 
     log.info("default to storage");
     this.moveToWithdrawFromStorage(creep, <Storage> storage);

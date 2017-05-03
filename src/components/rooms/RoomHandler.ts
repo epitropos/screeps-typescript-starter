@@ -17,8 +17,6 @@ export class RoomHandler {
   }
 
   public run() {
-    // log.info("Processing room: " + this.room.name);
-
     let spawns = this.room.find(FIND_MY_SPAWNS);
     if (spawns.length > 0) {
       let roomCity = new RoomFriendlyCity(this.room);

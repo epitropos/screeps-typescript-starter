@@ -40,31 +40,29 @@ export class CreepBuilder extends CreepSupport {
   public run() {
     super.run();
 
-    let state = this.creep.memory.state = this.determineCurrentState(this.creep);
+    let state = this.creep.memory.state || this.STATE_REFUELING;
 
     if (state === this.STATE_REFUELING) {
       this.getEnergy(this.creep);
-      return;
-    }
-
-    if (state === this.STATE_BUILDING) {
+    } else if (state === this.STATE_BUILDING) {
       let constructionSites = this.roomHandler.loadConstructionSites(this.creep.room);
       if (constructionSites.length > 0) {
         let constructionSite = this.creep.pos.findClosestByPath<ConstructionSite>(constructionSites);
         this.build(this.creep, constructionSite);
-        return;
-      }
-
-      let damagedStructures = this.roomHandler.loadDamagedStructures(this.creep.room);
-      if (damagedStructures.length > 0) {
-        let damagedStructure = this.creep.pos.findClosestByPath<Structure>(damagedStructures);
-        this.moveToRepair(this.creep, damagedStructure);
-        return;
+      } else {
+        let damagedStructures = this.roomHandler.loadDamagedStructures(this.creep.room);
+        if (damagedStructures.length > 0) {
+          let damagedStructure = this.creep.pos.findClosestByPath<Structure>(damagedStructures);
+          this.moveToRepair(this.creep, damagedStructure);
+        }
       }
     }
 
-    // TODO: Move randomly. This should keep the creep as an obstacle to a minimum.
-    // TODO: Otherwise, move creep to an idle location.
+    if (this.creep.carry[RESOURCE_ENERGY] || 0 > 0) {
+      this.creep.memory.state = this.STATE_BUILDING;
+    } else {
+      this.creep.memory.state = this.STATE_REFUELING;
+    }
   }
 
   public determineCurrentState(creep: Creep): string {
@@ -96,40 +94,6 @@ export class CreepBuilder extends CreepSupport {
   }
 
   public getEnergy(creep: Creep): void {
-    // // let containers = this.roomHandler.loadContainersWithEnergy(creep.room);
-    // // if (containers.length > 0) {
-    // //   let container = creep.pos.findClosestByPath<Container>(containers);
-    // //   this.moveToWithdraw(creep, container);
-    // //   return;
-    // // }
-
-    // // let energySource = creep.pos.findClosestByPath<Source>(FIND_SOURCES_ACTIVE);
-    // // this.moveToHarvest(creep, energySource);
-
-    // let stepsToContainer = Infinity;
-    // let closestContainer = creep.pos.findClosestByPath<Container>(FIND_MY_STRUCTURES, {
-    //   filter: (s: Structure) => s.structureType === STRUCTURE_CONTAINER,
-    // });
-    // if (closestContainer) {
-    //   let pathToContainer = creep.room.findPath(creep.pos, closestContainer.pos);
-    //   stepsToContainer = pathToContainer.length;
-    // }
-
-    // let storage = creep.room.storage;
-    // let stepsToStorage = Infinity;
-    // if (storage) {
-    //   let pathToStorage = creep.room.findPath(creep.pos, storage.pos);
-    //   stepsToStorage = pathToStorage.length;
-    // }
-
-    // if (stepsToContainer === Infinity && stepsToStorage === Infinity) {
-    //   return;
-    // } else if (stepsToContainer < stepsToStorage) {
-    //   this.moveToWithdraw(creep, closestContainer);
-    // } else {
-    //   this.moveToWithdrawFromStorage(creep, storage);
-    // }
-    // Get path to closest container.
     let pathToContainer = undefined;
     // let container = undefined;
     // let containers = creep.room.find<Container>(FIND_STRUCTURES, {
@@ -159,16 +123,6 @@ export class CreepBuilder extends CreepSupport {
       return;
     }
 
-    // if (pathToStorage === undefined) {
-    //   this.moveToWithdraw(creep, <Container> container);
-    //   return;
-    // }
-
-    // if (pathToContainer.length <= pathToStorage.length) {
-    //   this.moveToWithdraw(creep, <Container> container);
-    //   return;
-    // }
-
     this.moveToWithdrawFromStorage(creep, <Storage> storage);
     return;
   }
@@ -182,10 +136,4 @@ export class CreepBuilder extends CreepSupport {
   public tryRepair(creep: Creep, structure: Structure): number {
     return creep.repair(structure);
   }
-
-  /*
-  protected moveToUnderConstructionRoom(creep: Creep, roomManager: RoomManager): ??? {
-
-  }
-  */
 }

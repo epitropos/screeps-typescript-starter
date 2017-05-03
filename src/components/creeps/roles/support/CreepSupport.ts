@@ -22,8 +22,24 @@ export class CreepSupport extends CreepBase {
     }
   }
 
+  public tryResourceDropOff(creep: Creep, target: Spawn | Structure): number {
+    for (let resource in this.creep.carry) {
+      let amountTransferred = creep.transfer(target, resource);
+      if (amountTransferred) {
+        return amountTransferred;
+      }
+    }
+    return 0;
+  }
+
   public tryEnergyDropOff(creep: Creep, target: Spawn | Structure): number {
     return creep.transfer(target, RESOURCE_ENERGY);
+  }
+
+  public moveToDropResource(creep: Creep, target: Spawn | Structure): void {
+    if (this.tryResourceDropOff(creep, target) === ERR_NOT_IN_RANGE) {
+      this.moveTo(creep, target.pos);
+    }
   }
 
   public moveToDropEnergy(creep: Creep, target: Spawn | Structure): void {

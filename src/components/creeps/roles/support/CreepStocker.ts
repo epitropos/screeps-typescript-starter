@@ -38,83 +38,39 @@ export class CreepStocker extends CreepSupport {
   public run() {
     super.run();
 
-    let state = this.creep.memory.state = this.determineCurrentState(this.creep);
+    let state = this.creep.memory.state || this.STATE_REFUELING;
 
     if (state === this.STATE_REFUELING) {
-      // let droppedEnergy = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY,
-      //   {filter: (r: Resource) => r.resourceType === RESOURCE_ENERGY});
-      // if (droppedEnergy) {
-      //   this.moveToPickup(this.creep, droppedEnergy);
-      //   return;
-      // }
-
       let storage = this.creep.room.storage;
       if (storage) {
         let availableEnergy = storage.store[RESOURCE_ENERGY] || 0;
         if (availableEnergy > 0) {
-          // log.info("availableEnergy: " + availableEnergy);
           this.moveToWithdrawFromStorage(this.creep, storage);
-          return;
         }
       }
-
-      // let containers = this.creep.room.find<Container>(FIND_STRUCTURES, {
-      //   filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0,
-      // });
-
-      // if (containers) {
-      //   let container = this.creep.pos.findClosestByPath(containers);
-      //   if (container) {
-      //     this.moveToWithdraw(this.creep, container);
-      //     return;
-      //   }
-      // }
-
-      return;
-    }
-
-    if (state === this.STATE_DELIVERING) {
+    } else if (state === this.STATE_DELIVERING) {
       let extensions = this.roomHandler.loadExtensions(this.creep.room);
       if (extensions.length > 0) {
         let extension = this.creep.pos.findClosestByPath<Extension>(extensions);
         this.moveToDropEnergy(this.creep, extension);
-        return;
-      }
-
-      let spawn = this.creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
-      if (spawn.energy < spawn.energyCapacity) {
-        this.moveToDropEnergy(this.creep, spawn);
-        return;
-      }
-
-      let towers = this.roomHandler.loadTowers(this.creep.room);
-      if (towers.length > 0) {
-        let tower = this.creep.pos.findClosestByPath<Tower>(towers);
-        this.moveToDropEnergy(this.creep, tower);
-        return;
-      }
-    }
-  }
-
-  public determineCurrentState(creep: Creep): string {
-    let state = creep.memory.state;
-
-    if (state === this.STATE_REFUELING) {
-      if (!this.refuelingComplete(creep)) {
-        return this.STATE_REFUELING;
+      } else {
+        let spawn = this.creep.room.find<Spawn>(FIND_MY_SPAWNS)[0];
+        if (spawn.energy < spawn.energyCapacity) {
+          this.moveToDropEnergy(this.creep, spawn);
+        } else {
+          let towers = this.roomHandler.loadTowers(this.creep.room);
+          if (towers.length > 0) {
+            let tower = this.creep.pos.findClosestByPath<Tower>(towers);
+            this.moveToDropEnergy(this.creep, tower);
+          }
+        }
       }
     }
 
-    if (this.needsToRefuel(creep)) {
-      return this.STATE_REFUELING;
+    if (this.creep.carry[RESOURCE_ENERGY] || 0 > 0) {
+      this.creep.memory.state = this.STATE_DELIVERING;
+    } else {
+      this.creep.memory.state = this.STATE_REFUELING;
     }
-
-    if (this.refuelingComplete) {
-      return this.STATE_DELIVERING;
-    }
-
-    // TODO: Add STATE_IDLE
-    // return STATE_IDLE;
-    return this.STATE_DELIVERING;
   }
 }

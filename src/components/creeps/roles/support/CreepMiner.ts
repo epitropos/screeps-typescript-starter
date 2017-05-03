@@ -23,30 +23,20 @@ export class CreepMiner extends CreepSupport {
     super.run();
 
     this.containerId = this.creep.memory.containerId;
-    // log.info("containerId: " + this.containerId);
     if (this.containerId === undefined) {
-      // log.info("containerId missing for " + this.creep.name);
       return;
-    } else {
-      // log.info("containerId: " + this.containerId);
     }
 
     this.sourceId = this.creep.memory.sourceId;
-    // log.info("sourceId: " + this.sourceId);
     if (this.sourceId === undefined) {
-      // log.info("sourceId missing for " + this.creep.name);
       return;
-    } else {
-      // log.info("sourceId: " + this.sourceId);
     }
 
     let container = <Container> Game.getObjectById(this.containerId);
     let inPosition = this.creep.pos.x === container.pos.x
       && this.creep.pos.y === container.pos.y
       && this.creep.pos.roomName === container.pos.roomName;
-    // log.info("inPosition: " + inPosition);
     if (!inPosition) {
-      // log.info("moveTo: (" + container.pos.x + ", " + container.pos.y + ")");
       this.moveTo(this.creep, container);
       return;
     }
@@ -62,7 +52,6 @@ export class CreepMiner extends CreepSupport {
       }
     }
 
-    // log.info("tryHarvest: " + this.sourceId);
     this.tryHarvest(this.creep, <Source> Game.getObjectById(this.sourceId));
   }
 }

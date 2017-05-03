@@ -76,7 +76,7 @@ function initializeMemory() {
   initializeMemoryConfig();
   initializeMemoryConfigDefaults();
   initializeMemoryConfigDefaultsPopulation();
-  initializeMemoryRequest();
+  initializeMemoryMessages();
 }
 
 function initializeMemoryConfig() {
@@ -104,12 +104,12 @@ function initializeMemoryConfigDefaultsPopulation() {
   }
 }
 
-function initializeMemoryRequest() {
-  if (!Memory.requests) {
-    Memory.requests = {};
+function initializeMemoryMessages() {
+  if (!Memory.messages) {
+    Memory.messages = {};
   }
 
-  if (!Memory.requests.nextRequestId) {
-    Memory.requests.nextRequestId = 1;
+  if (!Memory.messages.nextMessageId) {
+    Memory.messages.nextMessageId = 1;
   }
 }

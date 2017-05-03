@@ -38,7 +38,6 @@ export class CreepHauler extends CreepSupport {
   public run() {
     super.run();
 
-    // let state = this.creep.memory.state = this.determineCurrentState(this.creep);
     let state = this.creep.memory.state || this.STATE_REFUELING;
 
     if (state === this.STATE_REFUELING) {
@@ -47,6 +46,17 @@ export class CreepHauler extends CreepSupport {
       // TODO: Retrieve dropped energy.
       // TODO: Retrieve energy from container.
       // TODO: Change to STATE_DELIVERING
+
+      let droppedResource = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_RESOURCES, {
+        filter: (r: Resource) => r.resourceType !== RESOURCE_ENERGY,
+      });
+      if (droppedResource) {
+        this.moveToPickup(this.creep, droppedResource);
+        if (_.sum(this.creep.carry) === this.creep.carryCapacity) {
+          this.creep.memory.state = this.STATE_DELIVERING;
+          return;
+        }
+      }
 
       let droppedEnergy = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY, {
         filter: (r: Resource) => r.resourceType === RESOURCE_ENERGY && r.amount > 100,
@@ -72,6 +82,9 @@ export class CreepHauler extends CreepSupport {
       let storage = this.creep.room.storage;
       if (storage) {
         if (_.sum(storage.store) < storage.storeCapacity) {
+          if (this.creep.carry[RESOURCE_ENERGY] || 0 < _.sum(this.creep.carry)) {
+            this.moveToDropResource(this.creep, storage);
+          }
           this.moveToDropEnergy(this.creep, storage);
         }
       }
@@ -82,62 +95,5 @@ export class CreepHauler extends CreepSupport {
     } else {
       this.creep.memory.state = this.STATE_REFUELING;
     }
-
-    // if (state === this.STATE_REFUELING) {
-    //   let droppedEnergy = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY,
-    //     {filter: (r: Resource) => r.resourceType === RESOURCE_ENERGY});
-    //   if (droppedEnergy) {
-    //     this.moveToPickup(this.creep, droppedEnergy);
-    //     return;
-    //   }
-
-    //   let containers = this.creep.room.find<Container>(FIND_STRUCTURES, {
-    //     filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0,
-    //   });
-
-    //   if (containers) {
-    //     let container = this.creep.pos.findClosestByPath(containers);
-    //     if (container) {
-    //       log.info("moveToWithdraw from " + container.structureType +
-    //       " at (" + container.pos.x + "," + container.pos.y + ")");
-    //       this.moveToWithdraw(this.creep, container);
-    //     } else {
-    //       log.info("container is null");
-    //     }
-    //   } else {
-    //     log.info("ARGH");
-    //   }
-    // }
-
-    // if (state === this.STATE_DELIVERING) {
-    //   let storage = this.creep.room.storage;
-    //   if (storage) {
-    //     if (_.sum(storage.store) < storage.storeCapacity) {
-    //       this.moveToDropEnergy(this.creep, storage);
-    //     }
-    //   }
-    // }
-  }
-
-  public determineCurrentState(creep: Creep): string {
-    let state = creep.memory.state;
-
-    if (state === this.STATE_REFUELING) {
-      if (!this.refuelingComplete(creep)) {
-        return this.STATE_REFUELING;
-      }
-    }
-
-    if (this.needsToRefuel(creep)) {
-      return this.STATE_REFUELING;
-    }
-
-    if (this.refuelingComplete) {
-      return this.STATE_DELIVERING;
-    }
-
-    // TODO: Add STATE_IDLE
-    // return STATE_IDLE;
-    return this.STATE_DELIVERING;
   }
 }

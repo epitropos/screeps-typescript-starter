@@ -3,7 +3,6 @@
 import * as C from "../../config/constants";
 import {RoomHandler} from "../rooms/RoomHandler";
 import {CreepBuilder} from "./roles/support/CreepBuilder";
-// import {CreepHarvester} from "./roles/support/CreepHarvester";
 import {CreepHauler} from "./roles/support/CreepHauler";
 import {CreepMiner} from "./roles/support/CreepMiner";
 import {CreepStocker} from "./roles/support/CreepStocker";
@@ -19,19 +18,12 @@ export class CreepHandler {
   }
 
   public run() {
-    // log.info("Processing creep: " + this.creep.name);
-
     let creepRole = this.creep.memory.role;
-    // log.warning("creep: " + this.creep.name + " has a role of " + creepRole);
     switch (creepRole) {
       case C.BUILDER:
         let builder = new CreepBuilder(this.creep, this.roomHandler);
         builder.run();
         break;
-      // case C.HARVESTER:
-      //   let harvester = new CreepHarvester(this.creep, this.roomHandler);
-      //   harvester.run();
-      //   break;
       case C.HAULER:
         let hauler = new CreepHauler(this.creep, this.roomHandler);
         hauler.run();

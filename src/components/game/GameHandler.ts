@@ -9,6 +9,5 @@ export class GameHandler {
   }
 
   public run() {
-    // log.info("Processing game.");
   };
 }
