@@ -3,7 +3,8 @@ import { log } from "./lib/logger/log";
 // import * as CreepManager from "./components/creeps/creepManager";
 // import * as GameMapManager from "./components/gameMapManager";
 // import * as RoomManager from "./components/rooms/roomManager";
-import * as StructureManager from "./components/structures/structureManager";
+// import * as StructureManager from "./components/structures/structureManager";
+import {MessageHandler} from "./components/messages/MessageHandler";
 
 import {GameHandler} from "./components/game/GameHandler";
 import {RoomHandler} from "./components/rooms/RoomHandler";
@@ -35,6 +36,10 @@ export function loop() {
     Memory.uuid = 0;
   }
 
+  let messageHandler = new MessageHandler();
+  log.info("messageHandler: " + messageHandler);
+  messageHandler.test();
+
   let gameHandler = new GameHandler(Game);
   gameHandler.run();
 
@@ -44,26 +49,26 @@ export function loop() {
     roomHandler.run();
   }
 
-  for (let i in Game.rooms) {
-    let room: Room = Game.rooms[i];
+  // for (let i in Game.rooms) {
+  //   // let room: Room = Game.rooms[i];
 
-    // GameMapManager.run();
-    // RoomManager.run(room); // TODO: Move into GameMapManager.
-    StructureManager.run(room); // TODO: Move into RoomManager.
-    // CreepManager.run(room); // TODO: Move into RoomManager.
+  //   // GameMapManager.run();
+  //   // RoomManager.run(room); // TODO: Move into GameMapManager.
+  //   // StructureManager.run(room); // TODO: Move into RoomManager.
+  //   // CreepManager.run(room); // TODO: Move into RoomManager.
 
-    // // Clears any non-existing creep memory.
-    // for (let name in Memory.creeps) {
-    //   let creep: any = Memory.creeps[name];
+  //   // // Clears any non-existing creep memory.
+  //   // for (let name in Memory.creeps) {
+  //   //   let creep: any = Memory.creeps[name];
 
-    //   if (creep.room === room.name) {
-    //     if (!Game.creeps[name]) {
-    //       // log.info("Clearing non-existing creep memory:", name);
-    //       delete Memory.creeps[name];
-    //     }
-    //   }
-    // }
-  }
+  //   //   if (creep.room === room.name) {
+  //   //     if (!Game.creeps[name]) {
+  //   //       // log.info("Clearing non-existing creep memory:", name);
+  //   //       delete Memory.creeps[name];
+  //   //     }
+  //   //   }
+  //   // }
+  // }
 
   for (let i in Memory.creeps) {
     if (!Game.creeps[i]) {
@@ -73,10 +78,10 @@ export function loop() {
 }
 
 function initializeMemory() {
-  initializeMemoryConfig();
-  initializeMemoryConfigDefaults();
-  initializeMemoryConfigDefaultsPopulation();
-  initializeMemoryMessages();
+  initializeMemoryConfig(); // TODO: Move this into the appropriate location.
+  initializeMemoryConfigDefaults(); // TODO: Move this into the appropriate location.
+  initializeMemoryConfigDefaultsPopulation(); // TODO: Move this into the appropriate location.
+  MessageHandler.InitializeMemory(); // TODO: Consider this for the style of the appropriate location.
 }
 
 function initializeMemoryConfig() {
@@ -99,17 +104,5 @@ function initializeMemoryConfigDefaultsPopulation() {
     Memory.config.defaults.population.maximums.haulers = 0;
     Memory.config.defaults.population.maximums.miners = 0;
     Memory.config.defaults.population.maximums.upgraders = 1;
-
-    // Memory.config.defaults.population.maximums.harvesters = 1;
-  }
-}
-
-function initializeMemoryMessages() {
-  if (!Memory.messages) {
-    Memory.messages = {};
-  }
-
-  if (!Memory.messages.nextMessageId) {
-    Memory.messages.nextMessageId = 1;
   }
 }

@@ -12,13 +12,13 @@ export class MessageCloneCreep extends Message {
     super();
   }
 
-  public createMessage() {
-    let nextMessageId = Memory.messages.nextMessageId;
-    Memory.messages.nextMessageId++;
-    Memory.messages[nextMessageId] = {};
-    Memory.messages[nextMessageId].bodyParts = this.bodyParts;
-    Memory.messages[nextMessageId].destinationRoomName = this.destinationRoomName;
-    Memory.messages[nextMessageId].destinationPosition = this.destinationPosition;
-    Memory.messages[nextMessageId].memory = JSON.stringify(this.memory);
-  }
+  // public createMessage() {
+  //   let nextMessageId = Memory.messages.nextMessageId;
+  //   Memory.messages.nextMessageId++;
+  //   Memory.messages[nextMessageId] = {};
+  //   Memory.messages[nextMessageId].bodyParts = this.bodyParts;
+  //   Memory.messages[nextMessageId].destinationRoomName = this.destinationRoomName;
+  //   Memory.messages[nextMessageId].destinationPosition = this.destinationPosition;
+  //   Memory.messages[nextMessageId].memory = JSON.stringify(this.memory);
+  // }
 }

@@ -47,27 +47,36 @@ export class CreepHauler extends CreepSupport {
       // TODO: Retrieve energy from container.
       // TODO: Change to STATE_DELIVERING
 
-      let droppedResource = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_RESOURCES, {
-        filter: (r: Resource) => r.resourceType !== RESOURCE_ENERGY,
-      });
+      let droppedResource = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_RESOURCES);
       if (droppedResource) {
         this.moveToPickup(this.creep, droppedResource);
-        if (_.sum(this.creep.carry) === this.creep.carryCapacity) {
+        if (_.sum(this.creep.carry) > 0) {
           this.creep.memory.state = this.STATE_DELIVERING;
-          return;
         }
+        return;
       }
 
-      let droppedEnergy = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY, {
-        filter: (r: Resource) => r.resourceType === RESOURCE_ENERGY && r.amount > 100,
-      });
-      if (droppedEnergy) {
-        this.moveToPickup(this.creep, droppedEnergy);
-        if (_.sum(this.creep.carry) === this.creep.carryCapacity) {
-          this.creep.memory.state = this.STATE_DELIVERING;
-          return;
-        }
-      }
+      // let droppedResource = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_RESOURCES, {
+      //   filter: (r: Resource) => r.resourceType !== RESOURCE_ENERGY,
+      // });
+      // if (droppedResource) {
+      //   this.moveToPickup(this.creep, droppedResource);
+      //   if (_.sum(this.creep.carry) === this.creep.carryCapacity) {
+      //     this.creep.memory.state = this.STATE_DELIVERING;
+      //     return;
+      //   }
+      // }
+
+      // let droppedEnergy = this.creep.pos.findClosestByPath<Resource>(FIND_DROPPED_ENERGY, {
+      //   filter: (r: Resource) => r.resourceType === RESOURCE_ENERGY && r.amount > 100,
+      // });
+      // if (droppedEnergy) {
+      //   this.moveToPickup(this.creep, droppedEnergy);
+      //   if (_.sum(this.creep.carry) === this.creep.carryCapacity) {
+      //     this.creep.memory.state = this.STATE_DELIVERING;
+      //     return;
+      //   }
+      // }
 
       // Go to assigned container.
       let containerId = this.creep.memory.containerId;
