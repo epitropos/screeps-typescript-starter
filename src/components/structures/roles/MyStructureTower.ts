@@ -37,14 +37,17 @@ export class MyStructureTower extends MyStructureBase {
       return;
     }
 
-    let structures = this.tower.room.find<Structure>(FIND_MY_STRUCTURES, {filter: (s: Structure) => s.hits < s.hitsMax});
+    let structures = this.tower.room.find<Structure>(FIND_MY_STRUCTURES, {
+      filter: (s: Structure) => s.hits < s.hitsMax
+    });
     if (Config.ENABLE_DEBUG_MODE) {
       // log.info("Damaged structures: " + structures.length);
     }
     if (structures.length > 0) {
       let structure = this.tower.pos.findClosestByRange<Structure>(structures);
       if (Config.ENABLE_DEBUG_MODE) {
-        // log.info("Tower repairing: " + structure.structureType + " at (" + structure.pos.x + "," + structure.pos.y + ")");
+        // log.info("Tower repairing: " + structure.structureType
+        //   + " at (" + structure.pos.x + "," + structure.pos.y + ")");
       }
       this.tower.repair(structure);
       return;

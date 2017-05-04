@@ -38,7 +38,13 @@ export function loop() {
 
   let messageHandler = new MessageHandler();
   log.info("messageHandler: " + messageHandler);
-  messageHandler.test();
+  messageHandler.testSend();
+  let message = messageHandler.testReceive(MessageHandler.MESSAGE_TYPE_CLONE_CREEP);
+  if (message === undefined) {
+    log.info("MESSAGE: undefined");
+  } else {
+    log.info("MESSAGE: " + JSON.stringify(message));
+  }
 
   let gameHandler = new GameHandler(Game);
   gameHandler.run();

@@ -58,17 +58,20 @@ export class CreepUpgrader extends CreepSupport {
 
   public getEnergy(creep: Creep): void {
     let pathToContainer = undefined;
-    // let container = undefined;
-    // let containers = creep.room.find<Container>(FIND_STRUCTURES, {
-    //   filter: (c: Container) => (c.structureType === STRUCTURE_CONTAINER && c.store[RESOURCE_ENERGY] > 0),
-    // });
-    // // TODO: Check if doing findClosestByPath with zero length array results in undefined, null or an error.
-    // if (containers.length > 0) {
-    //   container = creep.pos.findClosestByPath<Container>(containers);
-    //   if (container) {
-    //     pathToContainer = creep.pos.findPathTo(container);
-    //   }
-    // }
+    let container = undefined;
+    let containers = creep.room.find<Container>(FIND_STRUCTURES, {
+      filter: (c: Container) => (c.structureType === STRUCTURE_CONTAINER
+      && c.store[RESOURCE_ENERGY] > 0
+      && c.pos.isNearTo(creep.pos)),
+    });
+    // TODO: Check if doing findClosestByPath with zero length array results in undefined, null or an error.
+    log.info("containers found: " + containers.length);
+    if (containers.length > 0) {
+      container = creep.pos.findClosestByPath<Container>(containers);
+      if (container) {
+        pathToContainer = creep.pos.findPathTo(container);
+      }
+    }
 
     // Get path to storage.
     let pathToStorage = undefined;
@@ -78,16 +81,22 @@ export class CreepUpgrader extends CreepSupport {
     }
 
     if (pathToContainer === undefined && pathToStorage === undefined) {
+      log.info("UPGRADER: all undefined");
       return;
     }
 
-    if (pathToContainer === undefined) {
-      log.info("pathToContainer undefined");
-      this.moveToWithdrawFromStorage(creep, <Storage> storage);
+    // if (pathToContainer !== undefined) {
+    //   log.info("UPGRADER: pathToContainer undefined");
+    //   this.moveToWithdrawFromStorage(creep, <Storage> storage);
+    // }
+
+    if (container !== undefined) {
+      log.info("UPGRADER: withdraw from container");
+      this.moveToWithdraw(creep, container);
       return;
     }
 
-    log.info("default to storage");
+    log.info("UPGRADER: default to storage");
     this.moveToWithdrawFromStorage(creep, <Storage> storage);
     return;
   }

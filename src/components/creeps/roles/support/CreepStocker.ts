@@ -62,6 +62,14 @@ export class CreepStocker extends CreepSupport {
           if (towers.length > 0) {
             let tower = this.creep.pos.findClosestByPath<Tower>(towers);
             this.moveToDropEnergy(this.creep, tower);
+          } else {
+            let outContainers = this.getOutContainers(this.roomHandler);
+            if (outContainers.length > 0) {
+              let outContainer = this.creep.pos.findClosestByPath<Container>(outContainers);
+              if (outContainer) {
+                this.moveToDropEnergy(this.creep, outContainer);
+              }
+            }
           }
         }
       }
@@ -72,5 +80,31 @@ export class CreepStocker extends CreepSupport {
     } else {
       this.creep.memory.state = this.STATE_REFUELING;
     }
+  }
+
+  public getOutContainers(roomHandler: RoomHandler) {
+    let containers = roomHandler.room.find<Container>(FIND_STRUCTURES, {
+      filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER && _.sum(c.store) < c.storeCapacity,
+    });
+
+    let sources = roomHandler.room.find<Source>(FIND_SOURCES);
+
+    let outContainers = new Array<Container>();
+
+    for (let container of containers) {
+      let isNearSource = false;
+      for (let source of sources) {
+        if (container.pos.isNearTo(source.pos)) {
+          isNearSource = true;
+          break;
+        }
+      }
+      if (isNearSource) {
+        continue;
+      }
+      outContainers.push(container);
+    }
+
+    return outContainers;
   }
 }

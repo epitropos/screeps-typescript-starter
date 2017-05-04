@@ -4,8 +4,7 @@ import {Message} from "./Message";
 
 export class MessageCloneCreep extends Message {
   public bodyParts: string[];
-  public destinationRoomName: string;
-  public destinationPosition: RoomPosition;
+  public creepType: string;
   public memory: {};
 
   constructor () {

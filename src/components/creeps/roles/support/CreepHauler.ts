@@ -91,10 +91,13 @@ export class CreepHauler extends CreepSupport {
       let storage = this.creep.room.storage;
       if (storage) {
         if (_.sum(storage.store) < storage.storeCapacity) {
-          if (this.creep.carry[RESOURCE_ENERGY] || 0 < _.sum(this.creep.carry)) {
+          if (_.sum(this.creep.carry) > 0) {
             this.moveToDropResource(this.creep, storage);
           }
-          this.moveToDropEnergy(this.creep, storage);
+          // if (this.creep.carry[RESOURCE_ENERGY] || 0 < _.sum(this.creep.carry)) {
+          //   this.moveToDropResource(this.creep, storage);
+          // }
+          // this.moveToDropEnergy(this.creep, storage);
         }
       }
     }

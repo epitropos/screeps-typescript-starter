@@ -1,4 +1,5 @@
 // import * as Config from "../../config/config";
+import * as C from "../../config/constants";
 import {log} from "../../lib/logger/log";
 import {Message} from "./Message";
 import {MessageCloneCreep} from "./MessageCloneCreep";
@@ -16,18 +17,56 @@ export class MessageHandler {
     // No operation.
   }
 
-  public test() {
+  public testSend() {
+    let scouts = Game.rooms.W7N9.find(FIND_MY_CREEPS, {
+      filter: (c: Creep) => c.memory.role === C.SCOUT,
+    });
+
+    if (scouts && scouts.length > 0) {
+      log.info(scouts.length + " scouts found");
+      return;
+    }
+
     let messages = Memory.messages.cloneCreep;
     log.info("messages: " + messages);
     log.info("messages.length: " + messages.length);
     if (messages && messages.length || 0 === 0) {
-      log.info("here");
+      // let creep = new Creep("asdf");
+      // let roomHandler = new RoomHandler(Game.rooms.W7N9);
+      // let myCreep = new CreepScout(creep, roomHandler);
+
       let cloneMyCreep = new MessageCloneCreep();
-      cloneMyCreep.bodyParts = [WORK, CARRY, MOVE];
-      cloneMyCreep.destinationPosition = new RoomPosition(30, 30, "N1W1");
-      cloneMyCreep.memory = { foo: "bar", role: "myCreep" };
+      // cloneMyCreep.bodyParts = myCreep.creep.body.map<string>(bp => bp.type);
+      // cloneMyCreep.creepType = myCreep.creep.memory.role;
+      // cloneMyCreep.memory = { destinationPosition: myCreep.creep.pos, role: myCreep.creep.memory.role };
+      cloneMyCreep.bodyParts = [MOVE];
+      cloneMyCreep.creepType = C.SCOUT;
+      cloneMyCreep.memory = { destinationPosition: new RoomPosition(29, 19, "W7N9"), role: C.SCOUT };
       this.sendMessage(MessageHandler.MESSAGE_TYPE_CLONE_CREEP, cloneMyCreep);
     }
+  }
+
+  public testReceive(messageType: string) {
+    let message = <MessageCloneCreep> this.getNextMessage(messageType);
+    if (message === undefined) {
+      log.info("MESSAGE undefined");
+      return;
+    } else {
+      log.info("MESSAGE " + JSON.stringify(message));
+    }
+
+    let room = Game.rooms.W7N9;
+    let spawns = room.find<Spawn>(FIND_MY_SPAWNS);
+    if (spawns === undefined || spawns.length === 0) {
+      return;
+    }
+
+    let spawn = spawns[0];
+    let creepName = spawn.createCreep(
+      message.bodyParts,
+      message.creepType + Memory.uuid++,
+      message.memory);
+    log.info("Created creep: " + creepName);
   }
 
   public getNextCreepMessage(creep: Creep): Message {
@@ -36,35 +75,59 @@ export class MessageHandler {
   }
 
   public getNextMessage(messageType: string): Message | undefined {
-    if (messageType === MessageHandler.MESSAGE_TYPE_CLONE_CREEP) {
-      return this.getNextMessageCloneCreep();
+    // if (messageType === MessageHandler.MESSAGE_TYPE_CLONE_CREEP) {
+    //   return this.getNextMessageCloneCreep();
+    // }
+
+    // return undefined;
+
+    let messages = Memory.messages[messageType];
+    if (messages === undefined || messages.length === 0) {
+      return undefined;
+    }
+
+    for (let messageId in messages) {
+      let serializedMessage = messages[messageId];
+      delete Memory.messages[messageType][messageId];
+      return JSON.parse(serializedMessage);
     }
 
     return undefined;
   }
 
-  public getNextMessageCloneCreep(): Message | undefined {
-    let cloneCreepMessages = Memory.messages.cloneCreep;
-    if (!cloneCreepMessages) {
-      return undefined;
-    }
-    let cloneCreepMesage = cloneCreepMessages[0];
-    log.info("cloneCreepMesage: " + cloneCreepMesage);
-  }
+  // public getNextMessageCloneCreep(): Message | undefined {
+  //   let cloneCreepMessages = Memory.messages.cloneCreep;
+  //   if (!cloneCreepMessages) {
+  //     return undefined;
+  //   }
+
+  //   for (let cloneCreepMessageId in cloneCreepMessages) {
+  //     let cloneCreepMesage = cloneCreepMessages[cloneCreepMessageId];
+  //     log.info("cloneCreepMesage: " + cloneCreepMesage);
+
+  //     if (cloneCreepMesage) {
+  //       delete Memory.messages.cloneCreep[cloneCreepMessageId];
+  //       return cloneCreepMesage;
+  //     }
+  //   }
+
+  //   return undefined;
+  // }
 
   public sendMessage(messageType: string, payload: Message) {
-    if (messageType === MessageHandler.MESSAGE_TYPE_CLONE_CREEP) {
-      this.sendMessageCloneCreep(<MessageCloneCreep> payload);
-    }
+    // if (messageType === MessageHandler.MESSAGE_TYPE_CLONE_CREEP) {
+    //   this.sendMessageCloneCreep(<MessageCloneCreep> payload);
+    // }
+    let nextMessageId = Memory.messages.nextMessageId++;
+    Memory.messages[messageType][nextMessageId] = JSON.stringify(payload);
   }
 
-  public sendMessageCloneCreep(payload: MessageCloneCreep) {
-    let nextMessageId = Memory.messages.nextMessageId;
-    Memory.messages.cloneCreep.nextMessageId++;
-    Memory.messages.cloneCreep[nextMessageId] = {};
-    Memory.messages.cloneCreep[nextMessageId].bodyParts = payload.bodyParts;
-    Memory.messages.cloneCreep[nextMessageId].destinationRoomName = payload.destinationRoomName;
-    Memory.messages.cloneCreep[nextMessageId].destinationPosition = payload.destinationPosition;
-    Memory.messages.cloneCreep[nextMessageId].memory = JSON.stringify(payload.memory);
-  }
+  // public sendMessageCloneCreep(payload: MessageCloneCreep) {
+  //   let nextMessageId = Memory.messages.nextMessageId++;
+  //   Memory.messages.cloneCreep[nextMessageId] = {};
+  //   Memory.messages.cloneCreep[nextMessageId].bodyParts = payload.bodyParts;
+  //   Memory.messages.cloneCreep[nextMessageId].destinationRoomName = payload.destinationRoomName;
+  //   Memory.messages.cloneCreep[nextMessageId].destinationPosition = payload.destinationPosition;
+  //   Memory.messages.cloneCreep[nextMessageId].memory = JSON.stringify(payload.memory);
+  // }
 }
