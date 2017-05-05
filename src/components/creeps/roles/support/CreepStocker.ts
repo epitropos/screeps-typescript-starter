@@ -89,6 +89,7 @@ export class CreepStocker extends CreepSupport {
 
     let sources = roomHandler.room.find<Source>(FIND_SOURCES);
 
+    let maybeContainers = new Array<Container>();
     let outContainers = new Array<Container>();
 
     for (let container of containers) {
@@ -100,11 +101,9 @@ export class CreepStocker extends CreepSupport {
         }
       }
       if (isNearSource) {
-        continue;
+        outContainers.push(container);
+      } else {
+        maybeContainers.push(container);
       }
-      outContainers.push(container);
     }
-
-    return outContainers;
-  }
 }
