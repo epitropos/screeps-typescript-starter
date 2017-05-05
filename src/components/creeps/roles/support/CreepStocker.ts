@@ -41,13 +41,18 @@ export class CreepStocker extends CreepSupport {
     let state = this.creep.memory.state || this.STATE_REFUELING;
 
     if (state === this.STATE_REFUELING) {
-      let storage = this.creep.room.storage;
-      if (storage) {
-        let availableEnergy = storage.store[RESOURCE_ENERGY] || 0;
-        if (availableEnergy > 0) {
-          this.moveToWithdrawFromStorage(this.creep, storage);
+      // let asdf = Game.getObjectById<Container>("aeca720c8474a69");
+      // if (asdf) {
+      //   this.moveToWithdraw(this.creep, asdf);
+      // } else {
+        let storage = this.creep.room.storage;
+        if (storage) {
+          let availableEnergy = storage.store[RESOURCE_ENERGY] || 0;
+          if (availableEnergy > 0) {
+            this.moveToWithdrawFromStorage(this.creep, storage);
+          }
         }
-      }
+      // }
     } else if (state === this.STATE_DELIVERING) {
       let extensions = this.roomHandler.loadExtensions(this.creep.room);
       if (extensions.length > 0) {
@@ -87,23 +92,56 @@ export class CreepStocker extends CreepSupport {
       filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER && _.sum(c.store) < c.storeCapacity,
     });
 
+    // Remove containers near energy sources.
     let sources = roomHandler.room.find<Source>(FIND_SOURCES);
-
-    let maybeContainers = new Array<Container>();
-    let outContainers = new Array<Container>();
-
-    for (let container of containers) {
-      let isNearSource = false;
+    _.remove(containers, function(container) {
       for (let source of sources) {
         if (container.pos.isNearTo(source.pos)) {
-          isNearSource = true;
-          break;
+          return true;
         }
       }
-      if (isNearSource) {
-        outContainers.push(container);
-      } else {
-        maybeContainers.push(container);
-      }
+      return false;
+    });
+
+    // Remove containers near mineral sources.
+    let minerals = roomHandler.room.find<Mineral>(FIND_MINERALS);
+    for (let mineral of minerals) {
+      _.remove(containers, function(c) { return c.pos.isNearTo(mineral.pos); });
     }
+
+    return containers;
+
+    // // let maybeContainers = new Array<Container>();
+    // let outContainers = new Array<Container>();
+
+    // for (let container of containers) {
+    //   let isNearSource = false;
+    //   for (let source of sources) {
+    //     if (container.pos.isNearTo(source.pos)) {
+    //       isNearSource = true;
+    //       break;
+    //     }
+    //   }
+    //   if (!isNearSource) {
+    //     outContainers.push(container);
+    //     continue;
+    //   }
+
+    //   let minerals = roomHandler.room.find<Mineral>(FIND_MINERALS);
+    //   for (let mineral of minerals) {
+    //     if (container.pos.isNearTo(mineral.pos)) {
+    //       isNearSource = true;
+    //       break;
+    //     }
+    //   }
+    //   if (!isNearSource) {
+    //     outContainers.push(container);
+    //     continue;
+    //   }
+
+    //   // maybeContainers.push(container);
+    // }
+
+    // return outContainers;
+  }
 }

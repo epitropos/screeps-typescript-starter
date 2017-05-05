@@ -1,12 +1,12 @@
 // import * as Config from "../../../../config/config";
-// import {log} from "../../../../lib/logger/log";
+import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepHauler extends CreepSupport {
   public static getBodyParts(energyAvailable: number) {
     let bodyParts: string[] = [];
-    let bodySegmentSize = 250;
+    let bodySegmentSize = 150;
 
     let bodyPartsSize = 0;
 
@@ -81,6 +81,7 @@ export class CreepHauler extends CreepSupport {
       // Go to assigned container.
       let containerId = this.creep.memory.containerId;
       let container = <Container> Game.getObjectById(containerId);
+      log.info(this.creep.name + " " + container);
       if (!container) {
         this.creep.suicide();
       }
@@ -102,7 +103,7 @@ export class CreepHauler extends CreepSupport {
       }
     }
 
-    if (this.creep.carry[RESOURCE_ENERGY] || 0 > 0) {
+    if (_.sum(this.creep.carry) || 0 > 0) {
       this.creep.memory.state = this.STATE_DELIVERING;
     } else {
       this.creep.memory.state = this.STATE_REFUELING;

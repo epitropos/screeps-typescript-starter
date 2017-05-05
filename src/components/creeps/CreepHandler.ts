@@ -3,6 +3,7 @@
 import * as C from "../../config/constants";
 import {RoomHandler} from "../rooms/RoomHandler";
 import {CreepBuilder} from "./roles/support/CreepBuilder";
+import {CreepExtractor} from "./roles/support/CreepExtractor";
 import {CreepHauler} from "./roles/support/CreepHauler";
 import {CreepMiner} from "./roles/support/CreepMiner";
 import {CreepStocker} from "./roles/support/CreepStocker";
@@ -23,6 +24,10 @@ export class CreepHandler {
       case C.BUILDER:
         let builder = new CreepBuilder(this.creep, this.roomHandler);
         builder.run();
+        break;
+      case C.EXTRACTOR:
+        let extractor = new CreepExtractor(this.creep, this.roomHandler);
+        extractor.run();
         break;
       case C.HAULER:
         let hauler = new CreepHauler(this.creep, this.roomHandler);

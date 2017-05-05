@@ -3,6 +3,7 @@ import * as C from "../../config/constants";
 import {log} from "../../lib/logger/log";
 import {RoomHandler} from "../rooms/RoomHandler";
 import {CreepBuilder} from "./roles/support/CreepBuilder";
+import {CreepExtractor} from "./roles/support/CreepExtractor";
 import {CreepHauler} from "./roles/support/CreepHauler";
 import {CreepMiner} from "./roles/support/CreepMiner";
 import {CreepStocker} from "./roles/support/CreepStocker";
@@ -20,12 +21,23 @@ export class CreepPopulationHandler {
     this.buildMissingMiners(this.roomHandler);
     this.buildMissingHaulers(this.roomHandler);
 
+    this.buildMissingExtractors(this.roomHandler);
+    this.buildMissingMineralHaulers(this.roomHandler);
+
     this.buildMissingStockers(this.roomHandler);
     this.buildMissingBuilders(this.roomHandler);
     this.buildMissingUpgraders(this.roomHandler);
   }
 
   public buildMissingStockers(roomHandler: RoomHandler) {
+    // TODO: Combine with spawn further in method.
+    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
+      filter: (s: Spawn) => s.spawning !== null,
+    });
+    if (!spawn2) {
+      return;
+    }
+
     let creeps = roomHandler.room.find(FIND_MY_CREEPS, {
       filter: (c: Creep) => c.memory.role === C.STOCKER,
     });
@@ -44,6 +56,14 @@ export class CreepPopulationHandler {
   }
 
   public buildMissingBuilders(roomHandler: RoomHandler) {
+    // TODO: Combine with spawn further in method.
+    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
+      filter: (s: Spawn) => s.spawning !== null,
+    });
+    if (!spawn2) {
+      return;
+    }
+
     let creeps = roomHandler.room.find(FIND_MY_CREEPS, {
       filter: (c: Creep) => c.memory.role === C.BUILDER,
     });
@@ -62,6 +82,14 @@ export class CreepPopulationHandler {
   }
 
   public buildMissingUpgraders(roomHandler: RoomHandler) {
+    // TODO: Combine with spawn further in method.
+    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
+      filter: (s: Spawn) => s.spawning !== null,
+    });
+    if (!spawn2) {
+      return;
+    }
+
     let creeps = roomHandler.room.find(FIND_MY_CREEPS, {
       filter: (c: Creep) => c.memory.role === C.UPGRADER,
     });
@@ -80,6 +108,14 @@ export class CreepPopulationHandler {
   }
 
   public buildMissingHaulers(roomHandler: RoomHandler) {
+    // TODO: Combine with spawn further in method.
+    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
+      filter: (s: Spawn) => s.spawning !== null,
+    });
+    if (!spawn2) {
+      return;
+    }
+
     log.info("Get sources from memory.");
     let sourceIds = roomHandler.room.memory.sources;
     if (sourceIds === undefined) {
@@ -115,16 +151,179 @@ export class CreepPopulationHandler {
       let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
       if (spawns.length > 0) {
         let spawn = spawns[0];
-        let haulerName = spawn.createCreep(bodyParts, C.HAULER + Memory.uuid++, {
+        let haulerName = C.HAULER + Memory.uuid++;
+        let result = spawn.createCreep(bodyParts, haulerName, {
           containerId: containerId,
           role: C.HAULER,
         });
-        roomHandler.room.memory.sources[source.id].haulerName = haulerName;
+        if (result === haulerName) {
+          roomHandler.room.memory.sources[source.id].haulerName = haulerName;
+        } else {
+          log.info(result + " happended trying to spawn " + haulerName);
+        }
+      }
+    }
+  }
+
+  public buildMissingMineralHaulers(roomHandler: RoomHandler) {
+    // TODO: Combine with spawn further in method.
+    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
+      filter: (s: Spawn) => s.spawning !== null,
+    });
+    if (!spawn2) {
+      return;
+    }
+
+    log.info("Get minerals from memory.");
+    let mineralIds = roomHandler.room.memory.minerals;
+    if (mineralIds === undefined) {
+      return;
+    }
+
+    for (let mineralId in mineralIds) {
+      let mineral = <Mineral> Game.getObjectById(mineralId);
+      if (!mineral) {
+        // TODO: Delete the memory entry.
+        continue;
+      }
+
+      let haulerName = roomHandler.room.memory.minerals[mineralId].haulerName;
+      if (haulerName) {
+        let hauler = Game.creeps[haulerName];
+        if (hauler) {
+          continue;
+        } else if (!hauler) {
+          roomHandler.room.memory.minerals[mineralId].haulerName = undefined;
+        }
+      }
+
+      let containerId = roomHandler.room.memory.minerals[mineralId].containerId;
+      let container = <Container> Game.getObjectById(containerId);
+      if (!container) {
+        // TODO: Delete the memory entry.
+        continue;
+      }
+
+      // Create hauler.
+      let bodyParts = CreepHauler.getBodyParts(roomHandler.room.energyCapacityAvailable);
+      let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
+      if (spawns.length > 0) {
+        let spawn = spawns[0];
+        let haulerName = C.HAULER + Memory.uuid++;
+        let result = spawn.createCreep(bodyParts, haulerName, {
+          containerId: containerId,
+          role: C.HAULER,
+        });
+        if (result === haulerName) {
+          roomHandler.room.memory.minerals[mineral.id].haulerName = haulerName;
+        } else {
+          log.info(result + " happended trying to spawn " + haulerName);
+        }
+      }
+    }
+  }
+
+  public buildMissingExtractors(roomHandler: RoomHandler) {
+    // TODO: Combine with spawn further in method.
+    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
+      filter: (s: Spawn) => s.spawning !== null,
+    });
+    if (!spawn2) {
+      return;
+    }
+
+    // Verify minerals are in memory.
+    log.info("Get minerals from memory.");
+    let minerals = roomHandler.room.memory.minerals;
+    if (minerals === undefined) {
+      roomHandler.room.memory.minerals = {};
+
+      log.info("Find minerals.");
+      let foundMinerals = roomHandler.room.find<Mineral>(FIND_MINERALS);
+      for (let foundMineral of foundMinerals) {
+        log.info("Create memory for mineral: " + foundMineral.id);
+        roomHandler.room.memory.minerals[foundMineral.id] = {};
+        log.info("Save id for mineral: " + foundMineral.id);
+        roomHandler.room.memory.minerals[foundMineral.id].id = foundMineral.id;
+      }
+      minerals = roomHandler.room.memory.minerals;
+    }
+
+    log.info("minerals: " + JSON.stringify(minerals));
+    for (let mineralId in minerals) {
+      log.info("mineral: " + mineralId);
+      let mineral = <Mineral> Game.getObjectById(mineralId);
+
+      // Verify containers are in memory.
+      let containerId = roomHandler.room.memory.minerals[mineral.id].containerId;
+      log.info("ContainerId in memory: " + containerId);
+      let container = null;
+      if (containerId === undefined) {
+        let possibleContainers = roomHandler.room.find<Container>(FIND_STRUCTURES, {
+          filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER
+          && c.pos.isNearTo(mineral),
+        });
+        log.info("Possible Containers: " + possibleContainers.length);
+        let index = 0;
+        for (let possibleContainer of possibleContainers) {
+          if (index++ === 0) {
+            roomHandler.room.memory.minerals[mineralId].containerId = possibleContainer.id;
+            containerId = possibleContainer.id;
+            container = possibleContainer;
+            log.info("Container found at (" + container.pos.x + "," + container.pos.x + ")");
+          } else {
+            possibleContainer.destroy();
+          }
+        }
+      } else {
+        container = Game.getObjectById<Container>(containerId);
+      }
+
+      if (container !== null) {
+        // Verify miners are in memory.
+        let extractorName = roomHandler.room.memory.minerals[mineral.id].extractorName;
+        log.info("minerName in memory: " + extractorName);
+        if (extractorName === undefined) {
+          let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
+          if (spawns.length > 0) {
+            let spawn = spawns[0];
+            let bodyParts = CreepExtractor.getBodyParts(roomHandler.room.energyCapacityAvailable);
+            let extractorName = C.EXTRACTOR + Memory.uuid++
+            let result = spawn.createCreep(bodyParts, extractorName, {
+              containerId: container.id,
+              mineralId: mineral.id,
+              role: C.EXTRACTOR,
+            });
+            log.info("Extractor spawning: " + extractorName);
+            if (result === extractorName) {
+              roomHandler.room.memory.minerals[mineral.id].extractorName = extractorName;
+            } else {
+              log.info(result + " happended trying to spawn " + extractorName);
+            }
+          }
+        } else {
+          // TODO: Remove this once creep replacement requests works.
+          // Reset extractor name.
+          let extractor = Game.creeps[extractorName];
+          if (!extractor) {
+            roomHandler.room.memory.minerals[mineral.id].extractorName = undefined;
+          }
+        }
+      } else {
+        log.warning("Mineral needs container at (" + mineral.pos.x + "," + mineral.pos.y + ")");
       }
     }
   }
 
   public buildMissingMiners(roomHandler: RoomHandler) {
+    // TODO: Combine with spawn further in method.
+    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
+      filter: (s: Spawn) => s.spawning !== null,
+    });
+    if (!spawn2) {
+      return;
+    }
+
     // Verify sources are in memory.
     log.info("Get sources from memory.");
     let sources = roomHandler.room.memory.sources;
@@ -181,13 +380,18 @@ export class CreepPopulationHandler {
           if (spawns.length > 0) {
             let spawn = spawns[0];
             let bodyParts = CreepMiner.getBodyParts(roomHandler.room.energyCapacityAvailable);
-            let minerName = spawn.createCreep(bodyParts, "M" + Memory.uuid++, {
+            let minerName = C.MINER + Memory.uuid++;
+            let result = spawn.createCreep(bodyParts, minerName, {
               containerId: container.id,
               role: C.MINER,
               sourceId: source.id,
             });
             log.info("Miner spawning: " + minerName);
-            roomHandler.room.memory.sources[source.id].minerName = minerName;
+            if (result === minerName) {
+              roomHandler.room.memory.sources[source.id].minerName = minerName;
+            } else {
+              log.info(result + " happended trying to spawn " + minerName);
+            }
           }
         } else {
           // TODO: Remove this once creep replacement requests works.

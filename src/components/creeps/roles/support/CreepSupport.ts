@@ -12,6 +12,10 @@ export class CreepSupport extends CreepBase {
     super.run();
   }
 
+  public tryHarvestMineral(creep: Creep, target: Mineral): number {
+    return creep.harvest(target);
+  }
+
   public tryHarvest(creep: Creep, target: Source): number {
     return creep.harvest(target);
   }
@@ -23,13 +27,14 @@ export class CreepSupport extends CreepBase {
   }
 
   public tryResourceDropOff(creep: Creep, target: Spawn | Structure): number {
-    for (let resource in this.creep.carry) {
-      let amountTransferred = creep.transfer(target, resource);
-      if (amountTransferred) {
-        return amountTransferred;
-      }
+    let resource = _.findKey(this.creep.carry);
+    let amountTransferred = creep.transfer(target, resource);
+    // log.info(creep.name + " transferred " + amountTransferred)
+    if (amountTransferred) {
+      return amountTransferred;
+    } else {
+      return 0;
     }
-    return 0;
   }
 
   public tryEnergyDropOff(creep: Creep, target: Spawn | Structure): number {
@@ -77,12 +82,20 @@ export class CreepSupport extends CreepBase {
   }
 
   public tryWithdraw(creep: Creep, target: Container): number {
+    // if (target) {
+    //   let amountToWithdraw = creep.carryCapacity - _.sum(creep.carry);
+    //   if (amountToWithdraw > target.store[RESOURCE_ENERGY]) {
+    //     amountToWithdraw = target.store[RESOURCE_ENERGY];
+    //   }
+    //   return creep.withdraw(target, RESOURCE_ENERGY, amountToWithdraw);
+    // }
     if (target) {
+      let key = _.findKey(target.store);
       let amountToWithdraw = creep.carryCapacity - _.sum(creep.carry);
-      if (amountToWithdraw > target.store[RESOURCE_ENERGY]) {
-        amountToWithdraw = target.store[RESOURCE_ENERGY];
+      if (amountToWithdraw > target.store[key]) {
+        amountToWithdraw = target.store[key];
       }
-      return creep.withdraw(target, RESOURCE_ENERGY, amountToWithdraw);
+      creep.withdraw(target, key, amountToWithdraw);
     }
     return 0;
   }

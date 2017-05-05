@@ -6,11 +6,14 @@ import {RoomHandler} from "../../../rooms/RoomHandler";
 export class CreepExtractor extends CreepSupport {
   public static getBodyParts(energyAvailable: number) {
     let bodyParts: string[] = [];
-    let bodySegmentSize = 100;
+    let bodySegmentSize = 450;
 
     let bodyPartsSize = 0;
 
     while (bodyPartsSize + bodySegmentSize < energyAvailable) {
+      bodyParts.push(WORK);
+      bodyParts.push(WORK);
+      bodyParts.push(WORK);
       bodyParts.push(WORK);
       bodyParts.push(MOVE);
       bodyPartsSize += bodySegmentSize;
@@ -26,12 +29,12 @@ export class CreepExtractor extends CreepSupport {
     });
   }
 
+  public containerId: string;
+  public mineralId: string;
+
   constructor (creep: Creep, roomHandler: RoomHandler) {
     super(creep, roomHandler);
   }
-
-  public containerId: string;
-  public sourceId: string;
 
   public run() {
     super.run();
@@ -41,8 +44,8 @@ export class CreepExtractor extends CreepSupport {
       return;
     }
 
-    this.sourceId = this.creep.memory.sourceId;
-    if (this.sourceId === undefined) {
+    this.mineralId = this.creep.memory.mineralId;
+    if (this.mineralId === undefined) {
       return;
     }
 
@@ -55,17 +58,17 @@ export class CreepExtractor extends CreepSupport {
       return;
     }
 
-    if (this.sourceId === undefined) {
-      let sources = this.creep.room.find<Source>(FIND_SOURCES, {
-        filter: (s: Source) => this.creep.pos.isNearTo(s),
+    if (this.mineralId === undefined) {
+      let minerals = this.creep.room.find<Mineral>(FIND_MINERALS, {
+        filter: (s: Mineral) => this.creep.pos.isNearTo(s),
       });
-      if (sources.length > 0) {
-        let source = sources[0];
-        this.sourceId = source.id;
-        this.creep.memory.sourceId = source.id;
+      if (minerals.length > 0) {
+        let mineral = minerals[0];
+        this.mineralId = mineral.id;
+        this.creep.memory.mineralId = mineral.id;
       }
     }
 
-    this.tryHarvest(this.creep, <Source> Game.getObjectById(this.sourceId));
+    this.tryHarvestMineral(this.creep, <Mineral> Game.getObjectById(this.mineralId));
   }
 }
