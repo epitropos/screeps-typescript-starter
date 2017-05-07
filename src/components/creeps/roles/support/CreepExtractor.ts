@@ -5,28 +5,6 @@ import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepExtractor extends CreepSupport {
   public static getBodyParts(energyAvailable: number) {
-    // let bodyParts: string[] = [];
-    // let bodySegmentSize = 450;
-
-    // let bodyPartsSize = 0;
-
-    // while (bodyPartsSize + bodySegmentSize < energyAvailable) {
-    //   bodyParts.push(WORK);
-    //   bodyParts.push(WORK);
-    //   bodyParts.push(WORK);
-    //   bodyParts.push(WORK);
-    //   bodyParts.push(MOVE);
-    //   bodyPartsSize += bodySegmentSize;
-    // }
-
-    // // TODO: Move function into CreepSupport.
-    // return _.sortBy(bodyParts, function(bodyPart) {
-    //   switch (bodyPart) {
-    //     case MOVE: return 2;
-    //     case WORK: return 1;
-    //     default: return 99;
-    //   }
-    // });
     let bodyParts: string[] = [WORK, MOVE];
     let bodySegmentSize = 100;
 

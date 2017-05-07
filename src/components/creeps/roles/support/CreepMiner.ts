@@ -5,10 +5,6 @@ import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepMiner extends CreepSupport {
   public static getBodyParts(energyAvailable: number) {
-    // if (energyAvailable > 0) {
-    //   return [WORK, WORK, WORK, WORK, WORK, MOVE];
-    // }
-    // return [WORK, WORK, WORK, WORK, WORK, MOVE];
     let bodyParts: string[] = [WORK, MOVE];
     let bodySegmentSize = 100;
 
