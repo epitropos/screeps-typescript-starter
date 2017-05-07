@@ -1,28 +1,47 @@
 // import * as Config from "../../../../config/config";
-// import {log} from "../../../../lib/logger/log";
+import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepExtractor extends CreepSupport {
   public static getBodyParts(energyAvailable: number) {
-    let bodyParts: string[] = [];
-    let bodySegmentSize = 450;
+    // let bodyParts: string[] = [];
+    // let bodySegmentSize = 450;
 
-    let bodyPartsSize = 0;
+    // let bodyPartsSize = 0;
+
+    // while (bodyPartsSize + bodySegmentSize < energyAvailable) {
+    //   bodyParts.push(WORK);
+    //   bodyParts.push(WORK);
+    //   bodyParts.push(WORK);
+    //   bodyParts.push(WORK);
+    //   bodyParts.push(MOVE);
+    //   bodyPartsSize += bodySegmentSize;
+    // }
+
+    // // TODO: Move function into CreepSupport.
+    // return _.sortBy(bodyParts, function(bodyPart) {
+    //   switch (bodyPart) {
+    //     case MOVE: return 2;
+    //     case WORK: return 1;
+    //     default: return 99;
+    //   }
+    // });
+    let bodyParts: string[] = [WORK, MOVE];
+    let bodySegmentSize = 100;
+
+    let bodyPartsSize = 150;
 
     while (bodyPartsSize + bodySegmentSize < energyAvailable) {
       bodyParts.push(WORK);
-      bodyParts.push(WORK);
-      bodyParts.push(WORK);
-      bodyParts.push(WORK);
-      bodyParts.push(MOVE);
       bodyPartsSize += bodySegmentSize;
     }
 
     // TODO: Move function into CreepSupport.
     return _.sortBy(bodyParts, function(bodyPart) {
       switch (bodyPart) {
-        case MOVE: return 2;
+        case CARRY: return 2;
+        case MOVE: return 3;
         case WORK: return 1;
         default: return 99;
       }
@@ -54,6 +73,7 @@ export class CreepExtractor extends CreepSupport {
       && this.creep.pos.y === container.pos.y
       && this.creep.pos.roomName === container.pos.roomName;
     if (!inPosition) {
+      log.info(this.creep.name + " move to " + container.structureType + " (" + container.id + ")");
       this.moveTo(this.creep, container);
       return;
     }
@@ -69,6 +89,13 @@ export class CreepExtractor extends CreepSupport {
       }
     }
 
-    this.tryHarvestMineral(this.creep, <Mineral> Game.getObjectById(this.mineralId));
+    let mineral = <Mineral> Game.getObjectById(this.mineralId);
+    if (!mineral || mineral.mineralAmount === 0) {
+      // TODO: return creep to spawn and recycle it.
+      this.creep.suicide();
+      return;
+    }
+
+    this.tryHarvestMineral(this.creep, mineral);
   }
 }

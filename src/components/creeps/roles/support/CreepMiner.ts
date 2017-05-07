@@ -5,11 +5,30 @@ import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepMiner extends CreepSupport {
   public static getBodyParts(energyAvailable: number) {
-    if (energyAvailable > 0) {
-      return [WORK, WORK, WORK, WORK, WORK, MOVE];
+    // if (energyAvailable > 0) {
+    //   return [WORK, WORK, WORK, WORK, WORK, MOVE];
+    // }
+    // return [WORK, WORK, WORK, WORK, WORK, MOVE];
+    let bodyParts: string[] = [WORK, MOVE];
+    let bodySegmentSize = 100;
+
+    let bodyPartsSize = 50 + 100;
+    let bodyPartsSizeMax = 50 + 100 + 100 + 100 + 100 + 100;
+
+    while (bodyPartsSize + bodySegmentSize < energyAvailable && bodyPartsSize < bodyPartsSizeMax) {
+      bodyParts.push(WORK);
+      bodyPartsSize += bodySegmentSize;
     }
 
-    return [WORK, WORK, WORK, WORK, WORK, MOVE];
+    // TODO: Move function into CreepSupport.
+    return _.sortBy(bodyParts, function(bodyPart) {
+      switch (bodyPart) {
+        case CARRY: return 2;
+        case MOVE: return 3;
+        case WORK: return 1;
+        default: return 99;
+      }
+    });
   }
 
   public containerId: string;

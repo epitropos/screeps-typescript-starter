@@ -1,11 +1,12 @@
 // import * as Config from "../../config/config";
-// import {log} from "../../lib/logger/log";
+import {log} from "../../lib/logger/log";
 import * as C from "../../config/constants";
 import {RoomHandler} from "../rooms/RoomHandler";
 import {CreepBuilder} from "./roles/support/CreepBuilder";
 import {CreepExtractor} from "./roles/support/CreepExtractor";
 import {CreepHauler} from "./roles/support/CreepHauler";
 import {CreepMiner} from "./roles/support/CreepMiner";
+import {CreepScout} from "./roles/military/CreepScout";
 import {CreepStocker} from "./roles/support/CreepStocker";
 import {CreepUpgrader} from "./roles/support/CreepUpgrader";
 
@@ -45,7 +46,12 @@ export class CreepHandler {
         let upgrader = new CreepUpgrader(this.creep, this.roomHandler);
         upgrader.run();
         break;
+      case C.SCOUT:
+        let scout = new CreepScout(this.creep, this.roomHandler);
+        scout.run();
+        break;
       default:
+        log.error("UNKNOWN Creep type: " + JSON.stringify(this.creep));
         break;
     }
   }
