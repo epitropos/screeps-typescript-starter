@@ -120,7 +120,7 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.UPGRADER,
     });
     log.info(creeps.length + " upgraders found");
-    if (creeps.length < 2) {
+    if (creeps.length < 1) {
       let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
       if (spawns.length > 0) {
         let spawn = spawns[0];
