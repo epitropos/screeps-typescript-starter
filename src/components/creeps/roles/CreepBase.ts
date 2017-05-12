@@ -16,7 +16,7 @@ export class CreepBase {
     this.creep.say(this.creep.name);
 
     // let currentDestination = this.creep.memory.currentDestination;
-    let finalDestination = this.creep.memory.finalDestination;
+    let finalDestination: RoomPosition = this.creep.memory.finalDestination;
 
     // // TODO: Test if object comparison works
     // if (this.creep.pos.roomName !== this.currentDestination.roomName) {
@@ -34,9 +34,11 @@ export class CreepBase {
     // }
 
     if (finalDestination !== undefined) {
-      if (this.creep.pos.x !== finalDestination.x || this.creep.pos.y !== finalDestination.y) {
-        log.info(this.creep.name + " moving to " + JSON.stringify(finalDestination));
-        this.moveTo(this.creep, finalDestination);
+      // TODO: WHY DOES FINALDESTINATION FAIL TO WORK BUT PULLING THE DATA OUT WORKS?!?
+      let asdf = new RoomPosition(finalDestination.x, finalDestination.y, finalDestination.roomName);
+      if (this.creep.pos.x !== asdf.x || this.creep.pos.y !== asdf.y) {
+        log.info(this.creep.name + " moving to " + JSON.stringify(asdf));
+        this.moveTo(this.creep, asdf);
         return;
       }
     }

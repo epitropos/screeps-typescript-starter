@@ -1,6 +1,6 @@
 import * as C from "../../config/constants";
 // import * as Config from "../../config/config";
-// import {log} from "../../lib/logger/log";
+import {log} from "../../lib/logger/log";
 import {RoomHandler} from "../rooms/RoomHandler";
 import {CreepBuilder} from "./roles/support/CreepBuilder";
 import {CreepExtractor} from "./roles/support/CreepExtractor";
@@ -283,34 +283,39 @@ export class CreepPopulationHandler {
     }
 
     for (let sourceId in sources) {
-      let source = sources[sourceId];
-      let minerPosition = new RoomPosition(30, 30, roomHandler.room.name);
+      let memorySource = sources[sourceId];
+      let source = <Source> Game.getObjectById(sourceId);
 
-      if (source.containerId === undefined) {
+      let minerName = memorySource.minerName;
+
+      if (minerName !== undefined) {
+        let miner = Game.creeps[minerName];
+        if (!miner) {
+          memorySource.minerName = minerName = undefined;
+        }
+      }
+
+      if (minerName === undefined) {
+        let minerPosition = undefined;
         let container = this.loadSourceContainer(roomHandler, source);
         if (container !== undefined) {
-          source.containerId = container.id;
           minerPosition = container.pos;
-        }
-
-        if (source.containerId === undefined) {
+        } else {
           let containerConstructionSite = this.loadSourceContainerConstructionSite(roomHandler, source);
           if (containerConstructionSite !== undefined) {
             minerPosition = containerConstructionSite.pos;
           }
         }
-      }
 
-      if (source.minerName === undefined) {
-        let minerName = this.loadSourceMiner(spawn, roomHandler, source, minerPosition);
-        if (minerName !== undefined) {
-          source.minerName = minerName;
+        if (minerPosition === undefined) {
+          log.error("Unable to determine final destination for miner for container: " + source.id);
+          return;
         }
-      } else {
-        // Remove dead miners.
-        let miner = Game.creeps[source.minerName];
-        if (miner === undefined) {
-          roomHandler.room.memory.sources[source.id].minerName = undefined;
+
+        // Create miner.
+        minerName = this.loadSourceMiner(spawn, roomHandler, source, minerPosition);
+        if (minerName !== undefined) {
+          roomHandler.room.memory.sources[source.id].minerName = memorySource.minerName = minerName;
         }
       }
     }
@@ -337,10 +342,12 @@ export class CreepPopulationHandler {
   }
 
   private loadSourceContainerConstructionSite(roomHandler: RoomHandler, source: Source) {
+    // log.info("Source: " + mySource.id + " - pos: " + JSON.stringify(mySource.pos));
     let constructionSites = roomHandler.room.find<ConstructionSite>(FIND_CONSTRUCTION_SITES, {
       filter: (c: ConstructionSite) => c.structureType === STRUCTURE_CONTAINER
       && c.pos.isNearTo(source),
     });
+    log.info(source.id + " - construction sites found: " + constructionSites.length);
     if (constructionSites.length > 0) {
       return constructionSites[0];
     }

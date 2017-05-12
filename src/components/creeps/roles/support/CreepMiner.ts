@@ -37,22 +37,24 @@ export class CreepMiner extends CreepSupport {
   public run() {
     super.run();
 
-    if (this.creep.pos !== this.creep.memory.finalDestination) {
+    if (this.creep.pos.x !== this.creep.memory.finalDestination.x
+    && this.creep.pos.y !== this.creep.memory.finalDestination.y
+    && this.creep.pos.roomName !== this.creep.memory.finalDestination.roomName) {
       return;
     }
 
     let sourceId = this.creep.memory.sourceId;
     if (sourceId === undefined) {
       let sources = this.creep.room.find<Source>(FIND_SOURCES, {
-        filter: (s: Source) => this.creep.pos.isNearTo(s),
+        filter: (s: Source) => s.pos.isNearTo(this.creep.pos),
       });
       if (sources.length > 0) {
         this.creep.memory.sourceId = sourceId = sources[0].id;
       }
     }
     if (sourceId !== undefined) {
-    let source = <Source> Game.getObjectById(sourceId);
-    this.tryHarvest(this.creep, source);
+      let source = <Source> Game.getObjectById(sourceId);
+      this.tryHarvest(this.creep, source);
     }
   }
 }
