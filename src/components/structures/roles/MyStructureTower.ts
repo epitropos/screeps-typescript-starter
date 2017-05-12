@@ -38,7 +38,7 @@ export class MyStructureTower extends MyStructureBase {
     }
 
     let structures = this.tower.room.find<Structure>(FIND_MY_STRUCTURES, {
-      filter: (s: Structure) => s.hits < s.hitsMax
+      filter: (s: Structure) => s.hits < s.hitsMax,
     });
     if (Config.ENABLE_DEBUG_MODE) {
       // log.info("Damaged structures: " + structures.length);

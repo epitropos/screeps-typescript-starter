@@ -1,5 +1,5 @@
 // import * as Config from "../../../../config/config";
-import {log} from "../../../../lib/logger/log";
+// import {log} from "../../../../lib/logger/log";
 import {CreepBase} from "../CreepBase";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
@@ -77,13 +77,10 @@ export class CreepSupport extends CreepBase {
 
   public moveToWithdraw(creep: Creep, target: Container): void {
     let isNearTo = creep.pos.isNearTo(target.pos);
-    log.info(creep.name + " is near to " + target.structureType + " (" + target.id + ") = " + isNearTo);
     if (isNearTo) {
-      log.info(creep.name + " try to withdraw from " + target.structureType + " (" + target.id + ")")
       this.tryWithdraw(creep, target);
     } else {
       // TODO: Consider storing path in memory and re-pathing if creep does not move for X ticks.
-      log.info(creep.name + " move to " + target.structureType + " (" + target.id + ")")
       this.moveTo(creep, target);
     }
     // log.info(creep.name + " - tryWithdraw - " + target);

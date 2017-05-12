@@ -1,6 +1,6 @@
 import * as C from "../../../config/constants";
 import * as Config from "../../../config/config";
-// import {log} from "../../../lib/logger/log";
+import {log} from "../../../lib/logger/log";
 import {RoomHandler} from "../../rooms/RoomHandler";
 
 export class CreepBase {
@@ -14,6 +14,38 @@ export class CreepBase {
 
   public run() {
     this.creep.say(this.creep.name);
+
+    // let currentDestination = this.creep.memory.currentDestination;
+    let finalDestination = this.creep.memory.finalDestination;
+
+    // // TODO: Test if object comparison works
+    // if (this.creep.pos.roomName !== this.currentDestination.roomName) {
+    //   this.creep.memory.currentDestination = this.recalculateCurrentDestination(this.creep, this.finalDestination);
+    // }
+
+    // if (this.creep.pos.x !== this.currentDestination.x || this.creep.pos.y !== this.currentDestination.y) {
+    //   this.moveTo(this.creep, this.currentDestination);
+    //   // TODO: Check if this screws up if the currentDestination is an exit resulting in room transfer.
+    // }
+
+    // if (this.creep.pos.roomName !== this.finalDestination.roomName) {
+    //   this.moveToRoom(this.creep, this.finalDestination);
+    //   return;
+    // }
+
+    if (finalDestination !== undefined) {
+      if (this.creep.pos.x !== finalDestination.x || this.creep.pos.y !== finalDestination.y) {
+        log.info(this.creep.name + " moving to " + JSON.stringify(finalDestination));
+        this.moveTo(this.creep, finalDestination);
+        return;
+      }
+    }
+  }
+
+  public recalculateCurrentDestination(creep: Creep, finalDestination: RoomPosition) {
+    return creep.pos.roomName === finalDestination.roomName
+      ? finalDestination
+      : creep.room.findExitTo(finalDestination.roomName);
   }
 
   /**
@@ -27,11 +59,14 @@ export class CreepBase {
   public moveTo(creep: Creep, target: Structure | RoomPosition): number {
     let result: number = 0;
 
-    // Execute moves by cached paths at first
     result = creep.moveTo(target, {ignoreCreeps: false, visualizePathStyle: {stroke: C.WHITE}});
-
+    log.info(creep.name + " moveTo " + JSON.stringify(target) + " resulted in " + result);
     return result;
   }
+
+  // public moveToRoom(creep: Creep, destination: RoomPosition) {
+  //   let exitPosition = creep.room.findExitTo(destination.roomName);
+  // }
 
   // TODO: Change this to needsMoreCargo.
   public needsToRefuel(creep: Creep): boolean {

@@ -37,13 +37,13 @@ export function loop() {
   }
 
   let messageHandler = new MessageHandler();
-  log.info("messageHandler: " + messageHandler);
+  // log.info("messageHandler: " + messageHandler);
   messageHandler.testSend();
   let message = messageHandler.testReceive(MessageHandler.MESSAGE_TYPE_CLONE_CREEP);
   if (message === undefined) {
-    log.info("MESSAGE: undefined");
+    // log.info("MESSAGE: undefined");
   } else {
-    log.info("MESSAGE: " + JSON.stringify(message));
+    // log.info("MESSAGE: " + JSON.stringify(message));
   }
 
   let gameHandler = new GameHandler(Game);
@@ -81,6 +81,8 @@ export function loop() {
         delete Memory.creeps[i];
     }
   }
+
+  log.info("CPU used: " + Game.cpu.getUsed());
 }
 
 function initializeMemory() {

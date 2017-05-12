@@ -1,5 +1,5 @@
 // import * as Config from "../../../../config/config";
-import {log} from "../../../../lib/logger/log";
+// import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
@@ -51,7 +51,6 @@ export class CreepExtractor extends CreepSupport {
       && this.creep.pos.y === container.pos.y
       && this.creep.pos.roomName === container.pos.roomName;
     if (!inPosition) {
-      log.info(this.creep.name + " move to " + container.structureType + " (" + container.id + ")");
       this.moveTo(this.creep, container);
       return;
     }

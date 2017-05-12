@@ -1,5 +1,5 @@
 // import * as Config from "../../../../config/config";
-import {log} from "../../../../lib/logger/log";
+// import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
@@ -84,7 +84,6 @@ export class CreepHauler extends CreepSupport {
       // Go to assigned container.
       let containerId = this.creep.memory.containerId;
       let container = <Container> Game.getObjectById(containerId);
-      log.info(this.creep.name + " " + container);
       if (!container) {
         this.creep.suicide();
       }

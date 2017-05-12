@@ -1,6 +1,6 @@
-// import * as Config from "../../config/config";
 import * as C from "../../config/constants";
-import {log} from "../../lib/logger/log";
+// import * as Config from "../../config/config";
+// import {log} from "../../lib/logger/log";
 import {RoomHandler} from "../rooms/RoomHandler";
 import {CreepBuilder} from "./roles/support/CreepBuilder";
 import {CreepExtractor} from "./roles/support/CreepExtractor";
@@ -12,144 +12,106 @@ import {CreepUpgrader} from "./roles/support/CreepUpgrader";
 export class CreepPopulationHandler {
   public roomHandler: RoomHandler;
 
+  public MAX_STOCKERS = 0;
+  public MAX_BUILDERS = 0;
+  public MAX_UPGRADERS = 0;
+  public MAX_HAULERS = 2;
+  public MAX_MINERAL_HAULERS = 0;
+  public MAX_EXTRACTORS = 0;
+  public MAX_MINERS = 2;
+
   constructor(roomHandler: RoomHandler) {
     this.roomHandler = roomHandler;
   }
 
   public run() {
+    let spawns = this.roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
+      filter: (s: Spawn) => s.spawning === null,
+    });
+    if (spawns.length === 0) {
+      return;
+    }
+
+    let spawn = spawns[0];
+
     // TODO: Change this to the miner requesting replacement.
-    let creep = this.buildMissingMiners(this.roomHandler);
+    let creep = this.buildMissingMiners(spawn, this.roomHandler);
     if (creep) { return; }
 
-    creep = this.buildMissingHaulers(this.roomHandler);
+    creep = this.buildMissingHaulers(spawn, this.roomHandler);
     if (creep) { return; }
 
-    creep = this.buildMissingExtractors(this.roomHandler);
+    creep = this.buildMissingExtractors(spawn, this.roomHandler);
     if (creep) { return; }
 
-    creep = this.buildMissingMineralHaulers(this.roomHandler);
+    creep = this.buildMissingMineralHaulers(spawn, this.roomHandler);
     if (creep) { return; }
 
-    creep = this.buildMissingStockers(this.roomHandler);
+    creep = this.buildMissingStockers(spawn, this.roomHandler);
     if (creep) { return; }
 
-    creep = this.buildMissingBuilders(this.roomHandler);
+    creep = this.buildMissingBuilders(spawn, this.roomHandler);
     if (creep) { return; }
 
-    creep = this.buildMissingUpgraders(this.roomHandler);
+    creep = this.buildMissingUpgraders(spawn, this.roomHandler);
     if (creep) { return; }
   }
 
-  public buildMissingStockers(roomHandler: RoomHandler) {
-    // TODO: Combine with spawn further in method.
-    // Check if the spawn is already spawning a creep.
-    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
-      filter: (s: Spawn) => s.spawning !== null,
-    });
-    if (!spawn2) {
-      return 0;
-    }
-
+  public buildMissingStockers(spawn: Spawn, roomHandler: RoomHandler) {
     let creeps = roomHandler.room.find(FIND_MY_CREEPS, {
       filter: (c: Creep) => c.memory.role === C.STOCKER,
     });
-    log.info(creeps.length + " stockers found");
-    if (creeps.length < 2) {
-      let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
-      if (spawns.length > 0) {
-        let spawn = spawns[0];
-        let bodyParts = CreepStocker.getBodyParts(roomHandler.room.energyAvailable);
-        let creepName = C.STOCKER + Memory.uuid++;
-        log.info("Creating stocker: " + creepName);
-        let result = spawn.createCreep(bodyParts, creepName, {
-          role: C.STOCKER,
-        });
-        if (result === creepName) {
-          return OK;
-        }
+    if (creeps.length < this.MAX_STOCKERS) {
+      let bodyParts = CreepStocker.getBodyParts(roomHandler.room.energyAvailable);
+      let creepName = C.STOCKER + Memory.uuid++;
+      let result = spawn.createCreep(bodyParts, creepName, {
+        role: C.STOCKER,
+      });
+      if (result === creepName) {
+        return OK;
       }
     }
 
     return 0;
   }
 
-  public buildMissingBuilders(roomHandler: RoomHandler) {
-    // TODO: Combine with spawn further in method.
-    // Check if the spawn is already spawning a creep.
-    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
-      filter: (s: Spawn) => s.spawning !== null,
-    });
-    if (!spawn2) {
-      return 0;
-    }
-
+  public buildMissingBuilders(spawn: Spawn, roomHandler: RoomHandler) {
     let creeps = roomHandler.room.find(FIND_MY_CREEPS, {
       filter: (c: Creep) => c.memory.role === C.BUILDER,
     });
-    log.info(creeps.length + " builders found");
-    if (creeps.length < 1) {
-      let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
-      if (spawns.length > 0) {
-        let spawn = spawns[0];
-        let bodyParts = CreepBuilder.getBodyParts(roomHandler.room.energyAvailable);
-        let creepName = C.BUILDER + Memory.uuid++;
-        log.info("Creating builder: " + creepName);
-        let result = spawn.createCreep(bodyParts, creepName, {
-          role: C.BUILDER,
-        });
-        if (result === creepName) {
-          return OK;
-        }
+    if (creeps.length < this.MAX_BUILDERS) {
+      let bodyParts = CreepBuilder.getBodyParts(roomHandler.room.energyAvailable);
+      let creepName = C.BUILDER + Memory.uuid++;
+      let result = spawn.createCreep(bodyParts, creepName, {
+        role: C.BUILDER,
+      });
+      if (result === creepName) {
+        return OK;
       }
     }
 
     return 0;
   }
 
-  public buildMissingUpgraders(roomHandler: RoomHandler) {
-    // TODO: Combine with spawn further in method.
-    // Check if the spawn is already spawning a creep.
-    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
-      filter: (s: Spawn) => s.spawning !== null,
-    });
-    if (!spawn2) {
-      return 0;
-    }
-
+  public buildMissingUpgraders(spawn: Spawn, roomHandler: RoomHandler) {
     let creeps = roomHandler.room.find(FIND_MY_CREEPS, {
       filter: (c: Creep) => c.memory.role === C.UPGRADER,
     });
-    log.info(creeps.length + " upgraders found");
-    if (creeps.length < 1) {
-      let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
-      if (spawns.length > 0) {
-        let spawn = spawns[0];
-        let bodyParts = CreepUpgrader.getBodyParts(roomHandler.room.energyAvailable);
-        let creepName = C.UPGRADER + Memory.uuid++;
-        log.info("Creating upgrader: " + creepName);
-        let result = spawn.createCreep(bodyParts, creepName, {
-          role: C.UPGRADER,
-        });
-        if (result === creepName) {
-          return OK;
-        }
+    if (creeps.length < this.MAX_UPGRADERS) {
+      let bodyParts = CreepUpgrader.getBodyParts(roomHandler.room.energyAvailable);
+      let creepName = C.UPGRADER + Memory.uuid++;
+      let result = spawn.createCreep(bodyParts, creepName, {
+        role: C.UPGRADER,
+      });
+      if (result === creepName) {
+        return OK;
       }
     }
 
     return 0;
   }
 
-  public buildMissingHaulers(roomHandler: RoomHandler) {
-    // TODO: Combine with spawn further in method.
-    // Check if the spawn is already spawning a creep.
-    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
-      filter: (s: Spawn) => s.spawning !== null,
-    });
-    if (!spawn2) {
-      return 0;
-    }
-
-    log.info("Get sources from memory.");
+  public buildMissingHaulers(spawn: Spawn, roomHandler: RoomHandler) {
     let sourceIds = roomHandler.room.memory.sources;
     if (sourceIds === undefined) {
       return 0;
@@ -181,39 +143,22 @@ export class CreepPopulationHandler {
 
       // Create hauler.
       let bodyParts = CreepHauler.getBodyParts(roomHandler.room.energyAvailable);
-      let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
-      if (spawns.length > 0) {
-        let spawn = spawns[0];
-        let haulerName = C.HAULER + Memory.uuid++;
-        let result = spawn.createCreep(bodyParts, haulerName, {
-          containerId: containerId,
-          role: C.HAULER,
-        });
+      let newHaulerName = C.HAULER + Memory.uuid++;
+      let result = spawn.createCreep(bodyParts, newHaulerName, {
+        containerId: containerId,
+        role: C.HAULER,
+      });
 
-        if (result === haulerName) {
-          roomHandler.room.memory.sources[source.id].haulerName = haulerName;
-          return OK;
-        } else {
-          log.info(result + " happended trying to spawn " + haulerName);
-          log.info("body: " + JSON.stringify(bodyParts));
-        }
+      if (result === haulerName) {
+        roomHandler.room.memory.sources[source.id].haulerName = newHaulerName;
+        return OK;
       }
     }
 
     return 0;
   }
 
-  public buildMissingMineralHaulers(roomHandler: RoomHandler) {
-    // TODO: Combine with spawn further in method.
-    // Check if the spawn is already spawning a creep.
-    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
-      filter: (s: Spawn) => s.spawning !== null,
-    });
-    if (!spawn2) {
-      return 0;
-    }
-
-    log.info("Get minerals from memory.");
+  public buildMissingMineralHaulers(spawn: Spawn, roomHandler: RoomHandler) {
     let mineralIds = roomHandler.room.memory.minerals;
     if (mineralIds === undefined) {
       return 0;
@@ -245,57 +190,35 @@ export class CreepPopulationHandler {
 
       // Create hauler.
       let bodyParts = CreepHauler.getBodyParts(roomHandler.room.energyAvailable);
-      let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
-      if (spawns.length > 0) {
-        let spawn = spawns[0];
-        let haulerName = C.HAULER + Memory.uuid++;
-        let result = spawn.createCreep(bodyParts, haulerName, {
-          containerId: containerId,
-          role: C.HAULER,
-        });
-        if (result === haulerName) {
-          roomHandler.room.memory.minerals[mineral.id].haulerName = haulerName;
-          return OK;
-        } else {
-          log.info(result + " happended trying to spawn " + haulerName);
-          log.info("body: " + JSON.stringify(bodyParts));
-        }
+      let newHaulerName = C.HAULER + Memory.uuid++;
+      let result = spawn.createCreep(bodyParts, newHaulerName, {
+        containerId: containerId,
+        role: C.HAULER,
+      });
+      if (result === haulerName) {
+        roomHandler.room.memory.minerals[mineral.id].haulerName = newHaulerName;
+        return OK;
       }
     }
 
     return 0;
   }
 
-  public buildMissingExtractors(roomHandler: RoomHandler) {
-    // TODO: Combine with spawn further in method.
-    // Check if the spawn is already spawning a creep.
-    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
-      filter: (s: Spawn) => s.spawning !== null,
-    });
-    if (!spawn2) {
-      return 0;
-    }
-
+  public buildMissingExtractors(spawn: Spawn, roomHandler: RoomHandler) {
     // Verify minerals are in memory.
-    log.info("Get minerals from memory.");
     let minerals = roomHandler.room.memory.minerals;
     if (minerals === undefined) {
       roomHandler.room.memory.minerals = {};
 
-      log.info("Find minerals.");
       let foundMinerals = roomHandler.room.find<Mineral>(FIND_MINERALS);
       for (let foundMineral of foundMinerals) {
-        log.info("Create memory for mineral: " + foundMineral.id);
         roomHandler.room.memory.minerals[foundMineral.id] = {};
-        log.info("Save id for mineral: " + foundMineral.id);
         roomHandler.room.memory.minerals[foundMineral.id].id = foundMineral.id;
       }
       minerals = roomHandler.room.memory.minerals;
     }
 
-    log.info("minerals: " + JSON.stringify(minerals));
     for (let mineralId in minerals) {
-      log.info("mineral: " + mineralId);
       let mineral = <Mineral> Game.getObjectById(mineralId);
       if (!mineral || mineral.mineralAmount === 0) {
         // TODO: Delete the memory entry.
@@ -304,21 +227,18 @@ export class CreepPopulationHandler {
 
       // Verify containers are in memory.
       let containerId = roomHandler.room.memory.minerals[mineral.id].containerId;
-      log.info("ContainerId in memory: " + containerId);
       let container = null;
       if (containerId === undefined) {
         let possibleContainers = roomHandler.room.find<Container>(FIND_STRUCTURES, {
           filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER
           && c.pos.isNearTo(mineral),
         });
-        log.info("Possible Containers: " + possibleContainers.length);
         let index = 0;
         for (let possibleContainer of possibleContainers) {
           if (index++ === 0) {
             roomHandler.room.memory.minerals[mineralId].containerId = possibleContainer.id;
             containerId = possibleContainer.id;
             container = possibleContainer;
-            log.info("Container found at (" + container.pos.x + "," + container.pos.x + ")");
           } else {
             possibleContainer.destroy();
           }
@@ -330,26 +250,17 @@ export class CreepPopulationHandler {
       if (container !== null) {
         // Verify miners are in memory.
         let extractorName = roomHandler.room.memory.minerals[mineral.id].extractorName;
-        log.info("minerName in memory: " + extractorName);
         if (extractorName === undefined) {
-          let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
-          if (spawns.length > 0) {
-            let spawn = spawns[0];
-            let bodyParts = CreepExtractor.getBodyParts(roomHandler.room.energyAvailable);
-            let extractorName = C.EXTRACTOR + Memory.uuid++
-            let result = spawn.createCreep(bodyParts, extractorName, {
-              containerId: container.id,
-              mineralId: mineral.id,
-              role: C.EXTRACTOR,
-            });
-            log.info("Extractor spawning: " + extractorName);
-            if (result === extractorName) {
-              roomHandler.room.memory.minerals[mineral.id].extractorName = extractorName;
-              return OK;
-            } else {
-              log.info(result + " happended trying to spawn " + extractorName);
-              log.info("body: " + JSON.stringify(bodyParts));
-            }
+          let bodyParts = CreepExtractor.getBodyParts(roomHandler.room.energyAvailable);
+          let extractorName = C.EXTRACTOR + Memory.uuid++;
+          let result = spawn.createCreep(bodyParts, extractorName, {
+            containerId: container.id,
+            mineralId: mineral.id,
+            role: C.EXTRACTOR,
+          });
+          if (result === extractorName) {
+            roomHandler.room.memory.minerals[mineral.id].extractorName = extractorName;
+            return OK;
           }
         } else {
           // TODO: Remove this once creep replacement requests works.
@@ -359,109 +270,100 @@ export class CreepPopulationHandler {
             roomHandler.room.memory.minerals[mineral.id].extractorName = undefined;
           }
         }
-      } else {
-        log.warning("Mineral needs container at (" + mineral.pos.x + "," + mineral.pos.y + ")");
       }
     }
 
     return 0;
   }
 
-  public buildMissingMiners(roomHandler: RoomHandler) {
-    // TODO: Combine with spawn further in method.
-    // Check if the spawn is already spawning a creep.
-    let spawn2 = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS, {
-      filter: (s: Spawn) => s.spawning !== null,
-    });
-    if (!spawn2) {
-      return 0;
-    }
-
-    // Verify sources are in memory.
-    log.info("Get sources from memory.");
+  public buildMissingMiners(spawn: Spawn, roomHandler: RoomHandler) {
     let sources = roomHandler.room.memory.sources;
     if (sources === undefined) {
-      roomHandler.room.memory.sources = {};
-
-      log.info("Find sources.");
-      let foundSources = roomHandler.room.find<Source>(FIND_SOURCES);
-      for (let foundSource of foundSources) {
-        log.info("Create memory for source: " + foundSource.id);
-        roomHandler.room.memory.sources[foundSource.id] = {};
-        log.info("Save id for source: " + foundSource.id);
-        roomHandler.room.memory.sources[foundSource.id].id = foundSource.id;
-      }
-      sources = roomHandler.room.memory.sources;
+      sources = this.loadSources(roomHandler);
     }
 
-    log.info("sources: " + JSON.stringify(sources));
     for (let sourceId in sources) {
-      log.info("source: " + sourceId);
-      let source = <Source> Game.getObjectById(sourceId);
+      let source = sources[sourceId];
+      let minerPosition = new RoomPosition(30, 30, roomHandler.room.name);
 
-      // Verify containers are in memory.
-      let containerId = roomHandler.room.memory.sources[source.id].containerId;
-      log.info("ContainerId in memory: " + containerId);
-      let container = null;
-      if (containerId === undefined) {
-        let possibleContainers = roomHandler.room.find<Container>(FIND_STRUCTURES, {
-          filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER
-          && c.pos.isNearTo(source),
-        });
-        log.info("Possible Containers: " + possibleContainers.length);
-        let index = 0;
-        for (let possibleContainer of possibleContainers) {
-          if (index++ === 0) {
-            roomHandler.room.memory.sources[sourceId].containerId = possibleContainer.id;
-            containerId = possibleContainer.id;
-            container = possibleContainer;
-            log.info("Container found at (" + container.pos.x + "," + container.pos.x + ")");
-          } else {
-            possibleContainer.destroy();
+      if (source.containerId === undefined) {
+        let container = this.loadSourceContainer(roomHandler, source);
+        if (container !== undefined) {
+          source.containerId = container.id;
+          minerPosition = container.pos;
+        }
+
+        if (source.containerId === undefined) {
+          let containerConstructionSite = this.loadSourceContainerConstructionSite(roomHandler, source);
+          if (containerConstructionSite !== undefined) {
+            minerPosition = containerConstructionSite.pos;
           }
         }
-      } else {
-        container = Game.getObjectById<Container>(containerId);
       }
 
-      if (container !== null) {
-        // Verify miners are in memory.
-        let minerName = roomHandler.room.memory.sources[source.id].minerName;
-        log.info("minerName in memory: " + minerName);
-        if (minerName === undefined) {
-          let spawns = roomHandler.room.find<Spawn>(FIND_MY_SPAWNS);
-          if (spawns.length > 0) {
-            let spawn = spawns[0];
-            let bodyParts = CreepMiner.getBodyParts(roomHandler.room.energyAvailable);
-            let minerName = C.MINER + Memory.uuid++;
-            log.info("Miner spawning: " + minerName);
-            let result = spawn.createCreep(bodyParts, minerName, {
-              containerId: container.id,
-              role: C.MINER,
-              sourceId: source.id,
-            });
-
-            if (result === minerName) {
-              roomHandler.room.memory.sources[source.id].minerName = minerName;
-              return OK;
-            } else {
-              log.info(result + " happended trying to spawn " + minerName);
-              log.info("body: " + JSON.stringify(bodyParts));
-            }
-          }
-        } else {
-          // TODO: Remove this once creep replacement requests works.
-          // Reset miner name.
-          let miner = Game.creeps[minerName];
-          if (!miner) {
-            roomHandler.room.memory.sources[source.id].minerName = undefined;
-          }
+      if (source.minerName === undefined) {
+        let minerName = this.loadSourceMiner(spawn, roomHandler, source, minerPosition);
+        if (minerName !== undefined) {
+          source.minerName = minerName;
         }
       } else {
-        log.warning("Source needs container at (" + source.pos.x + "," + source.pos.y + ")");
+        // Remove dead miners.
+        let miner = Game.creeps[source.minerName];
+        if (miner === undefined) {
+          roomHandler.room.memory.sources[source.id].minerName = undefined;
+        }
       }
     }
 
     return 0;
+  }
+
+  private loadSources(roomHandler: RoomHandler) {
+    return roomHandler.room.find<Source>(FIND_SOURCES);
+  }
+
+  private loadSourceContainer(roomHandler: RoomHandler, source: Source) {
+    let containers = roomHandler.room.find<Container>(FIND_STRUCTURES, {
+      filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER
+      && c.pos.isNearTo(source),
+    });
+    if (containers.length > 0) {
+      roomHandler.room.memory.sources[source.id].containerId = containers[0].id;
+      return containers[0];
+    }
+    // TODO: Delete all but one container instead of ignoring them.
+
+    return undefined;
+  }
+
+  private loadSourceContainerConstructionSite(roomHandler: RoomHandler, source: Source) {
+    let constructionSites = roomHandler.room.find<ConstructionSite>(FIND_CONSTRUCTION_SITES, {
+      filter: (c: ConstructionSite) => c.structureType === STRUCTURE_CONTAINER
+      && c.pos.isNearTo(source),
+    });
+    if (constructionSites.length > 0) {
+      return constructionSites[0];
+    }
+    // TODO: Delete all but one container construction site instead of ignoring them.
+    // TODO: If there is a container then delete all container construction sites.
+
+    return undefined;
+  }
+
+  private loadSourceMiner(spawn: Spawn, roomHandler: RoomHandler, source: Source, destination: RoomPosition) {
+    let bodyParts = CreepMiner.getBodyParts(roomHandler.room.energyAvailable);
+    let minerName = C.MINER + Memory.uuid++;
+    let result = spawn.createCreep(bodyParts, minerName, {
+      finalDestination: destination,
+      role: C.MINER,
+      sourceId: source.id,
+    });
+
+    if (result === minerName) {
+      roomHandler.room.memory.sources[source.id].minerName = minerName;
+      return minerName;
+    } else {
+      return undefined;
+    }
   }
 }

@@ -1,6 +1,6 @@
-// import * as Config from "../../config/config";
 import * as C from "../../config/constants";
-import {log} from "../../lib/logger/log";
+// import * as Config from "../../config/config";
+// import {log} from "../../lib/logger/log";
 import {Message} from "./Message";
 import {MessageCloneCreep} from "./MessageCloneCreep";
 
@@ -23,13 +23,10 @@ export class MessageHandler {
     });
 
     if (scouts && scouts.length > 0) {
-      log.info(scouts.length + " scouts found");
       return;
     }
 
     let messages = Memory.messages.cloneCreep;
-    log.info("messages: " + messages);
-    log.info("messages.length: " + messages.length);
     if (messages && messages.length || 0 === 0) {
       // let creep = new Creep("asdf");
       // let roomHandler = new RoomHandler(Game.rooms.W7N9);
@@ -49,10 +46,8 @@ export class MessageHandler {
   public testReceive(messageType: string) {
     let message = <MessageCloneCreep> this.getNextMessage(messageType);
     if (message === undefined) {
-      log.info("MESSAGE undefined");
       return;
     } else {
-      log.info("MESSAGE " + JSON.stringify(message));
     }
 
     let room = Game.rooms.W7N9;
@@ -62,17 +57,16 @@ export class MessageHandler {
     }
 
     let spawn = spawns[0];
-    let creepName = spawn.createCreep(
+    spawn.createCreep(
       message.bodyParts,
       message.creepType + Memory.uuid++,
       message.memory);
-    log.info("Created creep: " + creepName);
   }
 
-  public getNextCreepMessage(creep: Creep): Message {
-    log.info("Retrieving message for creep: " + creep.name);
-    return new Message();
-  }
+  // public getNextCreepMessage(creep: Creep): Message {
+  //   // log.info("Retrieving message for creep: " + creep.name);
+  //   return new Message();
+  // }
 
   public getNextMessage(messageType: string): Message | undefined {
     // if (messageType === MessageHandler.MESSAGE_TYPE_CLONE_CREEP) {

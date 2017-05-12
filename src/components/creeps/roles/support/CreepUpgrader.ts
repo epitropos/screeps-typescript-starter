@@ -1,5 +1,5 @@
 // import * as Config from "../../../../config/config";
-import {log} from "../../../../lib/logger/log";
+// import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
@@ -65,7 +65,6 @@ export class CreepUpgrader extends CreepSupport {
       && c.pos.isNearTo(creep.pos)),
     });
     // TODO: Check if doing findClosestByPath with zero length array results in undefined, null or an error.
-    log.info("containers found: " + containers.length);
     if (containers.length > 0) {
       container = creep.pos.findClosestByPath<Container>(containers);
       if (container) {
@@ -81,7 +80,6 @@ export class CreepUpgrader extends CreepSupport {
     }
 
     if (pathToContainer === undefined && pathToStorage === undefined) {
-      log.info("UPGRADER: all undefined");
       return;
     }
 
@@ -91,12 +89,10 @@ export class CreepUpgrader extends CreepSupport {
     // }
 
     if (container !== undefined) {
-      log.info("UPGRADER: withdraw from container");
       this.moveToWithdraw(creep, container);
       return;
     }
 
-    log.info("UPGRADER: default to storage");
     this.moveToWithdrawFromStorage(creep, <Storage> storage);
     return;
   }
