@@ -29,7 +29,6 @@ export class CreepSupport extends CreepBase {
   public tryResourceDropOff(creep: Creep, target: Spawn | Structure): number {
     let resource = _.findKey(this.creep.carry);
     let amountTransferred = creep.transfer(target, resource);
-    // log.info(creep.name + " transferred " + amountTransferred)
     if (amountTransferred) {
       return amountTransferred;
     } else {
@@ -83,24 +82,9 @@ export class CreepSupport extends CreepBase {
       // TODO: Consider storing path in memory and re-pathing if creep does not move for X ticks.
       this.moveTo(creep, target);
     }
-    // log.info(creep.name + " - tryWithdraw - " + target);
-    // let withdrawalResult = this.tryWithdraw(creep, target);
-    // log.info(withdrawalResult);
-    // if (withdrawalResult === ERR_NOT_IN_RANGE) {
-    //   log.info(creep.name + " - moveTo - " + target.pos);
-    //   let moveToResult = this.moveTo(creep, target.pos);
-    //   log.info(moveToResult);
-    // }
   }
 
   public tryWithdraw(creep: Creep, target: Container): number {
-    // if (target) {
-    //   let amountToWithdraw = creep.carryCapacity - _.sum(creep.carry);
-    //   if (amountToWithdraw > target.store[RESOURCE_ENERGY]) {
-    //     amountToWithdraw = target.store[RESOURCE_ENERGY];
-    //   }
-    //   return creep.withdraw(target, RESOURCE_ENERGY, amountToWithdraw);
-    // }
     if (target) {
       let key = _.findKey(target.store);
       let amountToWithdraw = creep.carryCapacity - _.sum(creep.carry);

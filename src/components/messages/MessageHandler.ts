@@ -48,6 +48,7 @@ export class MessageHandler {
     if (message === undefined) {
       return;
     } else {
+      // TODO: Code goes here.
     }
 
     let room = Game.rooms.W7N9;

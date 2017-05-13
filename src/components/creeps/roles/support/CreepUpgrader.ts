@@ -8,6 +8,10 @@ export class CreepUpgrader extends CreepSupport {
     let bodyParts: string[] = [];
     let bodySegmentSize = 200;
 
+    if (energyAvailable < bodySegmentSize) {
+      return undefined;
+    }
+
     let bodyPartsSize = 0;
 
     let count = 0; // This is used to enforce the 15 energy per tick cap.
@@ -82,11 +86,6 @@ export class CreepUpgrader extends CreepSupport {
     if (pathToContainer === undefined && pathToStorage === undefined) {
       return;
     }
-
-    // if (pathToContainer !== undefined) {
-    //   log.info("UPGRADER: pathToContainer undefined");
-    //   this.moveToWithdrawFromStorage(creep, <Storage> storage);
-    // }
 
     if (container !== undefined) {
       this.moveToWithdraw(creep, container);

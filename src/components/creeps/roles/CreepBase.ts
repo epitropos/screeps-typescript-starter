@@ -1,6 +1,6 @@
 import * as C from "../../../config/constants";
 import * as Config from "../../../config/config";
-import {log} from "../../../lib/logger/log";
+// import {log} from "../../../lib/logger/log";
 import {RoomHandler} from "../../rooms/RoomHandler";
 
 export class CreepBase {
@@ -37,7 +37,6 @@ export class CreepBase {
       // TODO: WHY DOES FINALDESTINATION FAIL TO WORK BUT PULLING THE DATA OUT WORKS?!?
       let asdf = new RoomPosition(finalDestination.x, finalDestination.y, finalDestination.roomName);
       if (this.creep.pos.x !== asdf.x || this.creep.pos.y !== asdf.y) {
-        log.info(this.creep.name + " moving to " + JSON.stringify(asdf));
         this.moveTo(this.creep, asdf);
         return;
       }
@@ -62,7 +61,6 @@ export class CreepBase {
     let result: number = 0;
 
     result = creep.moveTo(target, {ignoreCreeps: false, visualizePathStyle: {stroke: C.WHITE}});
-    log.info(creep.name + " moveTo " + JSON.stringify(target) + " resulted in " + result);
     return result;
   }
 

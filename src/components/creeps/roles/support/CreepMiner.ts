@@ -8,6 +8,10 @@ export class CreepMiner extends CreepSupport {
     let bodyParts: string[] = [WORK, MOVE];
     let bodySegmentSize = 100;
 
+    if (energyAvailable < bodySegmentSize) {
+      return undefined;
+    }
+
     let bodyPartsSize = 50 + 100;
     let bodyPartsSizeMax = 50 + 100 + 100 + 100 + 100 + 100;
 

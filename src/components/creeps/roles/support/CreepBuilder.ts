@@ -9,6 +9,10 @@ export class CreepBuilder extends CreepSupport {
     let bodyParts: string[] = [];
     let bodySegmentSize = 200;
 
+    if (energyAvailable < bodySegmentSize) {
+      return undefined;
+    }
+
     let bodyPartsSize = 0;
 
     while (bodyPartsSize + bodySegmentSize < energyAvailable) {

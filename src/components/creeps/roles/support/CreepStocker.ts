@@ -8,6 +8,10 @@ export class CreepStocker extends CreepSupport {
     let bodyParts: string[] = [];
     let bodySegmentSize = 250;
 
+    if (energyAvailable < bodySegmentSize) {
+      return undefined;
+    }
+
     let bodyPartsSize = 0;
 
     while (bodyPartsSize + bodySegmentSize < energyAvailable) {
