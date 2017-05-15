@@ -18,6 +18,15 @@ export class CreepBase {
     // let currentDestination = this.creep.memory.currentDestination;
     let finalDestination: RoomPosition = this.creep.memory.finalDestination;
 
+    // Create a road construction site if there is none.
+    let lookAtResults = this.roomHandler.room.lookAt(this.creep);
+    let lookAtResult = _.filter(lookAtResults, (l: LookAtResult) => l.type === LOOK_STRUCTURES
+    && (l.constructionSite !== undefined
+      || l.structure !== undefined));
+    if (lookAtResult.length === 0) {
+      this.roomHandler.room.createConstructionSite(this.creep, STRUCTURE_ROAD);
+    }
+
     // // TODO: Test if object comparison works
     // if (this.creep.pos.roomName !== this.currentDestination.roomName) {
     //   this.creep.memory.currentDestination = this.recalculateCurrentDestination(this.creep, this.finalDestination);
@@ -67,15 +76,6 @@ export class CreepBase {
   // public moveToRoom(creep: Creep, destination: RoomPosition) {
   //   let exitPosition = creep.room.findExitTo(destination.roomName);
   // }
-
-  // TODO: Change this to needsMoreCargo.
-  public needsToRefuel(creep: Creep): boolean {
-    return (_.sum(creep.carry) === 0);
-  }
-
-  public refuelingComplete(creep: Creep): boolean {
-    return (_.sum(creep.carry) === creep.carryCapacity);
-  }
 
   /**
    * Returns true if the `ticksToLive` of a creep has dropped below the renew

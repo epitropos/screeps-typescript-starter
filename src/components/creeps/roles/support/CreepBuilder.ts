@@ -140,4 +140,13 @@ export class CreepBuilder extends CreepSupport {
   public tryRepair(creep: Creep, structure: Structure): number {
     return creep.repair(structure);
   }
+
+  // TODO: Change this to needsMoreCargo.
+  public needsToRefuel(creep: Creep): boolean {
+    return (_.sum(creep.carry) === 0);
+  }
+
+  public refuelingComplete(creep: Creep): boolean {
+    return (_.sum(creep.carry) === creep.carryCapacity);
+  }
 }

@@ -13,7 +13,7 @@ export class CreepPopulationHandler {
   public roomHandler: RoomHandler;
 
   public MAX_STOCKERS = 0;
-  public MAX_BUILDERS = 1;
+  public MAX_BUILDERS = 2;
   public MAX_UPGRADERS = 1;
   public MAX_HAULERS = 2;
   public MAX_MINERAL_HAULERS = 0;

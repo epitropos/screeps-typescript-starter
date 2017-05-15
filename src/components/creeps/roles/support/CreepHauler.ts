@@ -1,3 +1,4 @@
+// import * as C from "../../../../config/constants";
 // import * as Config from "../../../../config/config";
 import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
@@ -42,23 +43,26 @@ export class CreepHauler extends CreepSupport {
   public run() {
     super.run();
 
-    // TODO: Check current position for road. Create construction site if nothing.
+    // Look for dropped resources.
+    let droppedResource = this.loadDroppedResource(this.creep, 100, this.roomHandler);
+    if (droppedResource !== undefined) {
+      this.moveToPickup(this.creep, droppedResource);
+      return;
+    }
 
-    if (this.creep.memory.state === undefined || (this.creep.carry.energy || 0) === 0) {
+    // Default to refueling state.
+    let carriedEnergy = this.creep.carry[RESOURCE_ENERGY] || 0;
+    if (this.creep.memory.state === undefined || carriedEnergy === 0) {
       this.creep.memory.state = this.STATE_REFUELING;
+    } else if (carriedEnergy > 0) {
+      this.creep.memory.state = this.STATE_DELIVERING;
     }
 
-    if (this.creep.memory.state === this.STATE_REFUELING) {
-      this.runRefueling(this.creep, this.roomHandler);
-      return;
+    switch (this.creep.memory.state) {
+      case this.STATE_REFUELING: this.runRefueling(this.creep, this.roomHandler); return;
+      case this.STATE_DELIVERING: this.runDelivering(this.creep); return;
+      default: log.error("Unknown creep state: " + this.creep.memory.state);
     }
-
-    if (this.creep.memory.state === this.STATE_DELIVERING) {
-      this.runDelivering(this.creep);
-      return;
-    }
-
-    log.error("Unknown creep state: " + this.creep.memory.state);
   }
 
   public runRefueling(creep: Creep, roomHandler: RoomHandler) {
@@ -75,47 +79,73 @@ export class CreepHauler extends CreepSupport {
     if (creep.memory.containerId !== undefined) {
       let container = <Container> Game.getObjectById(creep.memory.containerId);
       if (_.sum(container.store) === container.storeCapacity) {
-        this.tryWithdraw(creep, container);
-        creep.memory.state = this.STATE_DELIVERING;
-        // TODO: Fix after path is being stored in memory.
-        creep.memory.finalDestination = undefined;
+        this.moveToWithdraw(creep, container);
+        if ((creep.carry[RESOURCE_ENERGY] || 0) > 0) {
+          creep.memory.state = this.STATE_DELIVERING;
+          // TODO: Fix after path is being stored in memory.
+          creep.memory.finalDestination = undefined;
+        }
         return;
       }
 
-      let droppedResource = this.loadDroppedResource(creep, roomHandler);
+      let droppedResource = this.loadDroppedEnergy(creep, roomHandler);
       if (droppedResource !== undefined) {
-        this.tryPickup(creep, droppedResource);
-        creep.memory.state = this.STATE_DELIVERING;
-        // TODO: Fix after path is being stored in memory.
-        creep.memory.finalDestination = undefined;
+        this.moveToPickup(creep, droppedResource);
+        if ((creep.carry[RESOURCE_ENERGY] || 0) > 0) {
+          // creep.memory.state = this.STATE_DELIVERING;
+          // TODO: Fix after path is being stored in memory.
+          creep.memory.finalDestination = undefined;
+        }
         return;
       }
 
-      if (_.sum(container.store[RESOURCE_ENERGY]) > 0) {
-        this.tryWithdraw(creep, container);
-        creep.memory.state = this.STATE_DELIVERING;
-        // TODO: Fix after path is being stored in memory.
-        creep.memory.finalDestination = undefined;
+      if ((container.store[RESOURCE_ENERGY] || 0) > 0) {
+        this.moveToWithdraw(creep, container);
+        if ((creep.carry[RESOURCE_ENERGY] || 0) > 0) {
+          // creep.memory.state = this.STATE_DELIVERING;
+          // TODO: Fix after path is being stored in memory.
+          creep.memory.finalDestination = undefined;
+        }
         return;
       }
     }
 
-    let droppedResource = this.loadDroppedResource(creep, roomHandler);
-    if (droppedResource !== undefined) {
-      this.tryPickup(creep, droppedResource);
-    }
+    // let droppedResource = this.loadDroppedResource(creep, roomHandler);
+    // if (droppedResource !== undefined) {
+    //   this.moveToPickup(creep, droppedResource);
+    // }
 
-    if (creep.carry[RESOURCE_ENERGY] || 0 > 0) {
-      creep.memory.state = this.STATE_DELIVERING;
-      // TODO: Fix after path is being stored in memory.
-      creep.memory.finalDestination = undefined;
+    // if (creep.carry[RESOURCE_ENERGY] || 0 > 0) {
+    //   creep.memory.state = this.STATE_DELIVERING;
+    //   // TODO: Fix after path is being stored in memory.
+    //   creep.memory.finalDestination = undefined;
+    // }
+
+    if (_.sum(this.creep.carry) > 0) {
+      this.creep.memory.state = this.STATE_DELIVERING;
+      this.creep.memory.finalDestination = undefined;
     }
   }
 
   public runDelivering(creep: Creep) {
+    // Drop off non-energy cargo.
+    let carriedEnergy = creep.carry[RESOURCE_ENERGY] || 0;
+    let totalCarried = _.sum(creep.carry);
+    if (carriedEnergy < totalCarried) {
+      let storage = this.loadStorage(creep);
+      if (storage) {
+        log.info("Delivering non-energy resource to storage.");
+        if (this.tryResourceDropOff(creep, storage) === ERR_NOT_IN_RANGE) {
+          this.moveTo(creep, storage);
+        }
+        return;
+      }
+    }
+
     // Load closest extension.
     let extension = this.loadExtension(creep);
     if (extension) {
+      log.info("Delivering energy resource to extension.");
       if (this.tryEnergyDropOff(creep, extension) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, extension);
       }
@@ -125,6 +155,7 @@ export class CreepHauler extends CreepSupport {
     // Load closest spawn.
     let spawn = this.loadSpawn(creep);
     if (spawn) {
+      log.info("Delivering energy resource to spawn.");
       if (this.tryEnergyDropOff(creep, spawn) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, spawn);
       }
@@ -134,6 +165,7 @@ export class CreepHauler extends CreepSupport {
     // Load closest tower.
     let tower = this.loadTower(creep);
     if (tower) {
+      log.info("Delivering energy resource to tower.");
       if (this.tryEnergyDropOff(creep, tower) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, tower);
       }
@@ -146,7 +178,8 @@ export class CreepHauler extends CreepSupport {
     // Load storage.
     let storage = this.loadStorage(creep);
     if (storage) {
-      if (this.tryEnergyDropOff(creep, storage) === ERR_NOT_IN_RANGE) {
+      let result = this.tryEnergyDropOff(creep, storage);
+      if (result === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, storage);
       }
       return;
@@ -168,9 +201,20 @@ export class CreepHauler extends CreepSupport {
   }
 
   // TODO: Need to create construction site because the hauler may stop too far away.
-  private loadDroppedResource(creep: Creep, roomHandler: RoomHandler) {
-    let droppedResources = roomHandler.room.find<Resource>(FIND_DROPPED_RESOURCES, {
+  private loadDroppedEnergy(creep: Creep, roomHandler: RoomHandler) {
+    let droppedResources = roomHandler.room.find<Resource>(FIND_DROPPED_ENERGY, {
       filter: (r: Resource) => r.pos.isNearTo(creep.pos),
+    });
+    if (droppedResources.length > 0) {
+      return droppedResources[0];
+    }
+
+    return undefined;
+  }
+
+  private loadDroppedResource(creep: Creep, range: number, roomHandler: RoomHandler) {
+    let droppedResources = roomHandler.room.find<Resource>(FIND_DROPPED_RESOURCES, {
+      filter: (r: Resource) => r.resourceType !== RESOURCE_ENERGY && r.pos.inRangeTo(creep, range),
     });
     if (droppedResources.length > 0) {
       return droppedResources[0];
@@ -194,11 +238,20 @@ export class CreepHauler extends CreepSupport {
   }
 
   private loadStorage(creep: Creep) {
-    return creep.pos.findClosestByPath<Storage>(FIND_STRUCTURES, {
+    let storages = creep.room.find<Storage>(FIND_MY_STRUCTURES, {
       filter: (s: Storage) => s.structureType === STRUCTURE_STORAGE
-        && s.isActive // In case the RCL drops and deactivates this structure.
-        && s.store[RESOURCE_ENERGY] || 0 < _.sum(s.store),
+      && (s.store[RESOURCE_ENERGY] || 0) < _.sum(s.store),
     });
+    if (storages.length > 0) {
+      return storages[0];
+    }
+
+    return undefined;
+    // return creep.pos.findClosestByPath<Storage>(FIND_STRUCTURES, {
+    //   filter: (s: Storage) => s.structureType === STRUCTURE_STORAGE
+    //     && s.isActive // In case the RCL drops and deactivates this structure.
+    //     && s.store[RESOURCE_ENERGY] || 0 < _.sum(s.store),
+    // });
   }
 
   private loadTower(creep: Creep) {
