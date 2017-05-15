@@ -42,6 +42,8 @@ export class CreepHauler extends CreepSupport {
   public run() {
     super.run();
 
+    // TODO: Check current position for road. Create construction site if nothing.
+
     if (this.creep.memory.state === undefined || (this.creep.carry.energy || 0) === 0) {
       this.creep.memory.state = this.STATE_REFUELING;
     }
@@ -116,8 +118,8 @@ export class CreepHauler extends CreepSupport {
     if (extension) {
       if (this.tryEnergyDropOff(creep, extension) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, extension);
-        return;
       }
+      return;
     }
 
     // Load closest spawn.
@@ -125,8 +127,8 @@ export class CreepHauler extends CreepSupport {
     if (spawn) {
       if (this.tryEnergyDropOff(creep, spawn) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, spawn);
-        return;
       }
+      return;
     }
 
     // Load closest tower.
@@ -134,8 +136,8 @@ export class CreepHauler extends CreepSupport {
     if (tower) {
       if (this.tryEnergyDropOff(creep, tower) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, tower);
-        return;
       }
+      return;
     }
 
     // Load closest outbound container.
@@ -146,8 +148,8 @@ export class CreepHauler extends CreepSupport {
     if (storage) {
       if (this.tryEnergyDropOff(creep, storage) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, storage);
-        return;
       }
+      return;
     }
   }
 
@@ -165,6 +167,7 @@ export class CreepHauler extends CreepSupport {
     return undefined;
   }
 
+  // TODO: Need to create construction site because the hauler may stop too far away.
   private loadDroppedResource(creep: Creep, roomHandler: RoomHandler) {
     let droppedResources = roomHandler.room.find<Resource>(FIND_DROPPED_RESOURCES, {
       filter: (r: Resource) => r.pos.isNearTo(creep.pos),

@@ -12,6 +12,22 @@ export class RoomFriendlyCity extends RoomFriendly {
   public run() {
     super.run();
 
+    // Clear source containerIds and minerIds if no longer extant.
+    let sourceIds = this.room.memory.sources;
+    for (let sourceId in sourceIds) {
+      let containerId = this.room.memory.sources[sourceId].containerId;
+      let container = Game.getObjectById(containerId);
+      if (!container) {
+        this.room.memory.sources[sourceId].containerId = undefined;
+      }
+
+      let minerId = this.room.memory.sources[sourceId].minerId;
+      let miner = Game.getObjectById(minerId);
+      if (!miner) {
+        this.room.memory.sources[sourceId].minerId = undefined;
+      }
+    }
+
     // TODO: Change instantiation to parameter.
     let creepPopulationHandler = new CreepPopulationHandler(new RoomHandler(this.room));
     creepPopulationHandler.run();

@@ -149,13 +149,21 @@ export class CreepPopulationHandler {
         }
 
         if (haulerPosition === undefined) {
-          // TODO: Determine position based on path from source to spawn or source to source or something.
+          // TODO: Use the miner's position for determination.
+          let path = roomHandler.room.findPath(spawn.pos, source.pos);
+          if (path.length > 2) {
+            let step = path[path.length - 2];
+            haulerPosition = new RoomPosition(
+              step.x,
+              step.y,
+              roomHandler.room.name);
+          }
         }
 
-        if (haulerPosition === undefined) {
-          log.error("Unable to determine final destination for hauler for container: " + source.id);
-          return;
-        }
+        // if (haulerPosition === undefined) {
+        //   log.error("Unable to determine final destination for hauler for container: " + source.id);
+        //   return;
+        // }
 
         // Create hauler.
         haulerName = this.createSourceHauler(spawn, roomHandler, haulerPosition);
@@ -327,13 +335,20 @@ export class CreepPopulationHandler {
         }
 
         if (minerPosition === undefined) {
-          // TODO: Determine position based on path from source to spawn or source to source or something.
+          let path = roomHandler.room.findPath(spawn.pos, source.pos);
+          if (path.length > 2) {
+            let step = path[path.length - 2];
+            minerPosition = new RoomPosition(
+              step.x,
+              step.y,
+              roomHandler.room.name);
+          }
         }
 
-        if (minerPosition === undefined) {
-          log.error("Unable to determine final destination for miner for container: " + source.id);
-          return;
-        }
+        // if (minerPosition === undefined) {
+        //   log.error("Unable to determine final destination for miner for container: " + source.id);
+        //   return;
+        // }
 
         // Create miner.
         minerName = this.createSourceMiner(spawn, roomHandler, source, minerPosition);
@@ -385,7 +400,9 @@ export class CreepPopulationHandler {
   }
 
   // TODO: Add container to signature.
-  private createSourceHauler(spawn: Spawn, roomHandler: RoomHandler, myRefuelPosition: RoomPosition) {
+  private createSourceHauler(spawn: Spawn,
+                             roomHandler: RoomHandler,
+                             myRefuelPosition: RoomPosition | undefined) {
     let bodyParts = CreepHauler.getBodyParts(roomHandler.room.energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
@@ -407,7 +424,10 @@ export class CreepPopulationHandler {
     }
   }
 
-  private createSourceMiner(spawn: Spawn, roomHandler: RoomHandler, source: Source, destination: RoomPosition) {
+  private createSourceMiner(spawn: Spawn,
+                            roomHandler: RoomHandler,
+                            source: Source,
+                            destination: RoomPosition | undefined) {
     let bodyParts = CreepMiner.getBodyParts(roomHandler.room.energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
