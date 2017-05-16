@@ -1,11 +1,10 @@
 // import * as Config from "../../../config/config";
 // import {log} from "../../../lib/logger/log";
+import {MyStructureBase} from "./MyStructureBase";
 import {RoomHandler} from "../../rooms/RoomHandler";
 
-export class MyStructureBase {
-  private roomHandler: RoomHandler
-
+export class MyStructureSource extends MyStructureBase {
   constructor(roomHandler: RoomHandler) {
-    this.roomHandler = roomHandler;
+    super(roomHandler);
   }
 }

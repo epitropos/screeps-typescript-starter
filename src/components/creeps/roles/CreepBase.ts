@@ -18,14 +18,7 @@ export class CreepBase {
     // let currentDestination = this.creep.memory.currentDestination;
     let finalDestination: RoomPosition = this.creep.memory.finalDestination;
 
-    // Create a road construction site if there is none.
-    let lookAtResults = this.roomHandler.room.lookAt(this.creep);
-    let lookAtResult = _.filter(lookAtResults, (l: LookAtResult) => l.type === LOOK_STRUCTURES
-    && (l.constructionSite !== undefined
-      || l.structure !== undefined));
-    if (lookAtResult.length === 0) {
-      this.roomHandler.room.createConstructionSite(this.creep, STRUCTURE_ROAD);
-    }
+    // createRoadConstructionSite(this.creep, this.roomHandler);
 
     // // TODO: Test if object comparison works
     // if (this.creep.pos.roomName !== this.currentDestination.roomName) {
@@ -193,4 +186,15 @@ export class CreepBase {
     }
     return creep.memory.isRenewing;
   }
+
+  // private createRoadConstructionSite(creep: Creep, roomHandler: RoomHandler) {
+  //   // Create a road construction site if there is none.
+  //   let lookAtResults = roomHandler.room.lookAt(creep);
+  //   let lookAtResult = _.filter(lookAtResults, (l: LookAtResult) => l.type === LOOK_STRUCTURES
+  //   && (l.constructionSite !== undefined
+  //     || l.structure !== undefined));
+  //   if (lookAtResult.length === 0) {
+  //     roomHandler.room.createConstructionSite(creep, STRUCTURE_ROAD);
+  //   }
+  // }
 }

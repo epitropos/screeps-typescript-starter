@@ -95,4 +95,19 @@ export class CreepSupport extends CreepBase {
     }
     return 0;
   }
+
+  protected isFull(creep: Creep) {
+    if (_.sum(creep.carry) === creep.carryCapacity) {
+      return true;
+    }
+    return false;
+  }
+
+  protected carryingNonEnergyResource(creep: Creep) {
+    let energyCarried = creep.carry[RESOURCE_ENERGY] || 0;
+    if (creep.carryCapacity - energyCarried > 0) {
+      return true;
+    }
+    return false;
+  }
 }

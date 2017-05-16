@@ -43,12 +43,30 @@ export class CreepHauler extends CreepSupport {
   public run() {
     super.run();
 
-    // Look for dropped resources.
-    let droppedResource = this.loadDroppedResource(this.creep, 100, this.roomHandler);
-    if (droppedResource !== undefined) {
-      this.moveToPickup(this.creep, droppedResource);
-      return;
+    let storage = this.loadStorage(this.creep);
+    if (storage) {
+      // Deposit non-energy resources into storage.
+      if (this.isFull(this.creep) && this.carryingNonEnergyResource(this.creep)) {
+        this.tryResourceDropOff(this.creep, storage);
+        return;
+      }
+
+      // Look for dropped resources.
+      let droppedResource = this.loadDroppedResource(this.creep, 100, this.roomHandler);
+      if (droppedResource !== undefined) {
+        this.moveToPickup(this.creep, droppedResource);
+        return;
+      }
+
+      // Deposit non-energy resources into storage.
+      if (this.carryingNonEnergyResource(this.creep)) {
+        this.tryResourceDropOff(this.creep, storage);
+        return;
+      }
     }
+
+    if ()
+
 
     // Default to refueling state.
     let carriedEnergy = this.creep.carry[RESOURCE_ENERGY] || 0;

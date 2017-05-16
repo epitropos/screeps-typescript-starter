@@ -1,11 +1,10 @@
 // import * as Config from "../../../config/config";
 // import {log} from "../../../lib/logger/log";
-import {MyStructureBase} from "./MyStructureBase";
+import {MyStructureBuilding} from "./MyStructureBuilding";
 import {RoomHandler} from "../../rooms/RoomHandler";
 
-export class MyStructureTower extends MyStructureBase {
+export class MyStructureTower extends MyStructureBuilding {
   public tower: Tower;
-  public roomHandler: RoomHandler;
 
   constructor(tower: Tower, roomHandler: RoomHandler) {
     super(tower, roomHandler);
