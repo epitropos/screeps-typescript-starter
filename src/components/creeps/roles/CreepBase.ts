@@ -15,8 +15,19 @@ export class CreepBase {
   public run() {
     this.creep.say(this.creep.name);
 
-    // let currentDestination = this.creep.memory.currentDestination;
-    let finalDestination: RoomPosition = this.creep.memory.finalDestination;
+    if (this.creep.memory.finalDestination === undefined) {
+      return;
+    }
+
+    if (this.creep.memory.finalDestination === "{\"x\":20,\"y\":14,\"roomName\":\"W7N9\"}") {
+      this.creep.memory.finalDestination = undefined;
+    }
+
+    let finalDestination = new RoomPosition(
+      this.creep.memory.finalDestination.x,
+      this.creep.memory.finalDestination.y,
+      this.creep.memory.finalDestination.roomName
+    );
 
     // createRoadConstructionSite(this.creep, this.roomHandler);
 
@@ -197,4 +208,11 @@ export class CreepBase {
   //     roomHandler.room.createConstructionSite(creep, STRUCTURE_ROAD);
   //   }
   // }
+
+  protected isSamePosition(posA: RoomPosition, posB: RoomPosition) {
+    if (posA.x !== posB.x) { return false; }
+    if (posA.y !== posB.y) { return false; }
+    if (posA.roomName !== posB.roomName) { return false; }
+    return true;
+  }
 }

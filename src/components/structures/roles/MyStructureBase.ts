@@ -3,7 +3,7 @@
 import {RoomHandler} from "../../rooms/RoomHandler";
 
 export class MyStructureBase {
-  private roomHandler: RoomHandler
+  private roomHandler: RoomHandler;
 
   constructor(roomHandler: RoomHandler) {
     this.roomHandler = roomHandler;

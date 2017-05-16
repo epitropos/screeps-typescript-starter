@@ -104,8 +104,10 @@ export class CreepSupport extends CreepBase {
   }
 
   protected carryingNonEnergyResource(creep: Creep) {
+    let cargoCarried = _.sum(creep.carry);
     let energyCarried = creep.carry[RESOURCE_ENERGY] || 0;
-    if (creep.carryCapacity - energyCarried > 0) {
+    let nonEnergyCarried = cargoCarried - energyCarried;
+    if (nonEnergyCarried > 0) {
       return true;
     }
     return false;
