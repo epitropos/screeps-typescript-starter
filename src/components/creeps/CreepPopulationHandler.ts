@@ -166,7 +166,7 @@ export class CreepPopulationHandler {
         // }
 
         // Create hauler.
-        haulerName = this.createSourceHauler(spawn, roomHandler, haulerPosition);
+        haulerName = this.createSourceHauler(spawn, roomHandler, haulerPosition, source);
         if (haulerName !== undefined) {
           roomHandler.room.memory.sources[source.id].haulerName = haulerName;
         }
@@ -402,7 +402,8 @@ export class CreepPopulationHandler {
   // TODO: Add container to signature.
   private createSourceHauler(spawn: Spawn,
                              roomHandler: RoomHandler,
-                             myRefuelPosition: RoomPosition | undefined) {
+                             myRefuelPosition: RoomPosition | undefined,
+                             source: Source) {
     let bodyParts = CreepHauler.getBodyParts(roomHandler.room.energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
@@ -414,6 +415,7 @@ export class CreepPopulationHandler {
       {
         refuelPosition: myRefuelPosition,
         role: C.HAULER,
+        sourceId: source.id,
       });
 
     if (result === haulerName) {

@@ -9,6 +9,10 @@ import {MessageHandler} from "./components/messages/MessageHandler";
 import {GameHandler} from "./components/game/GameHandler";
 import {RoomHandler} from "./components/rooms/RoomHandler";
 
+// Remove logging fluff.
+log.showSource = false;
+log.showTick = false;
+
 // Any code written outside the `loop()` method is executed only when the
 // Screeps system reloads your script.
 // Use this bootstrap wisely. You can cache some of your stuff to save CPU.
@@ -20,6 +24,8 @@ if (Config.USE_PATHFINDER) {
 }
 
 initializeMemory();
+
+// TODO: Load room buildings into memory.
 
 /**
  * Screeps system expects this "loop" method in main.js to run the
@@ -49,19 +55,24 @@ export function loop() {
   let gameHandler = new GameHandler(Game);
   gameHandler.run();
 
+  log.info("Process rooms");
   for (let roomName in Game.rooms) {
     let room = Game.rooms[roomName];
     let roomHandler = new RoomHandler(room);
     roomHandler.run();
   }
 
+  log.info("Delete dead creeps from memory");
   for (let i in Memory.creeps) {
     if (!Game.creeps[i]) {
         delete Memory.creeps[i];
     }
   }
 
-  log.info("CPU used: " + Game.cpu.getUsed());
+  log.info("CPU used: " + _.round(Game.cpu.getUsed(), 1)
+    + " | Bucket: " + Game.cpu.bucket
+    + " | Limit: " + Game.cpu.limit
+    + " | TickLimit: " + Game.cpu.tickLimit);
 }
 
 function initializeMemory() {

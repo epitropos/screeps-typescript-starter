@@ -41,9 +41,9 @@ export class CreepMiner extends CreepSupport {
   public run() {
     super.run();
 
-    if (this.creep.pos.x !== this.creep.memory.finalDestination.x
-    && this.creep.pos.y !== this.creep.memory.finalDestination.y
-    && this.creep.pos.roomName !== this.creep.memory.finalDestination.roomName) {
+    // TODO: Create a STATE_TRAVELING state.
+    // Check if still traveling.
+    if (this.creep.memory.finalDestination !== undefined) {
       return;
     }
 

@@ -18,11 +18,6 @@ export class CreepBase {
     if (this.creep.memory.finalDestination === undefined) {
       return;
     }
-
-    if (this.creep.memory.finalDestination === "{\"x\":20,\"y\":14,\"roomName\":\"W7N9\"}") {
-      this.creep.memory.finalDestination = undefined;
-    }
-
     let finalDestination = new RoomPosition(
       this.creep.memory.finalDestination.x,
       this.creep.memory.finalDestination.y,
@@ -52,6 +47,8 @@ export class CreepBase {
       if (this.creep.pos.x !== asdf.x || this.creep.pos.y !== asdf.y) {
         this.moveTo(this.creep, asdf);
         return;
+      } else {
+        this.creep.memory.finalDestination = undefined;
       }
     }
   }

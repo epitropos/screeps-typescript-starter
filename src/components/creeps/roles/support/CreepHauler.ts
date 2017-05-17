@@ -41,68 +41,52 @@ export class CreepHauler extends CreepSupport {
   }
 
   public run() {
-    log.info("run 1");
     super.run();
 
-    log.info("run 2");
     let storage = this.loadStorage(this.creep);
     if (storage) {
-      log.info("run 3");
       // Deposit non-energy resources into storage.
       if (this.isFull(this.creep) && this.carryingNonEnergyResource(this.creep)) {
-        log.info("run 4");
         this.tryResourceDropOff(this.creep, storage);
         return;
       }
 
-      log.info("run 5");
       // Look for dropped resources.
       let droppedResource = this.loadDroppedResource(this.creep, 100, this.roomHandler);
       if (droppedResource !== undefined) {
-        log.info("run 6");
         this.moveToPickup(this.creep, droppedResource);
         return;
       } else {
-        log.info("run 7");
         // Deposit non-energy resources into storage.
         if (this.carryingNonEnergyResource(this.creep)) {
-          log.info("run 8");
           this.tryResourceDropOff(this.creep, storage);
           return;
         }
       }
     }
 
-    log.info("run 9");
     // Default state to refueling.
     if (this.creep.memory.state === undefined) {
-      log.info("run 10");
       this.creep.memory.state = this.STATE_REFUELING;
     }
 
-    log.info("run 11");
     if (this.creep.memory.state === this.STATE_REFUELING) {
-      log.info("run 12");
       this.runRefueling(this.creep, this.roomHandler);
       if (this.doesCreepHaveEnergy(this.creep)) {
-        log.info("run 13");
         this.creep.memory.state = this.STATE_DELIVERING;
       }
       return;
     }
 
-    log.info("run 4");
     if (this.creep.memory.state === this.STATE_DELIVERING) {
-      log.info("run 15");
       this.runDelivering(this.creep);
       if (this.isEmpty(this.creep)) {
-        log.info("run 16");
         this.creep.memory.state = this.STATE_REFUELING;
       }
       return;
     }
 
-    log.error("Unknown creep state: " + this.creep.memory.state);
+    log.error(this.creep.name + " Unknown creep state: " + this.creep.memory.state);
 
     // // Default to refueling state.
     // let energyCarried = this.creep.carry[RESOURCE_ENERGY] || 0;
@@ -120,29 +104,26 @@ export class CreepHauler extends CreepSupport {
   }
 
   public runRefueling(creep: Creep, roomHandler: RoomHandler) {
-    log.info("runRefueling 1");
     // Move to refuel position.
-    if (this.creep.memory.finalDestination === undefined
-    && !this.creep.pos.inRangeTo(this.creep.memory.refuelPosition, 1)) {
-    // && !this.isSamePosition(this.creep.pos, this.creep.memory.refuelPosition)) {
-      log.info("runRefueling 2");
-      let finalDestination = this.getFinalDestinationFromRefuelPosition(
-        this.creep.pos,
-        this.creep.memory.refuelPosition);
-      // this.creep.memory.finalDestination.x = finalDestination.x;
-      // this.creep.memory.finalDestination.y = finalDestination.y;
-      // this.creep.memory.finalDestination.roomName = finalDestination.roomName;
-      this.moveTo(this.creep, finalDestination);
+    if (this.creep.memory.finalDestination === undefined) {
+      let sourceId = creep.memory.sourceId;
+      let minerName = Memory.rooms[roomHandler.room.name].sources[sourceId].minerName;
+      let miner = Game.creeps[minerName];
+      let pathToMiner = creep.pos.findPathTo(miner);
+      let step = pathToMiner[pathToMiner.length - 1];
+      let finalDestination = new RoomPosition(creep.pos.x, creep.pos.y, creep.pos.roomName);
+      this.creep.memory.finalDestination = {};
+      this.creep.memory.finalDestination.x = finalDestination.x = step.x;
+      this.creep.memory.finalDestination.y = finalDestination.y = step.y;
+      this.creep.memory.finalDestination.roomName = finalDestination.roomName = creep.pos.roomName;
+      this.moveTo(creep, finalDestination);
       return;
     }
-
-    log.info("runRefueling 3");
     let cargoSpaceAvailable = creep.carryCapacity - _.sum(creep.carry);
 
     // Withdraw energy from container if it is full.
     let container = this.loadContainerNextToCreep(creep, roomHandler);
     if (container && this.isContainerFullOfEnergy(container)) {
-      log.info("runRefueling 4");
       // TODO: Combine this code with doesContainerHaveEnergy
       let energyAvailable = container.store[RESOURCE_ENERGY] || 0;
       let energyToWithdraw = _.min({cargoSpaceAvailable, energyAvailable});
@@ -153,23 +134,18 @@ export class CreepHauler extends CreepSupport {
     }
 
     // Pickup overflow energy.
-    log.info("runRefueling 5");
     let droppedEnergy = this.loadDroppedEnergy(creep, roomHandler, 1);
     if (droppedEnergy) {
-      log.info("runRefueling 6");
       creep.pickup(droppedEnergy);
       return;
     }
 
     // Nothing overflowing. Withdraw energy from container.
-    log.info("runRefueling 7");
     if (container && this.doesContainerHaveEnergy(container)) {
-      log.info("runRefueling 8");
       // TODO: Combine this code with isContainerFullOfEnergy
       let energyAvailable = container.store[RESOURCE_ENERGY] || 0;
       let energyToWithdraw = _.min({cargoSpaceAvailable, energyAvailable});
       if (energyToWithdraw > 0) {
-        log.info("runRefueling 9");
         creep.withdraw(container, RESOURCE_ENERGY, cargoSpaceAvailable);
         return;
       }
@@ -183,7 +159,6 @@ export class CreepHauler extends CreepSupport {
     // if (carriedEnergy < totalCarried) {
     //   let storage = this.loadStorage(creep);
     //   if (storage) {
-    //     log.info("Delivering non-energy resource to storage.");
     //     if (this.tryResourceDropOff(creep, storage) === ERR_NOT_IN_RANGE) {
     //       this.moveTo(creep, storage);
     //     }
@@ -194,7 +169,6 @@ export class CreepHauler extends CreepSupport {
     // Load closest extension.
     let extension = this.loadExtension(creep);
     if (extension) {
-      log.info("Delivering energy resource to extension.");
       if (this.tryEnergyDropOff(creep, extension) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, extension);
       }
@@ -204,7 +178,6 @@ export class CreepHauler extends CreepSupport {
     // Load closest spawn.
     let spawn = this.loadSpawn(creep);
     if (spawn) {
-      log.info("Delivering energy resource to spawn.");
       if (this.tryEnergyDropOff(creep, spawn) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, spawn);
       }
@@ -214,7 +187,6 @@ export class CreepHauler extends CreepSupport {
     // Load closest tower.
     let tower = this.loadTower(creep);
     if (tower) {
-      log.info("Delivering energy resource to tower.");
       if (this.tryEnergyDropOff(creep, tower) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, tower);
       }
@@ -312,28 +284,28 @@ export class CreepHauler extends CreepSupport {
     });
   }
 
-  private getFinalDestinationFromRefuelPosition(
-    currentPosition: RoomPosition,
-    refuelPosition: RoomPosition) {
-    let oldX = currentPosition.x;
-    let oldY = currentPosition.y;
-    let oldRoomName = currentPosition.roomName;
-    let oldPosition = new RoomPosition(oldX, oldY, oldRoomName);
+  // private getFinalDestinationFromRefuelPosition(
+  //   currentPosition: RoomPosition,
+  //   refuelPosition: RoomPosition) {
+  //   let oldX = currentPosition.x;
+  //   let oldY = currentPosition.y;
+  //   let oldRoomName = currentPosition.roomName;
+  //   let oldPosition = new RoomPosition(oldX, oldY, oldRoomName);
 
-    let newX = refuelPosition.x;
-    let newY = refuelPosition.y;
-    let newRoomName = refuelPosition.roomName;
-    let newPosition = new RoomPosition(newX, newY, newRoomName);
+  //   let newX = refuelPosition.x;
+  //   let newY = refuelPosition.y;
+  //   let newRoomName = refuelPosition.roomName;
+  //   let newPosition = new RoomPosition(newX, newY, newRoomName);
 
-    if (oldPosition.inRangeTo(newPosition, 1)) {
-      return oldPosition;
-    }
+  //   if (oldPosition.inRangeTo(newPosition, 1)) {
+  //     return oldPosition;
+  //   }
 
-    let path = oldPosition.findPathTo(newPosition);
-    let step = path[path.length - 2];
-    let actualPosition = new RoomPosition(step.x, step.y, newRoomName);
-    return actualPosition;
-  }
+  //   let path = oldPosition.findPathTo(newPosition);
+  //   let step = path[path.length - 1];
+  //   let actualPosition = new RoomPosition(step.x, step.y, newRoomName);
+  //   return actualPosition;
+  // }
 
   private isEmpty(creep: Creep) {
     let energyCarried = creep.carry[RESOURCE_ENERGY] || 0;

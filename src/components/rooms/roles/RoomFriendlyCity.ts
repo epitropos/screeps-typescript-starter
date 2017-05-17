@@ -5,8 +5,15 @@ import {RoomHandler} from "../RoomHandler";
 import {StructureHandler} from "../../structures/StructureHandler";
 
 export class RoomFriendlyCity extends RoomFriendly {
+  public spawns: Spawn[];
+  public creeps: Creep[];
+  public enemyCreeps: Creep[];
+
   constructor(room: Room) {
     super(room);
+    this.spawns = room.find<Spawn>(FIND_MY_SPAWNS);
+    this.creeps = room.find<Creep>(FIND_MY_CREEPS);
+    this.enemyCreeps = room.find<Creep>(FIND_HOSTILE_CREEPS);
   }
 
   public run() {
