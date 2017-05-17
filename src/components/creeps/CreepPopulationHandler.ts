@@ -10,6 +10,8 @@ import {CreepStocker} from "./roles/support/CreepStocker";
 import {CreepUpgrader} from "./roles/support/CreepUpgrader";
 
 export class CreepPopulationHandler {
+  // TODO: Figure a way to help ensure creeps grow in size.
+
   public roomHandler: RoomHandler;
 
   public MAX_STOCKERS = 0;
@@ -77,7 +79,7 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.BUILDER,
     });
     if (creeps.length < this.MAX_BUILDERS) {
-      let bodyParts = CreepBuilder.getBodyParts(roomHandler.room.energyAvailable);
+      let bodyParts = CreepBuilder.getBodyParts(roomHandler.room.energyAvailable / 2);
       if (bodyParts === undefined) {
         return OK;
       }
@@ -98,7 +100,7 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.UPGRADER,
     });
     if (creeps.length < this.MAX_UPGRADERS) {
-      let bodyParts = CreepUpgrader.getBodyParts(roomHandler.room.energyAvailable);
+      let bodyParts = CreepUpgrader.getBodyParts(roomHandler.room.energyAvailable / 2);
       if (bodyParts === undefined) {
         return OK;
       }

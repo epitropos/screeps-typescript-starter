@@ -33,10 +33,6 @@ export class CreepBuilder extends CreepSupport {
     });
   }
 
-  // TODO: Change into a shared enum.
-  public readonly STATE_BUILDING = "BUILDING";
-  public readonly STATE_REFUELING = "REFUELING";
-
   constructor (creep: Creep, roomHandler: RoomHandler) {
     super(creep, roomHandler);
   }
@@ -44,11 +40,11 @@ export class CreepBuilder extends CreepSupport {
   public run() {
     super.run();
 
-    let state = this.creep.memory.state || this.STATE_REFUELING;
+    let state = this.creep.memory.state || C.STATE_REFUELING;
 
-    if (state === this.STATE_REFUELING) {
+    if (state === C.STATE_REFUELING) {
       this.getEnergy(this.creep);
-    } else if (state === this.STATE_BUILDING) {
+    } else if (state === C.STATE_BUILDING) {
       let constructionSites = this.roomHandler.loadConstructionSites(this.creep.room);
       if (constructionSites.length > 0) {
         let constructionSite = this.creep.pos.findClosestByPath<ConstructionSite>(constructionSites);
@@ -63,32 +59,32 @@ export class CreepBuilder extends CreepSupport {
     }
 
     if (this.creep.carry[RESOURCE_ENERGY] || 0 > 0) {
-      this.creep.memory.state = this.STATE_BUILDING;
+      this.creep.memory.state = C.STATE_BUILDING;
     } else {
-      this.creep.memory.state = this.STATE_REFUELING;
+      this.creep.memory.state = C.STATE_REFUELING;
     }
   }
 
   public determineCurrentState(creep: Creep): string {
     let state = creep.memory.state;
 
-    if (state === this.STATE_REFUELING) {
+    if (state === C.STATE_REFUELING) {
       if (!this.refuelingComplete(creep)) {
-        return this.STATE_REFUELING;
+        return C.STATE_REFUELING;
       }
     }
 
     if (this.needsToRefuel(creep)) {
-      return this.STATE_REFUELING;
+      return C.STATE_REFUELING;
     }
 
     if (this.roomHandler.constructionSitesExist(creep.room)) {
-      return this.STATE_BUILDING;
+      return C.STATE_BUILDING;
     }
 
     // TODO: Add STATE_IDLE
     // return STATE_IDLE;
-    return this.STATE_BUILDING;
+    return C.STATE_BUILDING;
   }
 
   public build(creep: Creep, constructionSite: ConstructionSite): void {

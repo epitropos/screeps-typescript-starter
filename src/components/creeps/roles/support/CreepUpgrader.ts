@@ -1,3 +1,4 @@
+import * as C from "../../../../config/constants";
 // import * as Config from "../../../../config/config";
 // import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
@@ -34,9 +35,6 @@ export class CreepUpgrader extends CreepSupport {
     });
   }
 
-  protected readonly STATE_UPGRADING = "UPGRADING";
-  protected readonly STATE_REFUELING = "REFUELING";
-
   constructor (creep: Creep, roomHandler: RoomHandler) {
     super(creep, roomHandler);
   }
@@ -44,19 +42,19 @@ export class CreepUpgrader extends CreepSupport {
   public run() {
     super.run();
 
-    let state = this.creep.memory.state || this.STATE_REFUELING;
+    let state = this.creep.memory.state || C.STATE_REFUELING;
 
-    if (state === this.STATE_REFUELING) {
+    if (state === C.STATE_REFUELING) {
       this.getEnergy(this.creep);
-    } else if (state === this.STATE_UPGRADING) {
+    } else if (state === C.STATE_UPGRADING) {
       let controller = <Controller> this.creep.room.controller;
       this.moveToUpgrade(this.creep, controller);
     }
 
     if (this.creep.carry[RESOURCE_ENERGY] || 0 > 0) {
-      this.creep.memory.state = this.STATE_UPGRADING;
+      this.creep.memory.state = C.STATE_UPGRADING;
     } else {
-      this.creep.memory.state = this.STATE_REFUELING;
+      this.creep.memory.state = C.STATE_REFUELING;
     }
   }
 

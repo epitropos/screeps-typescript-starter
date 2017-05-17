@@ -1,4 +1,4 @@
-// import * as C from "../../../../config/constants";
+import * as C from "../../../../config/constants";
 // import * as Config from "../../../../config/config";
 import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
@@ -33,9 +33,6 @@ export class CreepHauler extends CreepSupport {
     });
   }
 
-  public readonly STATE_DELIVERING = "DELIVERING";
-  public readonly STATE_REFUELING = "REFUELING";
-
   constructor (creep: Creep, roomHandler: RoomHandler) {
     super(creep, roomHandler);
   }
@@ -67,21 +64,21 @@ export class CreepHauler extends CreepSupport {
 
     // Default state to refueling.
     if (this.creep.memory.state === undefined) {
-      this.creep.memory.state = this.STATE_REFUELING;
+      this.creep.memory.state = C.STATE_REFUELING;
     }
 
-    if (this.creep.memory.state === this.STATE_REFUELING) {
+    if (this.creep.memory.state === C.STATE_REFUELING) {
       this.runRefueling(this.creep, this.roomHandler);
       if (this.doesCreepHaveEnergy(this.creep)) {
-        this.creep.memory.state = this.STATE_DELIVERING;
+        this.creep.memory.state = C.STATE_DELIVERING;
       }
       return;
     }
 
-    if (this.creep.memory.state === this.STATE_DELIVERING) {
+    if (this.creep.memory.state === C.STATE_DELIVERING) {
       this.runDelivering(this.creep);
       if (this.isEmpty(this.creep)) {
-        this.creep.memory.state = this.STATE_REFUELING;
+        this.creep.memory.state = C.STATE_REFUELING;
       }
       return;
     }
@@ -91,14 +88,14 @@ export class CreepHauler extends CreepSupport {
     // // Default to refueling state.
     // let energyCarried = this.creep.carry[RESOURCE_ENERGY] || 0;
     // if (this.creep.memory.state === undefined || energyCarried === 0) {
-    //   this.creep.memory.state = this.STATE_REFUELING;
+    //   this.creep.memory.state = C.STATE_REFUELING;
     // } else if (energyCarried > 0) {
-    //   this.creep.memory.state = this.STATE_DELIVERING;
+    //   this.creep.memory.state = C.STATE_DELIVERING;
     // }
 
     // switch (this.creep.memory.state) {
-    //   case this.STATE_REFUELING: this.runRefueling(this.creep, this.roomHandler); return;
-    //   case this.STATE_DELIVERING: this.runDelivering(this.creep); return;
+    //   case C.STATE_REFUELING: this.runRefueling(this.creep, this.roomHandler); return;
+    //   case C.STATE_DELIVERING: this.runDelivering(this.creep); return;
     //   default: log.error("Unknown creep state: " + this.creep.memory.state);
     // }
   }
@@ -199,6 +196,8 @@ export class CreepHauler extends CreepSupport {
     // Load storage.
     let storage = this.loadStorage(creep);
     if (storage) {
+      // TODO: Check near squares for creeps that need energy
+
       let result = this.tryEnergyDropOff(creep, storage);
       if (result === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, storage);

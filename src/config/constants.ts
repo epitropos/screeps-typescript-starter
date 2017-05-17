@@ -13,6 +13,12 @@ export const RED = "#ff0000";
 export const YELLOW = "#ffff00";
 export const WHITE = "#ffffff";
 
+export const STATE_BUILDING = "BUILDING";
+export const STATE_DELIVERING = "DELIVERING";
+export const STATE_REFUELING = "REFUELING";
+export const STATE_TRAVELING = "TRAVELING";
+export const STATE_UPGRADING = "UPGRADING";
+
 export function Error(errorCode: number) {
   switch (errorCode) {
     case OK: return "OK";

@@ -1,3 +1,4 @@
+import * as C from "../../../../config/constants";
 // import * as Config from "../../../../config/config";
 // import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
@@ -32,9 +33,6 @@ export class CreepStocker extends CreepSupport {
     });
   }
 
-  public readonly STATE_DELIVERING = "DELIVERING";
-  public readonly STATE_REFUELING = "REFUELING";
-
   constructor (creep: Creep, roomHandler: RoomHandler) {
     super(creep, roomHandler);
   }
@@ -42,9 +40,9 @@ export class CreepStocker extends CreepSupport {
   public run() {
     super.run();
 
-    let state = this.creep.memory.state || this.STATE_REFUELING;
+    let state = this.creep.memory.state || C.STATE_REFUELING;
 
-    if (state === this.STATE_REFUELING) {
+    if (state === C.STATE_REFUELING) {
       // let asdf = Game.getObjectById<Container>("aeca720c8474a69");
       // if (asdf) {
       //   this.moveToWithdraw(this.creep, asdf);
@@ -57,7 +55,7 @@ export class CreepStocker extends CreepSupport {
           }
         }
       // }
-    } else if (state === this.STATE_DELIVERING) {
+    } else if (state === C.STATE_DELIVERING) {
       let extensions = this.roomHandler.loadExtensions(this.creep.room);
       if (extensions.length > 0) {
         let extension = this.creep.pos.findClosestByPath<Extension>(extensions);
@@ -85,9 +83,9 @@ export class CreepStocker extends CreepSupport {
     }
 
     if (this.creep.carry[RESOURCE_ENERGY] || 0 > 0) {
-      this.creep.memory.state = this.STATE_DELIVERING;
+      this.creep.memory.state = C.STATE_DELIVERING;
     } else {
-      this.creep.memory.state = this.STATE_REFUELING;
+      this.creep.memory.state = C.STATE_REFUELING;
     }
   }
 
