@@ -4,13 +4,15 @@ import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepMiner extends CreepSupport {
-  public static getBodyParts(energyAvailable: number) {
-    let bodyParts: string[] = [WORK, MOVE];
-    let bodySegmentSize = 100;
+  public static MinimumEnergyRequired = 150;
 
-    if (energyAvailable < bodySegmentSize) {
+  public static getBodyParts(energyAvailable: number) {
+    if (energyAvailable < CreepMiner.MinimumEnergyRequired) {
       return undefined;
     }
+
+    let bodyParts: string[] = [WORK, MOVE];
+    let bodySegmentSize = 100;
 
     let bodyPartsSize = 50 + 100;
     let bodyPartsSizeMax = 50 + 100 + 100 + 100 + 100 + 100;

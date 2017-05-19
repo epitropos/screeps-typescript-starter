@@ -58,7 +58,8 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.STOCKER,
     });
     if (creeps.length < this.MAX_STOCKERS) {
-      let bodyParts = CreepStocker.getBodyParts(roomHandler.room.energyAvailable);
+      let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepStocker.MinimumEnergyRequired]);
+      let bodyParts = CreepStocker.getBodyParts(energyAvailable);
       if (bodyParts === undefined) {
         return OK;
       }
@@ -79,7 +80,8 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.BUILDER,
     });
     if (creeps.length < this.MAX_BUILDERS) {
-      let bodyParts = CreepBuilder.getBodyParts(roomHandler.room.energyAvailable / 2);
+      let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepBuilder.MinimumEnergyRequired]);
+      let bodyParts = CreepBuilder.getBodyParts(energyAvailable);
       if (bodyParts === undefined) {
         return OK;
       }
@@ -100,7 +102,8 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.UPGRADER,
     });
     if (creeps.length < this.MAX_UPGRADERS) {
-      let bodyParts = CreepUpgrader.getBodyParts(roomHandler.room.energyAvailable / 2);
+      let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepUpgrader.MinimumEnergyRequired]);
+      let bodyParts = CreepUpgrader.getBodyParts(energyAvailable);
       if (bodyParts === undefined) {
         return OK;
       }
@@ -117,61 +120,40 @@ export class CreepPopulationHandler {
   }
 
   public buildMissingHaulers(spawn: Spawn, roomHandler: RoomHandler) {
-    if (roomHandler.room.memory.sources === undefined) {
-      this.loadRoomSourcesIntoMemory(roomHandler);
-    }
-
     let sourceIds = _.keys(roomHandler.room.memory.sources);
-    for (let sourceId of sourceIds) {
+    for (let sourceId in sourceIds) {
       let source = <Source> Game.getObjectById(sourceId);
+      if (!source) {
+        delete roomHandler.room.memory.sources[sourceId];
+        continue;
+      }
+
+      let memoryMinerPosition = roomHandler.room.memory.sources[sourceId].minerPosition;
+      if (memoryMinerPosition === undefined) {
+        continue;
+      }
+
+      let minerPosition = new RoomPosition(memoryMinerPosition.x, memoryMinerPosition.y, memoryMinerPosition.roomName);
+
       let haulerName = roomHandler.room.memory.sources[sourceId].haulerName;
       if (haulerName !== undefined) {
         let hauler = Game.creeps[haulerName];
         if (hauler) {
           continue;
         }
-        roomHandler.room.memory.sources[sourceId].haulerName = haulerName = undefined;
+
+        delete roomHandler.room.memory.sources[sourceId].haulerName;
+        haulerName = undefined;
       }
 
-      if (haulerName === undefined) {
-        let haulerPosition = undefined;
+      // TODO: Get refulPosition.
+      let path = spawn.pos.findPathTo(minerPosition);
+      let step = path[path.length - 1];
+      let refuelPosition = roomHandler.room.getPositionAt(step.x, step.y);
 
-        if (haulerPosition === undefined) {
-          let container = this.loadSourceContainer(roomHandler, source);
-          if (container) {
-            haulerPosition = container.pos;
-          }
-        }
-
-        if (haulerPosition === undefined) {
-          let containerConstructionSite = this.loadSourceContainerConstructionSite(roomHandler, source);
-          if (containerConstructionSite) {
-            haulerPosition = containerConstructionSite.pos;
-          }
-        }
-
-        if (haulerPosition === undefined) {
-          // TODO: Use the miner's position for determination.
-          let path = roomHandler.room.findPath(spawn.pos, source.pos);
-          if (path.length > 2) {
-            let step = path[path.length - 2];
-            haulerPosition = new RoomPosition(
-              step.x,
-              step.y,
-              roomHandler.room.name);
-          }
-        }
-
-        // if (haulerPosition === undefined) {
-        //   log.error("Unable to determine final destination for hauler for container: " + source.id);
-        //   return;
-        // }
-
-        // Create hauler.
-        haulerName = this.createSourceHauler(spawn, roomHandler, haulerPosition, source);
-        if (haulerName !== undefined) {
-          roomHandler.room.memory.sources[source.id].haulerName = haulerName;
-        }
+      haulerName = this.createSourceHauler(spawn, roomHandler, source, refuelPosition);
+      if (haulerName !== undefined) {
+        roomHandler.room.memory.sources[sourceId].haulerName = haulerName;
       }
     }
 
@@ -212,7 +194,7 @@ export class CreepPopulationHandler {
     //   }
 
     //   // Create hauler.
-    //   let bodyParts = CreepHauler.getBodyParts(roomHandler.room.energyAvailable);
+    //   let bodyParts = CreepHauler.getBodyParts(roomHandler.room.energyAvailable / 2);
     //   let newHaulerName = C.HAULER + Memory.uuid++;
     //   let result = spawn.createCreep(bodyParts, newHaulerName, {
     //     containerId: containerId,
@@ -277,7 +259,7 @@ export class CreepPopulationHandler {
     //     // Verify miners are in memory.
     //     let extractorName = roomHandler.room.memory.minerals[mineral.id].extractorName;
     //     if (extractorName === undefined) {
-    //       let bodyParts = CreepExtractor.getBodyParts(roomHandler.room.energyAvailable);
+    //       let bodyParts = CreepExtractor.getBodyParts(roomHandler.room.energyAvailable / 2);
     //       let extractorName = C.EXTRACTOR + Memory.uuid++;
     //       let result = spawn.createCreep(bodyParts, extractorName, {
     //         containerId: container.id,
@@ -303,133 +285,46 @@ export class CreepPopulationHandler {
   }
 
   public buildMissingMiners(spawn: Spawn, roomHandler: RoomHandler) {
-    if (roomHandler.room.memory.sources === undefined) {
-      this.loadRoomSourcesIntoMemory(roomHandler);
-    }
-
     let sourceIds = _.keys(roomHandler.room.memory.sources);
-    for (let sourceId of sourceIds) {
+    for (let sourceId in sourceIds) {
       let source = <Source> Game.getObjectById(sourceId);
+      if (!source) {
+        delete roomHandler.room.memory.sources[sourceId];
+        continue;
+      }
+
+      let memoryMinerPosition = roomHandler.room.memory.soruces[sourceId].minerPosition;
+      if (memoryMinerPosition === undefined) {
+        continue;
+      }
+
+      let minerPosition = new RoomPosition(memoryMinerPosition.x, memoryMinerPosition.y, memoryMinerPosition.roomName);
+
       let minerName = roomHandler.room.memory.sources[sourceId].minerName;
       if (minerName !== undefined) {
         let miner = Game.creeps[minerName];
         if (miner) {
           continue;
         }
-        roomHandler.room.memory.sources[sourceId].minerName = minerName = undefined;
+        delete roomHandler.room.memory.sources[sourceId].minerName;
+        minerName = undefined;
       }
 
-      if (minerName === undefined) {
-        let minerPosition = undefined;
-
-        if (minerPosition === undefined) {
-          let container = this.loadSourceContainer(roomHandler, source);
-          if (container) {
-            minerPosition = container.pos;
-          }
-        }
-
-        if (minerPosition === undefined) {
-          let containerConstructionSite = this.loadSourceContainerConstructionSite(roomHandler, source);
-          if (containerConstructionSite) {
-            minerPosition = containerConstructionSite.pos;
-          }
-        }
-
-        if (minerPosition === undefined) {
-          let path = roomHandler.room.findPath(spawn.pos, source.pos);
-          if (path.length > 2) {
-            let step = path[path.length - 2];
-            minerPosition = new RoomPosition(
-              step.x,
-              step.y,
-              roomHandler.room.name);
-          }
-        }
-
-        // if (minerPosition === undefined) {
-        //   log.error("Unable to determine final destination for miner for container: " + source.id);
-        //   return;
-        // }
-
-        // Create miner.
-        minerName = this.createSourceMiner(spawn, roomHandler, source, minerPosition);
-        if (minerName !== undefined) {
-          roomHandler.room.memory.sources[source.id].minerName = minerName;
-        }
+      minerName = this.createSourceMiner(spawn, roomHandler, source, minerPosition);
+      if (minerName !== undefined) {
+        roomHandler.room.memory.sources[sourceId].minerName = minerName;
       }
     }
 
     return OK;
-    // let sourceIds = _.keys(roomHandler.room.memory.sources);
-    // for (let sourceId of sourceIds) {
-    //   if (sourceId === undefined) {
-    //     continue;
-    //   }
-
-    //   let source = <Source> Game.getObjectById(sourceId);
-    //   if (!source) {
-    //     continue;
-    //   }
-    //   let minerPosition = roomHandler.room.memory.soruces[sourceId].minerPosition;
-    //   if (minerPosition === undefined) {
-    //     continue;
-    //   }
-
-    //   let minerName = roomHandler.room.memory.sources[sourceId].minerName;
-    //   if (minerName !== undefined) {
-    //     let miner = Game.creeps[minerName];
-    //     if (!miner) {
-    //       delete  roomHandler.room.memory.sources[sourceId].minerName;
-    //     }
-    //   }
-    // }
   }
 
-  private loadRoomSourcesIntoMemory(roomHandler: RoomHandler) {
-    // TODO: This will get called every tick for rooms without sources. Either verify all rooms have
-    // at least one source, or store the number of sources in memory.
-    let sources = roomHandler.room.find<Source>(FIND_SOURCES);
-    if (sources && sources.length > 0) {
-      for (let sourceId in sources) {
-        roomHandler.room.memory.sources[sourceId] = {};      }
-    }
-  }
-
-  private loadSourceContainer(roomHandler: RoomHandler, source: Source) {
-    let containers = roomHandler.room.find<Container>(FIND_STRUCTURES, {
-      filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER
-      && c.pos.isNearTo(source),
-    });
-    if (containers.length > 0) {
-      roomHandler.room.memory.sources[source.id].containerId = containers[0].id;
-      return containers[0];
-    }
-    // TODO: Delete all but one container instead of ignoring them.
-
-    return undefined;
-  }
-
-  private loadSourceContainerConstructionSite(roomHandler: RoomHandler, source: Source) {
-    let constructionSites = roomHandler.room.find<ConstructionSite>(FIND_CONSTRUCTION_SITES, {
-      filter: (c: ConstructionSite) => c.structureType === STRUCTURE_CONTAINER
-      && c.pos.isNearTo(source),
-    });
-    if (constructionSites.length > 0) {
-      return constructionSites[0];
-    }
-    // TODO: Delete all but one container construction site instead of ignoring them.
-    // TODO: If there is a container then delete all container construction sites.
-
-    return undefined;
-  }
-
-  // TODO: Add container to signature.
   private createSourceHauler(spawn: Spawn,
                              roomHandler: RoomHandler,
-                             myRefuelPosition: RoomPosition | undefined,
-                             source: Source) {
-    let bodyParts = CreepHauler.getBodyParts(roomHandler.room.energyAvailable);
+                             source: Source,
+                             myRefuelPosition: RoomPosition | null) {
+    let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepHauler.MinimumEnergyRequired]);
+    let bodyParts = CreepHauler.getBodyParts(energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
     }
@@ -455,7 +350,8 @@ export class CreepPopulationHandler {
                             roomHandler: RoomHandler,
                             source: Source,
                             destination: RoomPosition | undefined) {
-    let bodyParts = CreepMiner.getBodyParts(roomHandler.room.energyAvailable);
+    let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepMiner.MinimumEnergyRequired]);
+    let bodyParts = CreepMiner.getBodyParts(energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
     }
@@ -470,9 +366,11 @@ export class CreepPopulationHandler {
       });
 
     if (result === minerName) {
+      // TODO: Change from minerName to OK.
       return minerName;
     } else {
       log.error("result of creating miner: " + minerName + " = " + result);
+      // TODO: Change from undefined to error code.
       return undefined;
     }
   }

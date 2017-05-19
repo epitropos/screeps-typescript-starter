@@ -5,13 +5,15 @@ import {CreepSupport} from "./CreepSupport";
 import {RoomHandler} from "../../../rooms/RoomHandler";
 
 export class CreepHauler extends CreepSupport {
-  public static getBodyParts(energyAvailable: number) {
-    let bodyParts: string[] = [];
-    let bodySegmentSize = 150;
+  public static MinimumEnergyRequired = 150;
 
-    if (energyAvailable < bodySegmentSize) {
+  public static getBodyParts(energyAvailable: number) {
+    if (energyAvailable < CreepHauler.MinimumEnergyRequired) {
       return undefined;
     }
+
+    let bodyParts: string[] = [];
+    let bodySegmentSize = 150;
 
     let bodyPartsSize = 0;
 

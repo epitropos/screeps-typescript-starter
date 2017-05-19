@@ -146,7 +146,13 @@ export class RoomFriendlyCity extends RoomFriendly {
 
     // Process all sources.
     let sourceIds = this.room.memory.sources;
-    for (let sourceId of sourceIds) {
+    if (sourceIds === undefined) {
+      sourceIds = _.keys(this.room.find<Source>(FIND_SOURCES));
+      for (let sourceId in sourceIds) {
+        this.room.memory.sources[sourceId] = {};
+      }
+    }
+    for (let sourceId in sourceIds) {
       let source = <Source> Game.getObjectById(sourceId);
       if (!source) {
         delete this.room.memory.sources[sourceId];
