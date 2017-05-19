@@ -58,7 +58,8 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.STOCKER,
     });
     if (creeps.length < this.MAX_STOCKERS) {
-      let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepStocker.MinimumEnergyRequired]);
+      // TODO: replace with if comparison of energyAvailable and exit if not enough.
+      let energyAvailable = _.max([roomHandler.room.energyAvailable / 2, CreepStocker.MinimumEnergyRequired]);
       let bodyParts = CreepStocker.getBodyParts(energyAvailable);
       if (bodyParts === undefined) {
         return OK;
@@ -80,7 +81,8 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.BUILDER,
     });
     if (creeps.length < this.MAX_BUILDERS) {
-      let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepBuilder.MinimumEnergyRequired]);
+      // TODO: replace with if comparison of energyAvailable and exit if not enough.
+      let energyAvailable = _.max([roomHandler.room.energyAvailable / 2, CreepBuilder.MinimumEnergyRequired]);
       let bodyParts = CreepBuilder.getBodyParts(energyAvailable);
       if (bodyParts === undefined) {
         return OK;
@@ -102,7 +104,8 @@ export class CreepPopulationHandler {
       filter: (c: Creep) => c.memory.role === C.UPGRADER,
     });
     if (creeps.length < this.MAX_UPGRADERS) {
-      let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepUpgrader.MinimumEnergyRequired]);
+      // TODO: replace with if comparison of energyAvailable and exit if not enough.
+      let energyAvailable = _.max([roomHandler.room.energyAvailable / 2, CreepUpgrader.MinimumEnergyRequired]);
       let bodyParts = CreepUpgrader.getBodyParts(energyAvailable);
       if (bodyParts === undefined) {
         return OK;
@@ -323,7 +326,8 @@ export class CreepPopulationHandler {
                              roomHandler: RoomHandler,
                              source: Source,
                              myRefuelPosition: RoomPosition | null) {
-    let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepHauler.MinimumEnergyRequired]);
+    // TODO: replace with if comparison of energyAvailable and exit if not enough.
+    let energyAvailable = _.max([roomHandler.room.energyAvailable / 2, CreepHauler.MinimumEnergyRequired]);
     let bodyParts = CreepHauler.getBodyParts(energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
@@ -350,7 +354,8 @@ export class CreepPopulationHandler {
                             roomHandler: RoomHandler,
                             source: Source,
                             destination: RoomPosition | undefined) {
-    let energyAvailable = _.min([roomHandler.room.energyAvailable / 2, CreepMiner.MinimumEnergyRequired]);
+    // TODO: replace with if comparison of energyAvailable and exit if not enough.
+    let energyAvailable = _.max([roomHandler.room.energyAvailable / 2, CreepMiner.MinimumEnergyRequired]);
     let bodyParts = CreepMiner.getBodyParts(energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
