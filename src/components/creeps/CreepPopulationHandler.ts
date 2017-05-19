@@ -361,6 +361,29 @@ export class CreepPopulationHandler {
     }
 
     return OK;
+    // let sourceIds = _.keys(roomHandler.room.memory.sources);
+    // for (let sourceId of sourceIds) {
+    //   if (sourceId === undefined) {
+    //     continue;
+    //   }
+
+    //   let source = <Source> Game.getObjectById(sourceId);
+    //   if (!source) {
+    //     continue;
+    //   }
+    //   let minerPosition = roomHandler.room.memory.soruces[sourceId].minerPosition;
+    //   if (minerPosition === undefined) {
+    //     continue;
+    //   }
+
+    //   let minerName = roomHandler.room.memory.sources[sourceId].minerName;
+    //   if (minerName !== undefined) {
+    //     let miner = Game.creeps[minerName];
+    //     if (!miner) {
+    //       delete  roomHandler.room.memory.sources[sourceId].minerName;
+    //     }
+    //   }
+    // }
   }
 
   private loadRoomSourcesIntoMemory(roomHandler: RoomHandler) {
