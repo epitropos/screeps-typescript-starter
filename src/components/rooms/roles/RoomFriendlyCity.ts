@@ -92,6 +92,29 @@ export class RoomFriendlyCity extends RoomFriendly {
     }
   }
 
+  public determineHaulerName(source: Source) {
+    let haulerName = this.room.memory.sources[source.id].haulerName;
+
+    // Retrieve hauler. Delete from memory if it no longer exists.
+    if (haulerName) {
+      let hauler = Game.creeps[haulerName];
+      if (!hauler) {
+        delete this.room.memory.sources[source.id].haulerName;
+        haulerName = undefined;
+      }
+    }
+
+    // // Send hauler creation request.
+    // if (haulerName === undefined) {
+    //   if (this.spawns.length === 0) {
+    //     log.info("Cannot create hauler. No spawns in room: " + this.room.name + ".");
+    //     return;
+    //   }
+
+    //   // TODO: Create request to create hauler.
+    // }
+  }
+
   public determineMinerName(source: Source) {
     // // TODO: Consider moving miner creation here. Will be easier later to move to requesting a new miner.
     // let minerName = this.room.memory.sources[source.id].minerName;
@@ -111,15 +134,15 @@ export class RoomFriendlyCity extends RoomFriendly {
       }
     }
 
-    // Create miner.
-    if (minerName === undefined) {
-      if (this.spawns.length === 0) {
-        log.info("Cannot create miner. No spawns in room: " + this.room.name + ".");
-        return;
-      }
+    // // Send miner creation request.
+    // if (minerName === undefined) {
+    //   if (this.spawns.length === 0) {
+    //     log.info("Cannot create miner. No spawns in room: " + this.room.name + ".");
+    //     return;
+    //   }
 
-      // TODO: Create request to create miner.
-    }
+    //   // TODO: Create request to create miner.
+    // }
   }
 
   public determineMinerPosition(source: Source) {
@@ -168,6 +191,8 @@ export class RoomFriendlyCity extends RoomFriendly {
       this.determineContainer(source);
 
       this.determineMinerName(source);
+
+      this.determineHaulerName(source);
     }
 
     // Process all minerals.
