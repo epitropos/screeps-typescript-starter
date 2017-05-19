@@ -1,4 +1,4 @@
-import {log} from "../../../lib/logger/log";
+// import {log} from "../../../lib/logger/log";
 import {CreepHandler} from "../../creeps/CreepHandler";
 import {CreepPopulationHandler} from "../../creeps/CreepPopulationHandler";
 import {RoomFriendly} from "./RoomFriendly";
