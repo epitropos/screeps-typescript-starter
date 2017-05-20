@@ -134,7 +134,7 @@ export class CreepHauler extends CreepSupport {
       let energyAvailable = container.store[RESOURCE_ENERGY] || 0;
       let energyToWithdraw = _.min({cargoSpaceAvailable, energyAvailable});
       if (energyToWithdraw > 0) {
-        creep.withdraw(container, RESOURCE_ENERGY, cargoSpaceAvailable);
+        creep.withdraw(container, RESOURCE_ENERGY, energyToWithdraw);
         return;
       }
     }
@@ -152,7 +152,7 @@ export class CreepHauler extends CreepSupport {
       let energyAvailable = container.store[RESOURCE_ENERGY] || 0;
       let energyToWithdraw = _.min({cargoSpaceAvailable, energyAvailable});
       if (energyToWithdraw > 0) {
-        creep.withdraw(container, RESOURCE_ENERGY, cargoSpaceAvailable);
+        creep.withdraw(container, RESOURCE_ENERGY, energyToWithdraw);
         return;
       }
     }
