@@ -17,7 +17,7 @@ export class CreepStocker extends CreepSupport {
 
     let bodyPartsSize = 0;
 
-    while (bodyPartsSize + bodySegmentSize < energyAvailable) {
+    while (bodyPartsSize + bodySegmentSize <= energyAvailable) {
       bodyParts.push(CARRY);
       bodyParts.push(CARRY);
       bodyParts.push(MOVE);

@@ -42,11 +42,9 @@ export class CreepBase {
     // }
 
     if (finalDestination !== undefined) {
-      // TODO: WHY DOES FINALDESTINATION FAIL TO WORK BUT PULLING THE DATA OUT WORKS?!?
       let asdf = new RoomPosition(finalDestination.x, finalDestination.y, finalDestination.roomName);
-      if (this.creep.pos.x !== asdf.x || this.creep.pos.y !== asdf.y) {
+      if (!this.creep.pos.isEqualTo(asdf)) {
         this.moveTo(this.creep, asdf);
-        return;
       } else {
         this.creep.memory.finalDestination = undefined;
       }

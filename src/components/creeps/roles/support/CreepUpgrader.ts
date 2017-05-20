@@ -19,7 +19,7 @@ export class CreepUpgrader extends CreepSupport {
 
     let count = 0; // This is used to enforce the 15 energy per tick cap.
 
-    while (bodyPartsSize + bodySegmentSize < energyAvailable && count++ <= 15) {
+    while (bodyPartsSize + bodySegmentSize <= energyAvailable && count++ <= 15) {
       bodyParts.push(WORK);
       bodyParts.push(CARRY);
       bodyParts.push(MOVE);

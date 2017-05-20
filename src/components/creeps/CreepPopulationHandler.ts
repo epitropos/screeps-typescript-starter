@@ -124,7 +124,7 @@ export class CreepPopulationHandler {
 
   public buildMissingHaulers(spawn: Spawn, roomHandler: RoomHandler) {
     let sourceIds = _.keys(roomHandler.room.memory.sources);
-    for (let sourceId in sourceIds) {
+    for (let sourceId of sourceIds) {
       let source = <Source> Game.getObjectById(sourceId);
       if (!source) {
         delete roomHandler.room.memory.sources[sourceId];
@@ -289,14 +289,14 @@ export class CreepPopulationHandler {
 
   public buildMissingMiners(spawn: Spawn, roomHandler: RoomHandler) {
     let sourceIds = _.keys(roomHandler.room.memory.sources);
-    for (let sourceId in sourceIds) {
+    for (let sourceId of sourceIds) {
       let source = <Source> Game.getObjectById(sourceId);
       if (!source) {
         delete roomHandler.room.memory.sources[sourceId];
         continue;
       }
 
-      let memoryMinerPosition = roomHandler.room.memory.soruces[sourceId].minerPosition;
+      let memoryMinerPosition = roomHandler.room.memory.sources[sourceId].minerPosition;
       if (memoryMinerPosition === undefined) {
         continue;
       }
@@ -343,8 +343,10 @@ export class CreepPopulationHandler {
       });
 
     if (result === haulerName) {
+      // TODO: Change return to be OK.
       return haulerName;
     } else {
+      // TODO: Change return to be error code instead of undefined.
       log.error("result of creating hauler: " + haulerName + " = " + result);
       return undefined;
     }
@@ -360,6 +362,7 @@ export class CreepPopulationHandler {
     if (bodyParts === undefined) {
       return undefined;
     }
+
     let minerName = C.MINER + Memory.uuid++;
     let result = spawn.createCreep(
       bodyParts,

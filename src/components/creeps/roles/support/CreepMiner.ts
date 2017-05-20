@@ -17,7 +17,7 @@ export class CreepMiner extends CreepSupport {
     let bodyPartsSize = 50 + 100;
     let bodyPartsSizeMax = 50 + 100 + 100 + 100 + 100 + 100;
 
-    while (bodyPartsSize + bodySegmentSize < energyAvailable && bodyPartsSize < bodyPartsSizeMax) {
+    while (bodyPartsSize + bodySegmentSize <= energyAvailable && bodyPartsSize < bodyPartsSizeMax) {
       bodyParts.push(WORK);
       bodyPartsSize += bodySegmentSize;
     }

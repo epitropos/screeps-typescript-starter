@@ -17,9 +17,9 @@ export class RoomFriendlyCity extends RoomFriendly {
     this.enemyCreeps = room.find<Creep>(FIND_HOSTILE_CREEPS);
   }
 
-  public isPlainsOrSwamps(roomPosition: RoomPosition) {
+  public isPlainOrSwamp(roomPosition: RoomPosition) {
     let terrain = Game.map.getTerrainAt(roomPosition);
-    if (terrain === "plains" || terrain === "swamp") {
+    if (terrain === "plain" || terrain === "swamp") {
       return true;
     }
     return false;
@@ -29,28 +29,28 @@ export class RoomFriendlyCity extends RoomFriendly {
     let adjacentPositions = new Array<RoomPosition>();
 
     let nwPosition = <RoomPosition> this.room.getPositionAt(roomPosition.x - 1, roomPosition.y - 1);
-    if (this.isPlainsOrSwamps(nwPosition)) { adjacentPositions.push(nwPosition); }
+    if (this.isPlainOrSwamp(nwPosition)) { adjacentPositions.push(nwPosition); }
 
     let nPosition = <RoomPosition> this.room.getPositionAt(roomPosition.x , roomPosition.y - 1);
-    if (this.isPlainsOrSwamps(nPosition)) { adjacentPositions.push(nPosition); }
+    if (this.isPlainOrSwamp(nPosition)) { adjacentPositions.push(nPosition); }
 
     let nePosition = <RoomPosition> this.room.getPositionAt(roomPosition.x + 1, roomPosition.y - 1);
-    if (this.isPlainsOrSwamps(nePosition)) { adjacentPositions.push(nePosition); }
+    if (this.isPlainOrSwamp(nePosition)) { adjacentPositions.push(nePosition); }
 
     let wPosition = <RoomPosition> this.room.getPositionAt(roomPosition.x - 1, roomPosition.y);
-    if (this.isPlainsOrSwamps(wPosition)) { adjacentPositions.push(wPosition); }
+    if (this.isPlainOrSwamp(wPosition)) { adjacentPositions.push(wPosition); }
 
     let ePosition = <RoomPosition> this.room.getPositionAt(roomPosition.x + 1, roomPosition.y);
-    if (this.isPlainsOrSwamps(ePosition)) { adjacentPositions.push(ePosition); }
+    if (this.isPlainOrSwamp(ePosition)) { adjacentPositions.push(ePosition); }
 
     let swPosition = <RoomPosition> this.room.getPositionAt(roomPosition.x - 1, roomPosition.y + 1);
-    if (this.isPlainsOrSwamps(swPosition)) { adjacentPositions.push(swPosition); }
+    if (this.isPlainOrSwamp(swPosition)) { adjacentPositions.push(swPosition); }
 
     let sPosition = <RoomPosition> this.room.getPositionAt(roomPosition.x , roomPosition.y + 1);
-    if (this.isPlainsOrSwamps(sPosition)) { adjacentPositions.push(sPosition); }
+    if (this.isPlainOrSwamp(sPosition)) { adjacentPositions.push(sPosition); }
 
     let sePosition = <RoomPosition> this.room.getPositionAt(roomPosition.x + 1, roomPosition.y + 1);
-    if (this.isPlainsOrSwamps(sePosition)) { adjacentPositions.push(sePosition); }
+    if (this.isPlainOrSwamp(sePosition)) { adjacentPositions.push(sePosition); }
 
     return adjacentPositions;
   }
@@ -71,24 +71,51 @@ export class RoomFriendlyCity extends RoomFriendly {
       }
     }
 
+    // Look for containers next to source.
+    let containers = this.room.find<Container>(FIND_STRUCTURES, {
+      filter: (c: Container) => c.structureType === STRUCTURE_CONTAINER
+      && c.pos.isNearTo(source),
+    });
+    if (containers.length > 0) {
+      this.room.memory.sources[source.id].containerId
+        = containerId
+        = containers[0].id;
+      delete this.room.memory.sources[source.id].containerConstructionSiteId;
+    }
+
     // Retrieve container construction site. Delete from memory if it no longer exists.
     let containerConstructionSiteId = this.room.memory.sources[source.id].containerConstructionSiteId;
     if (containerConstructionSiteId !== undefined) {
       let containerConstructionSite = <ConstructionSite> Game.getObjectById(containerConstructionSiteId);
 
       if (!containerConstructionSite) {
-        delete this.room.memory.sources[source.id].constructionSite.containerConstructionSiteId;
+        delete this.room.memory.sources[source.id].containerConstructionSiteId;
       }
+    }
+
+    // Look for construction sites next to source.
+    let constructionSites = this.room.find<ConstructionSite>(FIND_CONSTRUCTION_SITES, {
+      filter: (c: ConstructionSite) => c.structureType === STRUCTURE_CONTAINER
+      && c.pos.isNearTo(source),
+    });
+    if (constructionSites.length > 0) {
+      this.room.memory.sources[source.id].containerConstructionSiteId
+        = containerConstructionSiteId
+        = constructionSites[0].id;
     }
 
     // If neither container nor construction site exists then construct a container.
     if (containerId === undefined && containerConstructionSiteId === undefined) {
       this.room.createConstructionSite(minerPosition, STRUCTURE_CONTAINER);
-      containerConstructionSiteId = this.room.find<ConstructionSite>(FIND_MY_CONSTRUCTION_SITES, {
-        filter: (c: ConstructionSite) => c.structureType === STRUCTURE_CONTAINER
-        && c.pos.isEqualTo(minerPosition),
-      });
-      this.room.memory.sources[source.id].constructionSite.containerConstructionSiteId = containerConstructionSiteId;
+      constructionSites = this.room.find<ConstructionSite>(FIND_CONSTRUCTION_SITES, {
+      filter: (c: ConstructionSite) => c.structureType === STRUCTURE_CONTAINER
+      && c.pos.isNearTo(source),
+    });
+      if (constructionSites.length > 0) {
+        this.room.memory.sources[source.id].containerConstructionSiteId
+          = containerConstructionSiteId
+          = constructionSites[0].id;
+      }
     }
   }
 

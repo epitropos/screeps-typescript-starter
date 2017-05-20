@@ -17,7 +17,7 @@ export class CreepHauler extends CreepSupport {
 
     let bodyPartsSize = 0;
 
-    while (bodyPartsSize + bodySegmentSize < energyAvailable) {
+    while (bodyPartsSize + bodySegmentSize <= energyAvailable) {
       bodyParts.push(CARRY);
       bodyParts.push(CARRY);
       bodyParts.push(MOVE);
@@ -106,18 +106,25 @@ export class CreepHauler extends CreepSupport {
     // Move to refuel position.
     if (this.creep.memory.finalDestination === undefined) {
       let sourceId = creep.memory.sourceId;
-      let minerName = Memory.rooms[roomHandler.room.name].sources[sourceId].minerName;
-      let miner = Game.creeps[minerName];
-      let pathToMiner = creep.pos.findPathTo(miner);
-      let step = pathToMiner[pathToMiner.length - 1];
-      let finalDestination = new RoomPosition(creep.pos.x, creep.pos.y, creep.pos.roomName);
-      this.creep.memory.finalDestination = {};
-      this.creep.memory.finalDestination.x = finalDestination.x = step.x;
-      this.creep.memory.finalDestination.y = finalDestination.y = step.y;
-      this.creep.memory.finalDestination.roomName = finalDestination.roomName = creep.pos.roomName;
-      this.moveTo(creep, finalDestination);
-      return;
+      let memMinerPosition = roomHandler.room.memory.sources[sourceId].minerPosition;
+      if (memMinerPosition === undefined) { return; }
+
+      let minerPosition = roomHandler.room.getPositionAt(memMinerPosition.x, memMinerPosition.y);
+      if (minerPosition === null) { return; }
+
+      let path = creep.pos.findPathTo(minerPosition);
+      if (path.length > 1) {
+        let step = path[path.length - 2];
+        let finalDestination = roomHandler.room.getPositionAt(step.x, step.y);
+        if (finalDestination === null) { return; }
+        this.creep.memory.finalDestination = {};
+        this.creep.memory.finalDestination.x = finalDestination.x = step.x;
+        this.creep.memory.finalDestination.y = finalDestination.y = step.y;
+        this.creep.memory.finalDestination.roomName = finalDestination.roomName = creep.pos.roomName;
+        return;
+      }
     }
+
     let cargoSpaceAvailable = creep.carryCapacity - _.sum(creep.carry);
 
     // Withdraw energy from container if it is full.
