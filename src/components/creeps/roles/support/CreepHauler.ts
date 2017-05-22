@@ -42,6 +42,28 @@ export class CreepHauler extends CreepSupport {
   public run() {
     super.run();
 
+    // Exit if creep is currently moving.
+    if (this.creep.memory.state === C.STATE_TRAVELING) {
+      let memFinalDestination = this.creep.memory.finalDestination;
+      if (memFinalDestination !== undefined) {
+        let finalDestination = new RoomPosition(
+          memFinalDestination.x,
+          memFinalDestination.y,
+          memFinalDestination.roomName);
+        if (this.creep.pos.isEqualTo(finalDestination)) {
+          let energyCarried = this.creep.carry[RESOURCE_ENERGY] || 0;
+          if (energyCarried > 0) {
+            this.creep.memory.state = C.STATE_DELIVERING;
+          } else {
+            this.creep.memory.state = C.STATE_REFUELING;
+          }
+        } else {
+          // Still travelling. Do not do any other logic.
+          return;
+        }
+      }
+    }
+
     let storage = this.loadStorage(this.creep);
     if (storage) {
       // Deposit non-energy resources into storage.
@@ -112,17 +134,8 @@ export class CreepHauler extends CreepSupport {
       let minerPosition = roomHandler.room.getPositionAt(memMinerPosition.x, memMinerPosition.y);
       if (minerPosition === null) { return; }
 
-      let path = creep.pos.findPathTo(minerPosition);
-      if (path.length > 1) {
-        let step = path[path.length - 2];
-        let finalDestination = roomHandler.room.getPositionAt(step.x, step.y);
-        if (finalDestination === null) { return; }
-        this.creep.memory.finalDestination = {};
-        this.creep.memory.finalDestination.x = finalDestination.x = step.x;
-        this.creep.memory.finalDestination.y = finalDestination.y = step.y;
-        this.creep.memory.finalDestination.roomName = finalDestination.roomName = creep.pos.roomName;
-        return;
-      }
+      this.setFinalDestinationToRefuel(creep, minerPosition, roomHandler);
+      return;
     }
 
     let cargoSpaceAvailable = creep.carryCapacity - _.sum(creep.carry);
@@ -175,6 +188,7 @@ export class CreepHauler extends CreepSupport {
     // Load closest extension.
     let extension = this.loadExtension(creep);
     if (extension) {
+      this.creep.memory.finalDestination = undefined; // TODO: Figure out move vs work logic
       if (this.tryEnergyDropOff(creep, extension) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, extension);
       }
@@ -184,6 +198,7 @@ export class CreepHauler extends CreepSupport {
     // Load closest spawn.
     let spawn = this.loadSpawn(creep);
     if (spawn) {
+      this.creep.memory.finalDestination = undefined; // TODO: Figure out move vs work logic
       if (this.tryEnergyDropOff(creep, spawn) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, spawn);
       }
@@ -193,6 +208,7 @@ export class CreepHauler extends CreepSupport {
     // Load closest tower.
     let tower = this.loadTower(creep);
     if (tower) {
+      this.creep.memory.finalDestination = undefined; // TODO: Figure out move vs work logic
       if (this.tryEnergyDropOff(creep, tower) === ERR_NOT_IN_RANGE) {
         this.moveTo(creep, tower);
       }
@@ -205,6 +221,7 @@ export class CreepHauler extends CreepSupport {
     // Load storage.
     let storage = this.loadStorage(creep);
     if (storage) {
+      this.creep.memory.finalDestination = undefined; // TODO: Figure out move vs work logic
       // TODO: Check near squares for creeps that need energy
 
       let result = this.tryEnergyDropOff(creep, storage);
@@ -353,5 +370,22 @@ export class CreepHauler extends CreepSupport {
       return true;
     }
     return false;
+  }
+
+  private setFinalDestinationToRefuel(creep: Creep, minerPosition: RoomPosition, roomHandler: RoomHandler) {
+    let path = creep.pos.findPathTo(minerPosition);
+    let step: PathStep;
+    let finalDestination: RoomPosition | null;
+    if (path.length > 1) {
+      step = path[path.length - 2];
+      finalDestination = roomHandler.room.getPositionAt(step.x, step.y);
+    } else {
+      finalDestination = creep.pos;
+    }
+    if (finalDestination === null) { return; }
+    this.creep.memory.finalDestination = {};
+    this.creep.memory.finalDestination.x = finalDestination.x;
+    this.creep.memory.finalDestination.y = finalDestination.y;
+    this.creep.memory.finalDestination.roomName = finalDestination.roomName = creep.pos.roomName;
   }
 }

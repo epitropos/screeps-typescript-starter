@@ -15,6 +15,7 @@ export const WHITE = "#ffffff";
 
 export const STATE_BUILDING = "BUILDING";
 export const STATE_DELIVERING = "DELIVERING";
+export const STATE_MINING = "MINING";
 export const STATE_REFUELING = "REFUELING";
 export const STATE_TRAVELING = "TRAVELING";
 export const STATE_UPGRADING = "UPGRADING";

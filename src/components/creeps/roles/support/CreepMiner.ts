@@ -1,3 +1,4 @@
+import * as C from "../../../../config/constants";
 // import * as Config from "../../../../config/config";
 // import {log} from "../../../../lib/logger/log";
 import {CreepSupport} from "./CreepSupport";
@@ -45,8 +46,17 @@ export class CreepMiner extends CreepSupport {
 
     // TODO: Create a STATE_TRAVELING state.
     // Check if still traveling.
-    if (this.creep.memory.finalDestination !== undefined) {
-      return;
+    if (this.creep.memory.state === C.STATE_TRAVELING) {
+      let memFinalDestination = this.creep.memory.finalDestination;
+      if (memFinalDestination !== undefined) {
+        let finalDestination = new RoomPosition(
+          memFinalDestination.x,
+          memFinalDestination.y,
+          memFinalDestination.roomName);
+        if (this.creep.pos.isEqualTo(finalDestination)) {
+          this.creep.memory.state = C.STATE_MINING;
+        }
+      }
     }
 
     let sourceId = this.creep.memory.sourceId;

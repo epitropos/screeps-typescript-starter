@@ -42,11 +42,9 @@ export class CreepBase {
     // }
 
     if (finalDestination !== undefined) {
-      let asdf = new RoomPosition(finalDestination.x, finalDestination.y, finalDestination.roomName);
-      if (!this.creep.pos.isEqualTo(asdf)) {
-        this.moveTo(this.creep, asdf);
-      } else {
-        this.creep.memory.finalDestination = undefined;
+      if (!this.creep.pos.isEqualTo(finalDestination)) {
+        this.creep.memory.state = C.STATE_TRAVELING;
+        this.moveTo(this.creep, finalDestination);
       }
     }
   }
