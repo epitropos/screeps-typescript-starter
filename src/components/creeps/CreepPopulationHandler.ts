@@ -357,7 +357,7 @@ export class CreepPopulationHandler {
                             source: Source,
                             destination: RoomPosition | undefined) {
     // TODO: replace with if comparison of energyAvailable and exit if not enough.
-    let energyAvailable = _.max([roomHandler.room.energyAvailable / 2, CreepMiner.MinimumEnergyRequired]);
+    let energyAvailable = _.max([roomHandler.room.energyAvailable, CreepMiner.MinimumEnergyRequired]);
     let bodyParts = CreepMiner.getBodyParts(energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
