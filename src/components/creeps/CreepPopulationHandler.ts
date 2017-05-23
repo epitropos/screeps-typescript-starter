@@ -16,7 +16,7 @@ export class CreepPopulationHandler {
 
   public MAX_STOCKERS = 0;
   public MAX_BUILDERS = 2;
-  public MAX_UPGRADERS = 1;
+  public MAX_UPGRADERS = 3;
   public MAX_HAULERS = 2;
   public MAX_MINERAL_HAULERS = 0;
   public MAX_EXTRACTORS = 0;
@@ -357,7 +357,7 @@ export class CreepPopulationHandler {
                             source: Source,
                             destination: RoomPosition | undefined) {
     // TODO: replace with if comparison of energyAvailable and exit if not enough.
-    let energyAvailable = _.max([roomHandler.room.energyAvailable / 2, CreepMiner.MinimumEnergyRequired]);
+    let energyAvailable = _.max([roomHandler.room.energyAvailable, CreepMiner.MinimumEnergyRequired]);
     let bodyParts = CreepMiner.getBodyParts(energyAvailable);
     if (bodyParts === undefined) {
       return undefined;
