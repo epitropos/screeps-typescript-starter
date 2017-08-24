@@ -43,7 +43,6 @@ export function loop() {
   if (!Memory.uuid || Memory.uuid > 100) {
     Memory.uuid = 0;
   }
-  global.lastTick = Game.time;
 
   // let messageHandler = new MessageHandler();
   // // log.info("messageHandler: " + messageHandler);
