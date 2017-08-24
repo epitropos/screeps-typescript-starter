@@ -4,7 +4,8 @@ import { log } from "./lib/logger/log";
 // import * as GameMapManager from "./components/gameMapManager";
 // import * as RoomManager from "./components/rooms/roomManager";
 // import * as StructureManager from "./components/structures/structureManager";
-import {MessageHandler} from "./components/messages/MessageHandler";
+import {Initialize} from "./Initialize";
+// import {MessageHandler} from "./components/messages/MessageHandler";
 
 import {GameHandler} from "./components/game/GameHandler";
 import {RoomHandler} from "./components/rooms/RoomHandler";
@@ -23,7 +24,8 @@ if (Config.USE_PATHFINDER) {
   PathFinder.use(true);
 }
 
-initializeMemory();
+// initializeMemory();
+Initialize.InitializeMemory();
 
 // TODO: Load room buildings into memory.
 
@@ -41,6 +43,7 @@ export function loop() {
   if (!Memory.uuid || Memory.uuid > 100) {
     Memory.uuid = 0;
   }
+  global.lastTick = Game.time;
 
   // let messageHandler = new MessageHandler();
   // // log.info("messageHandler: " + messageHandler);
@@ -75,32 +78,32 @@ export function loop() {
     + " | TickLimit: " + Game.cpu.tickLimit);
 }
 
-function initializeMemory() {
-  initializeMemoryConfig(); // TODO: Move this into the appropriate location.
-  initializeMemoryConfigDefaults(); // TODO: Move this into the appropriate location.
-  initializeMemoryConfigDefaultsPopulation(); // TODO: Move this into the appropriate location.
-  MessageHandler.InitializeMemory(); // TODO: Consider this for the style of the appropriate location.
-}
+// function initializeMemory() {
+//   initializeMemoryConfig(); // TODO: Move this into the appropriate location.
+//   initializeMemoryConfigDefaults(); // TODO: Move this into the appropriate location.
+//   initializeMemoryConfigDefaultsPopulation(); // TODO: Move this into the appropriate location.
+//   MessageHandler.InitializeMemory(); // TODO: Consider this for the style of the appropriate location.
+// }
 
-function initializeMemoryConfig() {
-  if (!Memory.config) {
-    Memory.config = {};
-  }
-}
+// function initializeMemoryConfig() {
+//   if (!Memory.config) {
+//     Memory.config = {};
+//   }
+// }
 
-function initializeMemoryConfigDefaults() {
-  if (!Memory.config.defaults) {
-    Memory.config.defaults = {};
-  }
-}
+// function initializeMemoryConfigDefaults() {
+//   if (!Memory.config.defaults) {
+//     Memory.config.defaults = {};
+//   }
+// }
 
-function initializeMemoryConfigDefaultsPopulation() {
-  if (!Memory.config.defaults.population) {
-    Memory.config.defaults.population = {};
-    Memory.config.defaults.population.maximums = {};
-    Memory.config.defaults.population.maximums.builders = 1;
-    Memory.config.defaults.population.maximums.haulers = 0;
-    Memory.config.defaults.population.maximums.miners = 0;
-    Memory.config.defaults.population.maximums.upgraders = 1;
-  }
-}
+// function initializeMemoryConfigDefaultsPopulation() {
+//   if (!Memory.config.defaults.population) {
+//     Memory.config.defaults.population = {};
+//     Memory.config.defaults.population.maximums = {};
+//     Memory.config.defaults.population.maximums.builders = 1;
+//     Memory.config.defaults.population.maximums.haulers = 0;
+//     Memory.config.defaults.population.maximums.miners = 0;
+//     Memory.config.defaults.population.maximums.upgraders = 1;
+//   }
+// }

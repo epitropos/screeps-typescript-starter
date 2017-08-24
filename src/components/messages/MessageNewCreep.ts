@@ -1,21 +1,23 @@
 // import * as Config from "../../config/config";
 // import {log} from "../../lib/logger/log";
-import {MessageNewCreep} from "./MessageNewCreep";
+import {Message} from "./Message";
 
-export class MessageCloneCreep extends MessageNewCreep {
-  public originalCreepName: string;
+export class MessageNewCreep extends Message {
+  public bodyParts: string[];
+  public creepType: string;
+  public memory: {};
 
   constructor () {
     super();
   }
 
-  public loadFrom(data: {originalCreepName: string, bodyParts: string[], creepType: string, memory: string})
-  {
-    this.originalCreepName = data.originalCreepName;
+  public loadFrom(data: {bodyParts: string[], creepType: string, memory: string}) {
+    // super.loadFrom(data);
     this.bodyParts = data.bodyParts;
     this.creepType = data.creepType;
     this.memory = data.memory;
   }
+
   // public createMessage() {
   //   let nextMessageId = Memory.messages.nextMessageId;
   //   Memory.messages.nextMessageId++;
