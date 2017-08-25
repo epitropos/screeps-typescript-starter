@@ -26,21 +26,14 @@ Initialize.InitializeMemory();
  */
 export function loop() {
   log.info("##################################################");
-
-  log.info("Process game");
-  runGameHandler(Game);
-
-  log.info("Process rooms");
-  runRoomHandler(Game.rooms);
-
-  log.info("Delete dead creeps from memory");
+  processGame(Game);
+  processRooms(Game.rooms);
   deleteDeadCreeps(Game, Memory);
-
-  log.info("CPU usage");
   displayCpuUsage(Game.cpu);
 }
 
 function deleteDeadCreeps(game: Game, memory: Memory) {
+  log.info("Delete dead creeps from memory");
   for (let i in memory.creeps) {
     if (!game.creeps[i]) {
         delete memory.creeps[i];
@@ -55,12 +48,14 @@ function displayCpuUsage(cpu: CPU) {
   + " | TickLimit: " + cpu.tickLimit);
 }
 
-function runGameHandler(game: Game) {
+function processGame(game: Game) {
+  log.info("Process game");
   let gameHandler = new GameHandler(game);
   gameHandler.run();
 }
 
-function runRoomHandler(rooms: {[roomName: string]: Room}) {
+function processRooms(rooms: {[roomName: string]: Room}) {
+  log.info("Process rooms");
   for (let roomName in rooms) {
     let room = rooms[roomName];
     let roomHandler = new RoomHandler(room);

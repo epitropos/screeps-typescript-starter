@@ -1,5 +1,6 @@
 // import * as Config from "../../config/config";
-import { log } from "../../lib/logger/log";
+// import { log } from "../../lib/logger/log";
+import { MySource } from "./MySource";
 
 export class SourceHandler {
   public static InitializeMemory() {
@@ -13,8 +14,7 @@ export class SourceHandler {
   }
 
   public run() {
-    log.info("Process source: " + this.source.id );
-
-    // TODO: Code goes here.
+    let source = new MySource(this.source);
+    source.run();
   }
 }

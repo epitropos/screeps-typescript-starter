@@ -75,9 +75,22 @@ const gameConsts = {
   LOOK_NUKES: "nuke",
   LOOK_TERRAIN: "terrain",
 
-  OBSTACLE_OBJECT_TYPES: ["spawn", "creep", "wall", "source", "constructedWall", "extension",
-    "link", "storage", "tower", "observer", "powerSpawn", "powerBank", "lab",
-    "terminal", "nuker"],
+  OBSTACLE_OBJECT_TYPES: [
+    "spawn",
+    "creep",
+    "wall",
+    "source",
+    "constructedWall",
+    "extension",
+    "link",
+    "storage",
+    "tower",
+    "observer",
+    "powerSpawn",
+    "powerBank",
+    "lab",
+    "terminal",
+    "nuker"],
 
   MOVE: "move",
   WORK: "work",
@@ -150,7 +163,16 @@ const gameConsts = {
   WALL_HITS_MAX: 300000000,
 
   EXTENSION_HITS: 1000,
-  EXTENSION_ENERGY_CAPACITY: {0: 50, 1: 50, 2: 50, 3: 50, 4: 50, 5: 50, 6: 50, 7: 100, 8: 200},
+  EXTENSION_ENERGY_CAPACITY: {
+    0: 50,
+    1: 50,
+    2: 50,
+    3: 50,
+    4: 50,
+    5: 50,
+    6: 50,
+    7: 100,
+    8: 200},
 
   ROAD_HITS: 5000,
   ROAD_WEAROUT: 1,
@@ -205,7 +227,15 @@ const gameConsts = {
   },
   CONSTRUCTION_COST_ROAD_SWAMP_RATIO: 5,
 
-  CONTROLLER_LEVELS: {1: 200, 2: 45000, 3: 135000, 4: 405000, 5: 1215000, 6: 3645000, 7: 10935000},
+  CONTROLLER_LEVELS: {
+    1: 200,
+    2: 45000,
+    3: 135000,
+    4: 405000,
+    5: 1215000,
+    6: 3645000,
+    7: 10935000},
+
   CONTROLLER_STRUCTURES: {
     "spawn": {0: 0, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 2, 8: 3},
     "extension": {0: 0, 1: 0, 2: 5, 3: 10, 4: 20, 5: 30, 6: 40, 7: 50, 8: 60},
