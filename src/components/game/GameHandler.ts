@@ -1,10 +1,11 @@
-// import * as Config from "../../config/config";
-// import {log} from "../../lib/logger/log";
-
 export class GameHandler {
+  public static InitializeMemory() {
+    // TODO: Code goes here.
+  }
+
   public readonly game: Game;
 
-  constructor (game: Game) {
+    constructor (game: Game) {
     this.game = game;
   }
 
