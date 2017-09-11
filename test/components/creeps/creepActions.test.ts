@@ -1,3 +1,4 @@
+//import * as _  from "lodash";
 // import {assert} from "chai";
 // import {canWork} from "../../../src/components/creeps/creepActions";
 // import {CreepFactory} from "../../mock/factory.creep";

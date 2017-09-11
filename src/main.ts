@@ -1,8 +1,8 @@
 import * as Config from "./config/config";
 import { log } from "./lib/logger/log";
 import {Initialize} from "./Initialize";
-import {GameHandler} from "./components/game/GameHandler";
-import {RoomHandler} from "./components/rooms/RoomHandler";
+import {GameHandler} from "./component/game/GameHandler";
+import {RoomHandler} from "./component/room/RoomHandler";
 
 // Remove logging fluff.
 log.showSource = false;

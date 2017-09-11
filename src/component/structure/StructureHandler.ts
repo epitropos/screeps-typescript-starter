@@ -4,10 +4,6 @@ import { MyController } from "./MyController";
 import { MySpawn } from "./MySpawn";
 
 export class StructureHandler {
-  public static InitializeMemory() {
-    // TODO: Code goes here.
-  }
-
   public structure: Structure;
 
   constructor (structure: Structure) {

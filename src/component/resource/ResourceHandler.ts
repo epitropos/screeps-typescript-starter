@@ -1,13 +1,9 @@
 // import * as Config from "../../config/config";
 import { log } from "../../lib/logger/log";
 // import { ResourceFactory } from "./ResourceFactory";
-import { MyEnergy } from "./MyEnergy";
+import { EnergyResource } from "./EnergyResource";
 
 export class ResourceHandler {
-  public static InitializeMemory() {
-    // TODO: Code goes here.
-  }
-
   public resource: Resource;
 
   constructor (resource: Resource) {
@@ -15,11 +11,9 @@ export class ResourceHandler {
   }
 
   public run() {
-    log.info("Process resource: " + this.resource.resourceType + ":" + this.resource.id );
-
     switch (this.resource.resourceType) {
       case RESOURCE_ENERGY:
-        let energy = new MyEnergy(this.resource);
+        let energy = new EnergyResource(this.resource);
         energy.run();
         break;
       default:

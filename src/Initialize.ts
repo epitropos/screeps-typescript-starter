@@ -1,4 +1,4 @@
-import {MessageHandler} from "./components/messages/MessageHandler";
+import {MessageHandler} from "./component/message/MessageHandler";
 
 export class Initialize {
   public static InitializeMemory() {

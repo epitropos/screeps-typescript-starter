@@ -1,12 +1,8 @@
 // import * as Config from "../../config/config";
 // import { log } from "../../lib/logger/log";
-import { MySource } from "./MySource";
+import { EnergySource } from "./EnergySource";
 
 export class SourceHandler {
-  public static InitializeMemory() {
-    // TODO: Code goes here.
-  }
-
   public source: Source;
 
   constructor (source: Source) {
@@ -14,7 +10,7 @@ export class SourceHandler {
   }
 
   public run() {
-    let source = new MySource(this.source);
+    let source = new EnergySource(this.source);
     source.run();
   }
 }

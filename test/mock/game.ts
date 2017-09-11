@@ -208,6 +208,8 @@ const gameConsts = {
   STRUCTURE_CONTAINER: "container",
   STRUCTURE_NUKER: "nuker",
 
+  CREEP_MINER: "miner",
+
   CONSTRUCTION_COST: {
     "spawn": 15000,
     "extension": 3000,

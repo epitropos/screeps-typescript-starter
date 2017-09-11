@@ -4,10 +4,6 @@ import { MinerCreep } from "./MinerCreep";
 import { MiscCreep } from "./MiscCreep";
 
 export class CreepHandler {
-  public static InitializeMemory() {
-    // TODO: Code goes here.
-  }
-
   public creep: Creep;
 
   constructor (creep: Creep) {
