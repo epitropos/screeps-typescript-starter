@@ -1,4 +1,4 @@
-// import * as Config from "../../config/config";
+import * as Config from "../../config/config";
 // import { log } from "../../lib/logger/log";
 import { FriendlyCityRoom } from "./FriendlyCityRoom";
 import { FriendlyColonyRoom } from "./FriendlyColonyRoom";
@@ -20,46 +20,46 @@ export class RoomHandler {
   private determineRoomType(room: Room) {
     let spawns = room.find(FIND_MY_SPAWNS);
     if (spawns.length > 0) {
-      return ROOM_FRIENDLY_CITY;
+      return Config.ROOM_FRIENDLY_CITY;
     }
 
     let controller = room.controller;
     if (controller && controller.my) {
-      return ROOM_FRIENDLY_COLONY;
+      return Config.ROOM_FRIENDLY_COLONY;
     }
 
     spawns = this.room.find(FIND_HOSTILE_SPAWNS);
     if (spawns.length > 0) {
-      return ROOM_ENEMY_CITY;
+      return Config.ROOM_ENEMY_CITY;
     }
 
     if (controller && controller.owner.username !== "") {
-      return ROOM_ENEMY_COLONY;
+      return Config.ROOM_ENEMY_COLONY;
     }
 
-    return ROOM_NEUTRAL;
+    return Config.ROOM_NEUTRAL;
   }
 
   private processRoom(room: Room) {
     let roomType = this.determineRoomType(room);
 
-    if (roomType === ROOM_FRIENDLY_CITY) {
+    if (roomType === Config.ROOM_FRIENDLY_CITY) {
       this.processFriendlyCityRoom(room);
     }
 
-    if (roomType === ROOM_FRIENDLY_COLONY) {
+    if (roomType === Config.ROOM_FRIENDLY_COLONY) {
       this.processFriendlyColonyRoom(room);
     }
 
-    if (roomType === ROOM_ENEMY_CITY) {
+    if (roomType === Config.ROOM_ENEMY_CITY) {
       this.processEnemyCityRoom(room);
     }
 
-    if (roomType === ROOM_ENEMY_COLONY) {
+    if (roomType === Config.ROOM_ENEMY_COLONY) {
       this.processEnemyColonyRoom(room);
     }
 
-    if (roomType === ROOM_NEUTRAL) {
+    if (roomType === Config.ROOM_NEUTRAL) {
       this.processNeutralRoom(room);
     }
   }

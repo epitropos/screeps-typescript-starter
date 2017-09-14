@@ -136,7 +136,10 @@
 //         continue;
 //       }
 
-//       let minerPosition = new RoomPosition(memoryMinerPosition.x, memoryMinerPosition.y, memoryMinerPosition.roomName);
+//       let minerPosition = new RoomPosition(
+//         memoryMinerPosition.x,
+//         memoryMinerPosition.y,
+//         memoryMinerPosition.roomName);
 
 //       let haulerName = roomHandler.room.memory.sources[sourceId].haulerName;
 //       if (haulerName !== undefined) {
@@ -301,7 +304,10 @@
 //         continue;
 //       }
 
-//       let minerPosition = new RoomPosition(memoryMinerPosition.x, memoryMinerPosition.y, memoryMinerPosition.roomName);
+//       let minerPosition = new RoomPosition(
+//         memoryMinerPosition.x,
+//         memoryMinerPosition.y,
+//         memoryMinerPosition.roomName);
 
 //       let minerName = roomHandler.room.memory.sources[sourceId].minerName;
 //       if (minerName !== undefined) {

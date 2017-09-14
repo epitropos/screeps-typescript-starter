@@ -1,4 +1,4 @@
-// import * as Config from "../../config/config";
+import * as Config from "../../config/config";
 import { log } from "../../lib/logger/log";
 import { CreateMinerMessage } from "../message/creep/CreateMinerMessage";
 import { CreateMinerMessageAck } from "../message/creep/CreateMinerMessageAck";
@@ -57,15 +57,15 @@ export class MySpawn {
   }
 
   private processCreateMinerMessage(createMinerMessage: CreateMinerMessage) {
-    let minerName = CREEP_MINER + Game.time;
+    let minerName = Config.CREEP_MINER + Game.time;
     this.spawn.createCreep(
       createMinerMessage.bodyParts,
       minerName,
       {
-        creepType: CREEP_MINER,
+        creepType: Config.CREEP_MINER,
         positionX: createMinerMessage.positionX,
         positionY: createMinerMessage.positionY,
-        roomName: createMinerMessage.roomName
+        roomName: createMinerMessage.roomName,
       });
     MessageHandler.deleteMessage(CreateMinerMessage.MessageType, this.messageId);
     this.sendCreateMinerMessageAck(this.messageId, minerName);

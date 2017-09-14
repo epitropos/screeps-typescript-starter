@@ -19,18 +19,15 @@ export class EnergyResource {
     this.saveToMemory();
   }
 
-  private initializeMemory()
-  {
+  private initializeMemory() {
     // TODO: Code goes here.
   }
 
-  private loadFromMemory()
-  {
+  private loadFromMemory() {
     // TODO: Code goes here.
   }
 
-  private saveToMemory()
-  {
+  private saveToMemory() {
     // TODO: Code goes here.
   }
 }

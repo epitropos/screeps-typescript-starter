@@ -1,4 +1,4 @@
-// import * as Config from "../../config/config";
+import * as Config from "../../config/config";
 import { log } from "../../lib/logger/log";
 import { MinerCreep } from "./MinerCreep";
 import { MiscCreep } from "./MiscCreep";
@@ -12,11 +12,11 @@ export class CreepHandler {
 
   public run() {
     switch (this.creep.memory.role) {
-      case CREEP_MINER:
+      case Config.CREEP_MINER:
         let controller = new MinerCreep(this.creep);
         controller.run();
         break;
-      case CREEP_MISC:
+      case Config.CREEP_MISC:
         let spawn = new MiscCreep(this.creep);
         spawn.run();
         break;

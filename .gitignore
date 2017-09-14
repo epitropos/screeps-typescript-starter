@@ -5,6 +5,7 @@
 
 # Screeps config file
 /config.json
+/config.old.json
 
 # code coverage directory
 /coverage

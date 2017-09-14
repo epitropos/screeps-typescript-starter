@@ -1,5 +1,6 @@
 import * as Config from "./config/config";
 import { log } from "./lib/logger/log";
+import { LogLevels } from "./lib/logger/logLevels";
 import {Initialize} from "./Initialize";
 import {GameHandler} from "./component/game/GameHandler";
 import {RoomHandler} from "./component/room/RoomHandler";

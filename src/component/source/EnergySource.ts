@@ -1,4 +1,4 @@
-// import * as Config from "../../config/config";
+import * as Config from "../../config/config";
 import { log } from "../../lib/logger/log";
 // import { BuildContainerMessage } from "../message/structure/BuildContainerMessage";
 // import { BuildContainerMessageAck } from "../message/structure/BuildContainerMessageAck";
@@ -42,6 +42,7 @@ export class EnergySource {
   }
 
   private processContainer() {
+    log.warning("processContainer");
     // // TODO: Create a method to handle container message.
 
     // // if containerId is set and container does not exist clear containerId (i.e. container decayed).
@@ -78,6 +79,7 @@ export class EnergySource {
   }
 
   private processMiner() {
+    log.warning("processMiner");
     // If minerName is set and miner does not exist clear minerName (i.e. miner died).
     let miner = (this.minerName !== undefined)
       ? Game.creeps[this.minerName]
@@ -120,6 +122,7 @@ export class EnergySource {
   }
 
   private determineMinerPosition(source: Source) {
+    log.warning("determineMinerPosition");
     let minerPosition = source.room.memory.sources[source.id].minerPosition;
     if (minerPosition === undefined) {
       let numberOfAdjacentPositions: number = 0;
@@ -139,6 +142,7 @@ export class EnergySource {
   }
 
   private findAdjacentPlainsAndSwamps(source: Source, roomPosition: RoomPosition) {
+    log.warning("findAdjacentPlainsAndSwamps");
     let adjacentPositions = new Array<RoomPosition>();
 
     let nwPosition = <RoomPosition> source.room.getPositionAt(roomPosition.x - 1, roomPosition.y - 1);
@@ -185,6 +189,7 @@ export class EnergySource {
   }
 
   private isPlainOrSwamp(roomPosition: RoomPosition) {
+    log.warning("isPlainOrSwamp");
     let terrain = Game.map.getTerrainAt(roomPosition);
     if (terrain === "plain" || terrain === "swamp") {
       return true;
@@ -193,12 +198,14 @@ export class EnergySource {
   }
 
   private initializeMemory() {
+    log.warning("initializeMemory");
     if (this.source.room.memory.sources[this.source.id] === undefined) {
       this.source.room.memory.sources[this.source.id] = {};
     }
   }
 
   private loadFromMemory() {
+    log.warning("loadFromMemory");
     this.checksum = this.source.room.memory.sources[this.source.id].checksum;
     this.containerId = this.source.room.memory.sources[this.source.id].containerId;
     this.messageId = this.source.room.memory.sources[this.source.id].messageId;
@@ -214,6 +221,7 @@ export class EnergySource {
   }
 
   private saveToMemory() {
+    log.warning("saveToMemory");
     // TODO: Implement hash checksum to skip save if nothing is different.
     this.source.room.memory.sources[this.source.id].checksum = this.checksum;
     this.source.room.memory.sources[this.source.id].containerId = this.containerId;
@@ -224,6 +232,7 @@ export class EnergySource {
   }
 
   // private sendBuildContainerMessage() {
+  //   log.warning("sendBuildContainerMessage");
   //   let message = new BuildContainerMessage();
   //   message.messageId = MessageHandler.nextMessageId();
   //   message.positionX = this.minerPositionX;
@@ -238,13 +247,14 @@ export class EnergySource {
   // }
 
   private sendCreateMinerMessage() {
+    log.warning("sendCreateMinerMessage");
     let message = new CreateMinerMessage();
     let energyAvailable = _.max([this.source.room.energyAvailable / 2, MinerCreep.MinimumEnergyRequired]);
     let bodyParts = MinerCreep.getBodyParts(energyAvailable);
     if (bodyParts !== undefined) {
       message.bodyParts = bodyParts;
     }
-    message.creepType = CREEP_MINER;
+    message.creepType = Config.CREEP_MINER;
     message.positionX = this.minerPositionX;
     message.positionY = this.minerPositionY;
     message.sourceId = this.source.id;

@@ -28,7 +28,8 @@
 
 //     // // TODO: Test if object comparison works
 //     // if (this.creep.pos.roomName !== this.currentDestination.roomName) {
-//     //   this.creep.memory.currentDestination = this.recalculateCurrentDestination(this.creep, this.finalDestination);
+//     //   this.creep.memory.currentDestination =
+//     //     this.recalculateCurrentDestination(this.creep, this.finalDestination);
 //     // }
 
 //     // if (this.creep.pos.x !== this.currentDestination.x || this.creep.pos.y !== this.currentDestination.y) {
