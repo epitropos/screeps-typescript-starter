@@ -4,12 +4,16 @@ import { log } from "../../lib/logger/log";
 export class EnergyResource {
   public resource: Resource;
 
+  private debug: boolean = false;
+
   constructor (resource: Resource) {
     this.resource = resource;
   }
 
   public run() {
-    log.info("Process resource: " + this.resource.pos.roomName + " - " + this.resource.id);
+    if (this.debug) {
+      log.info(this.resource.pos.roomName + ":" + this.resource.id + " - EnergyResource.run");
+    }
 
     this.initializeMemory();
     this.loadFromMemory();

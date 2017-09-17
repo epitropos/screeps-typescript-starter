@@ -9,12 +9,16 @@ import { log } from "../../lib/logger/log";
 export class EnemyCityRoom {
   public room: Room;
 
+  private debug: boolean = false;
+
   constructor (room: Room) {
     this.room = room;
   }
 
   public run() {
-    log.info("Process room: " + this.room.name);
+    if (this.debug) {
+      log.info(this.room.name + " - EnemyCityRoom.run");
+    }
 
     this.initializeMemory();
     this.loadFromMemory();
@@ -41,6 +45,10 @@ export class EnemyCityRoom {
   }
 
     private processCreeps(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - EnemyCityRoom.processCreeps");
+    }
+
     room.name = room.name;
     // let creeps = room.find<Creep>(FIND_MY_CREEPS);
     // for (let creep of creeps) {
@@ -50,6 +58,10 @@ export class EnemyCityRoom {
   }
 
   private processMinerals(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - EnemyCityRoom.processMinerals");
+    }
+
     room.name = room.name;
     // let minerals = room.find<Mineral>(FIND_MINERALS);
     // for (let mineral of minerals) {
@@ -59,6 +71,10 @@ export class EnemyCityRoom {
     // }
   }
   private processResources(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - EnemyCityRoom.processResources");
+    }
+
     room.name = room.name;
     // let resources = room.find<Resource>(FIND_DROPPED_RESOURCES);
     // for (let resource of resources) {
@@ -69,6 +85,10 @@ export class EnemyCityRoom {
   }
 
   private processSources(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - EnemyCityRoom.processSources");
+    }
+
     room.name = room.name;
     // let sources = room.find<Source>(FIND_SOURCES);
     // for (let source of sources) {
@@ -79,6 +99,10 @@ export class EnemyCityRoom {
   }
 
   private processStructures(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - EnemyCityRoom.processStructures");
+    }
+
     room.name = room.name;
     // let structures = room.find<Structure>(FIND_MY_STRUCTURES);
     // for (let structure of structures) {

@@ -6,18 +6,24 @@ import { MySpawn } from "./MySpawn";
 export class StructureHandler {
   public structure: Structure;
 
+  private debug: boolean = false;
+
   constructor (structure: Structure) {
     this.structure = structure;
   }
 
   public run() {
+    if (this.debug) {
+      log.info(this.structure.room.name + ":" + this.structure.id + " - StructureHandler.run");
+    }
+
     switch (this.structure.structureType) {
       case STRUCTURE_CONTROLLER:
-        let controller = new MyController(this.structure);
+        let controller = new MyController(<Controller> this.structure);
         controller.run();
         break;
       case STRUCTURE_SPAWN:
-        let spawn = new MySpawn(this.structure);
+        let spawn = new MySpawn(<Spawn> this.structure);
         spawn.run();
         break;
       default:

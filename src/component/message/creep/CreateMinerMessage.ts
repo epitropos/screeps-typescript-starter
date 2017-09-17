@@ -1,5 +1,5 @@
 // import * as Config from "../../config/config";
-// import { log } from "../../lib/logger/log";
+// import { log } from "../../../lib/logger/log";
 
 export class CreateMinerMessage {
   public static MessageType: string = "MESSAGE_CREEP_CREATE_MINER";

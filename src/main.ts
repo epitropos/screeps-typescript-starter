@@ -1,6 +1,5 @@
 import * as Config from "./config/config";
 import { log } from "./lib/logger/log";
-import { LogLevels } from "./lib/logger/logLevels";
 import {Initialize} from "./Initialize";
 import {GameHandler} from "./component/game/GameHandler";
 import {RoomHandler} from "./component/room/RoomHandler";
@@ -34,7 +33,7 @@ export function loop() {
 }
 
 function deleteDeadCreeps(game: Game, memory: Memory) {
-  log.info("Delete dead creeps from memory");
+  // TODO: Change this into a handler.
   for (let i in memory.creeps) {
     if (!game.creeps[i]) {
         delete memory.creeps[i];
@@ -43,6 +42,7 @@ function deleteDeadCreeps(game: Game, memory: Memory) {
 }
 
 function displayCpuUsage(cpu: CPU) {
+  // TODO: Change this into a handler.
   log.info("CPU used: " + _.round(cpu.getUsed(), 1)
   + " | Bucket: " + cpu.bucket
   + " | Limit: " + cpu.limit
@@ -50,13 +50,11 @@ function displayCpuUsage(cpu: CPU) {
 }
 
 function processGame(game: Game) {
-  log.info("Process game");
   let gameHandler = new GameHandler(game);
   gameHandler.run();
 }
 
 function processRooms(rooms: {[roomName: string]: Room}) {
-  log.info("Process rooms");
   for (let roomName in rooms) {
     let room = rooms[roomName];
     let roomHandler = new RoomHandler(room);

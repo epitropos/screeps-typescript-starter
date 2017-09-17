@@ -1,5 +1,5 @@
 import * as Config from "../../config/config";
-// import { log } from "../../lib/logger/log";
+import { log } from "../../lib/logger/log";
 import { FriendlyCityRoom } from "./FriendlyCityRoom";
 import { FriendlyColonyRoom } from "./FriendlyColonyRoom";
 import { EnemyCityRoom } from "./EnemyCityRoom";
@@ -9,15 +9,25 @@ import { NeutralRoom } from "./NeutralRoom";
 export class RoomHandler {
   public room: Room;
 
+  private debug: boolean = false;
+
   constructor (room: Room) {
     this.room = room;
   }
 
   public run() {
+    if (this.debug) {
+      log.info(this.room.name + " - RoomHandler.run");
+    }
+
     this.processRoom(this.room);
   }
 
   private determineRoomType(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - RoomHandler.determineRoomType");
+    }
+
     let spawns = room.find(FIND_MY_SPAWNS);
     if (spawns.length > 0) {
       return Config.ROOM_FRIENDLY_CITY;
@@ -41,6 +51,10 @@ export class RoomHandler {
   }
 
   private processRoom(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - RoomHandler.processRoom");
+    }
+
     let roomType = this.determineRoomType(room);
 
     if (roomType === Config.ROOM_FRIENDLY_CITY) {
@@ -65,26 +79,46 @@ export class RoomHandler {
   }
 
   private processFriendlyCityRoom(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - RoomHandler.processFriendlyCityRoom");
+    }
+
     let friendlyCityRoom = new FriendlyCityRoom(room);
     friendlyCityRoom.run();
   }
 
   private processFriendlyColonyRoom(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - RoomHandler.processFriendlyColonyRoom");
+    }
+
     let friendlyColonyRoom = new FriendlyColonyRoom(room);
     friendlyColonyRoom.run();
   }
 
   private processEnemyCityRoom(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - RoomHandler.processEnemyCityRoom");
+    }
+
     let enemyCityRoom = new EnemyCityRoom(room);
     enemyCityRoom.run();
   }
 
   private processEnemyColonyRoom(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - RoomHandler.processEnemyColonyRoom");
+    }
+
     let enemyColonyRoom = new EnemyColonyRoom(room);
     enemyColonyRoom.run();
   }
 
   private processNeutralRoom(room: Room) {
+    if (this.debug) {
+      log.info(this.room.name + " - RoomHandler.processNeutralRoom");
+    }
+
     let neutralRoom = new NeutralRoom(room);
     neutralRoom.run();
   }

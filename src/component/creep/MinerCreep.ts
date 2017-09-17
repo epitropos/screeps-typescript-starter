@@ -37,12 +37,16 @@ export class MinerCreep {
   public source: Source;
   public sourceId: string;
 
+  private debug: boolean = false;
+
   constructor (creep: Creep) {
     this.creep = creep;
   }
 
   public run() {
-    log.info("Process miner: " + this.creep.room.name + " - " + this.creep.name);
+    if (this.debug) {
+      log.info(this.creep.room.name + ":" + this.creep.name + " - MinerCreep.run");
+    }
 
     this.initializeMemory();
     this.loadFromMemory();

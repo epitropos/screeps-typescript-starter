@@ -1,3 +1,6 @@
+// import * as Config from "../../config/config";
+import { log } from "../../lib/logger/log";
+
 export class MessageHandler {
   public static InitializeMemory() {
     if (!Memory.messages) { Memory.messages = {}; }
@@ -10,10 +13,19 @@ export class MessageHandler {
   }
 
   public static getNextMessage(messageType: string) {
+    if (MessageHandler.debug) {
+      log.info("MessageHandler.getNextMessage");
+      log.info("messageType == " + messageType);
+    }
+    // TODO: first is not getting an iterator for the collection and is returning undefined|null.
     return _.first(Memory.messages[messageType]);
   }
 
   public static sendMessage(messageType: string, messageId: number, serializedMessage: string) {
+    // TODO: Checking every time bad. Checking once good.
+    if (Memory.messages[messageType] === undefined) {
+      Memory.messages[messageType] = {};
+    }
     Memory.messages[messageType][messageId] = serializedMessage;
   }
 
@@ -40,7 +52,9 @@ export class MessageHandler {
     return Memory.messages[messageType][subscribedMessageType];
   }
 
-  constructor () {
-    // No operation.
-  }
+  private static debug: boolean = true;
+
+  // constructor () {
+  //   // No operation.
+  // }
 }

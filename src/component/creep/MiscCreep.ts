@@ -4,12 +4,16 @@ import { log } from "../../lib/logger/log";
 export class MiscCreep {
   public creep: Creep;
 
+  private debug: boolean = false;
+
   constructor (creep: Creep) {
     this.creep = creep;
   }
 
   public run() {
-    log.info("Process misc creep: " + this.creep.room.name + " - " + this.creep.name);
+    if (this.debug) {
+      log.info(this.creep.room.name + ":" + this.creep.name + " - MiscCreep.run");
+    }
 
     this.initializeMemory();
     this.loadFromMemory();

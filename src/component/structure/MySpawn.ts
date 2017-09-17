@@ -5,26 +5,28 @@ import { CreateMinerMessageAck } from "../message/creep/CreateMinerMessageAck";
 import { MessageHandler } from "../message/MessageHandler";
 
 export class MySpawn {
-  public structure: Structure;
   public spawn: Spawn;
   public messageId: number;
   public messageType: string;
 
-  constructor (structure: Structure) {
-    this.spawn = <Spawn> structure;
+  private debug: boolean = true;
+
+  constructor (spawn: Spawn) {
+    this.spawn = spawn;
   }
 
   public run() {
-    log.info("Process spawn: " + this.structure.room.name + ":" + this.structure.id);
-    if (this.spawn.spawning !== undefined) {
+    if (this.debug) {
+      log.info(this.spawn.room.name + ":" + this.spawn.id + " - MySpawn.run");
+    }
+
+    if (this.spawn.spawning !== null) {
       return;
     }
 
     this.initializeMemory();
     this.loadFromMemory();
-
     this.processNextCreateMinerMessage();
-
     this.saveToMemory();
   }
 
@@ -41,8 +43,15 @@ export class MySpawn {
   }
 
   private processNextCreateMinerMessage() {
+    if (this.debug) {
+      log.info(this.spawn.room.name + ":" + this.spawn.id + " - MySpawn.processNextCreateMinerMessage");
+    }
+
     // TODO: May need to have a router class that assigns incoming messages to a game object id.
     let message = MessageHandler.getNextMessage(CreateMinerMessage.MessageType);
+    if (this.debug) {
+      log.info("message: " + message);
+    }
     let createMinerMessage = (message !== undefined)
       ? CreateMinerMessage.create(message)
       : undefined;
@@ -57,6 +66,10 @@ export class MySpawn {
   }
 
   private processCreateMinerMessage(createMinerMessage: CreateMinerMessage) {
+    if (this.debug) {
+      log.info(this.spawn.room.name + ":" + this.spawn.id + " - MySpawn.processCreateMinerMessage");
+    }
+
     let minerName = Config.CREEP_MINER + Game.time;
     this.spawn.createCreep(
       createMinerMessage.bodyParts,
@@ -72,6 +85,10 @@ export class MySpawn {
   }
 
   private sendCreateMinerMessageAck(messageId: number, minerName: string) {
+    if (this.debug) {
+      log.info(this.spawn.room.name + ":" + this.spawn.id + " - MySpawn.sendCreateMinerMessageAck");
+    }
+
     let createMinerMessageAck = new CreateMinerMessageAck();
     createMinerMessageAck.messageId = messageId;
     createMinerMessageAck.minerName = minerName;

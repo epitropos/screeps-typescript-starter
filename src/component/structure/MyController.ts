@@ -2,14 +2,18 @@
 import { log } from "../../lib/logger/log";
 
 export class MyController {
-  public structure: Structure;
+  public controller: Controller;
 
-  constructor (structure: Structure) {
-    this.structure = structure;
+  private debug: boolean = false;
+
+  constructor (controller: Controller) {
+    this.controller = controller;
   }
 
   public run() {
-    log.info("Process controller: " + this.structure.room.name + " - " + this.structure.id);
+    if (this.debug) {
+      log.info(this.controller.room.name + ":" + this.controller.id + " - MyController.run");
+    }
 
     this.initializeMemory();
     this.loadFromMemory();
